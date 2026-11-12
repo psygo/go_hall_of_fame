@@ -1,0 +1,279 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Washi theme: paper, ink and a vermilion seal. */
+:root {
+  --paper: #f1e9d6;
+  --surface: #e8dcc0;
+  --ink: #1c1a17;
+  --accent: #c1321e;
+  --stone: #f6f0e0;
+  --stone-black: var(--ink);
+  --accent-600: color-mix(in srgb, var(--accent) 82%, #000);
+  --accent-700: color-mix(in srgb, var(--accent) 65%, #000);
+  --accent-800: color-mix(in srgb, var(--accent) 45%, #000);
+  --texture:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(120, 90, 40, 0.09),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(120, 90, 40, 0.07),
+      transparent 45%
+    );
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #15130f;
+  --surface: #211d17;
+  --ink: #ece4d2;
+  --accent: #e5604a;
+  --accent-600: color-mix(in srgb, var(--accent) 78%, #fff);
+  --accent-700: color-mix(in srgb, var(--accent) 60%, #fff);
+  --accent-800: color-mix(in srgb, var(--accent) 40%, #fff);
+  --texture:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(255, 255, 255, 0.04),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(255, 255, 255, 0.03),
+      transparent 45%
+    );
+  --stone-black: var(--paper);
+  color-scheme: dark;
+}
+
+:root,
+.dark {
+  --divider: color-mix(
+    in srgb,
+    var(--ink) 35%,
+    transparent
+  );
+  --accent-100: color-mix(
+    in srgb,
+    var(--accent) 12%,
+    var(--paper)
+  );
+  --accent-200: color-mix(
+    in srgb,
+    var(--accent) 22%,
+    var(--paper)
+  );
+  --accent-300: color-mix(
+    in srgb,
+    var(--accent) 38%,
+    var(--paper)
+  );
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
+  --color-divider: var(--divider);
+  --color-stone: var(--stone);
+  --font-serif:
+    var(--font-shippori), "Hiragino Mincho ProN",
+    "Yu Mincho", serif;
+}
+
+@layer base {
+  html {
+    background-color: var(--paper);
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    background-image: var(--texture);
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 800;
+    line-height: 1.12;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: var(--accent-700);
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    color: var(--accent-600);
+  }
+
+  ::selection {
+    background: color-mix(
+      in srgb,
+      var(--accent) 30%,
+      transparent
+    );
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.photo-grayscale {
+  filter: grayscale(1) contrast(1.08);
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 8px 14px;
+  }
+  .btn:hover {
+    color: var(--ink);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    background: var(--accent-600);
+    color: var(--paper);
+  }
+  .btn-secondary {
+    border-color: var(--divider);
+  }
+  .btn-secondary:hover {
+    background: color-mix(
+      in srgb,
+      var(--ink) 7%,
+      transparent
+    );
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    padding: 3px 10px;
+  }
+  .tag-accent {
+    background: var(--accent-100);
+    color: var(--accent-800);
+  }
+  .tag-outline {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+
+  .field > label,
+  .field > .field-label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
+  }
+  .input {
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 10px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    caret-color: var(--accent);
+    background: var(--surface);
+    border: 1px solid var(--divider);
+    border-radius: 0;
+  }
+  .input:hover {
+    border-color: color-mix(
+      in srgb,
+      var(--ink) 45%,
+      transparent
+    );
+  }
+  .input:focus-visible {
+    border-color: var(--accent);
+    outline-offset: 0;
+  }
+  textarea.input {
+    min-height: 90px;
+    resize: vertical;
+  }
+
+  .seg {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid var(--divider);
+  }
+  .seg-opt {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .seg-opt + .seg-opt {
+    border-left: 1px solid var(--divider);
+  }
+  .seg-opt input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  .seg-opt:has(input:checked) {
+    background: var(--accent);
+    color: var(--paper);
+  }
+  .seg-opt:not(:has(input:checked)):hover {
+    background: color-mix(
+      in srgb,
+      var(--ink) 7%,
+      transparent
+    );
+  }
+  .seg-opt:has(input:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+}

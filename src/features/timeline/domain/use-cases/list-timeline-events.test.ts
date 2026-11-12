@@ -1,0 +1,33 @@
+import { describe, expect, it, vi } from "vitest"
+
+import { fail, succeed } from "@/core/data-state"
+
+import type { TimelineEvent } from "../entities/timeline-event"
+import type { TimelineRepository } from "../repositories/timeline-repository"
+import { ListTimelineEvents } from "./list-timeline-events"
+
+describe("ListTimelineEvents", () => {
+  it("returns the events of the repository", async () => {
+    const events: TimelineEvent[] = [
+      { year: 1612, title: "Founded", text: "Text" },
+    ]
+    const repository: TimelineRepository = {
+      listAll: vi.fn(async () => succeed(events)),
+    }
+
+    expect(
+      await new ListTimelineEvents(repository).call(),
+    ).toEqual(succeed(events))
+  })
+
+  it("propagates a repository failure", async () => {
+    const failure = fail(new Error("db down"))
+    const repository: TimelineRepository = {
+      listAll: vi.fn(async () => failure),
+    }
+
+    expect(
+      await new ListTimelineEvents(repository).call(),
+    ).toBe(failure)
+  })
+})
