@@ -1,4 +1,4 @@
-import { Shippori_Mincho } from "next/font/google"
+import { Geist } from "next/font/google"
 import type { ReactNode } from "react"
 
 import { AppShell } from "@/shared/ui/presentation/app-shell"
@@ -7,10 +7,10 @@ import "@/styles/globals.css"
 
 export { siteMetadata as metadata } from "@/shared/ui/presentation/site-metadata"
 
-const shipporiMincho = Shippori_Mincho({
+// Geist is a variable font, so every weight from 100 to 900 is available.
+const geist = Geist({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "600", "800"],
-  variable: "--font-shippori",
+  variable: "--font-geist",
   display: "swap",
 })
 
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={shipporiMincho.variable}
+      className={geist.variable}
       suppressHydrationWarning
     >
       <body>

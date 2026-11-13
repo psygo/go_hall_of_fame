@@ -15,9 +15,10 @@ All tokens are CSS variables in `src/styles/globals.css` and are exposed to Tail
 + Divider is the ink at 35% alpha. `accent-100/200/300` mix the accent into the paper at 12/22/38%;
   `accent-600/700/800` mix it with black (light) or white (dark).
 + Page texture: two soft radial gradients (`--texture`).
-+ Type: Shippori Mincho 400/600/800 through `next/font/google` (latin and latin-ext subsets, so
-  the Han characters fall back to the system Mincho: Hiragino Mincho ProN or Yu Mincho). Body
-  15px / 1.55; headings weight 800, no letter-spacing.
++ Type: Geist (variable, all weights) through `next/font/google`, latin and latin-ext subsets, so
+  the Han and Hangul characters fall back to the system sans (Hiragino Sans, Yu Gothic, PingFang
+  SC, Apple SD Gothic Neo). Body 15px / 1.55; headings weight 800, no letter-spacing. The handoff
+  used Shippori Mincho; Geist replaced it on request.
 + Radius 0 everywhere, 1px solid dividers, no shadows, no card boxes.
 
 ## Behaviour

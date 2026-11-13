@@ -86,9 +86,10 @@
   --color-accent-800: var(--accent-800);
   --color-divider: var(--divider);
   --color-stone: var(--stone);
-  --font-serif:
-    var(--font-shippori), "Hiragino Mincho ProN",
-    "Yu Mincho", serif;
+  --font-sans:
+    var(--font-geist), system-ui, "Hiragino Sans",
+    "Yu Gothic", "PingFang SC", "Apple SD Gothic Neo",
+    sans-serif;
 }
 
 @layer base {
@@ -101,7 +102,7 @@
     background-color: var(--paper);
     background-image: var(--texture);
     color: var(--ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: 15px;
     line-height: 1.55;
   }
