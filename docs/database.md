@@ -32,11 +32,21 @@ generated into `drizzle/` and tracked in git.
 + `games`: one row per legendary game.
   + `slug` (unique), `year`, `name`, `black`, `white`, `result`, `setting`, `hook`, `moment`,
     `legacy`.
-  + `sgf_url`: URL of the SGF record. When set, the game page renders the board with `goban-web`.
+  + `black_player_id`, `white_player_id` (nullable, `set null` on delete): the Hall player behind the
+    Black / White name. The name then links to that player's page, and the two players are the
+    ones listed in `game_players`.
+  + `sgf_url`: URL of the SGF record, and `sgf_text`: the text of an uploaded SGF file (it wins over
+    the URL and is served at `/games/<slug>/sgf`). When either is set, the game page renders the
+    board with `goban-web`, and the games list shows a preview. Lists never read `sgf_text`; they
+    only learn whether it is set.
   + `sequence` orders games within the same year. `featured` works as for players.
 + `game_players`: join table (`game_id`, `player_id`, composite primary key, cascade delete) linking
   a game to the inducted players who played it. Not every side is a player in the Hall (AlphaGo,
   Akaboshi Intetsu), which is why `black` and `white` are plain text on `games`.
++ `resources`: a link with an optional `description`, on one game (`game_id`) or one player
+  (`player_id`): a check constraint requires exactly one of the two. `position` keeps the order.
++ `password_resets`: one-time reset links (`admin_id` cascade, `token_hash` unique, `expires_at`,
+  `used_at`). Only the token's SHA-256 is stored.
 + `timeline_events`: `year`, `title`, `text`.
 + `criteria`: the four induction criteria (`position` unique, `title`, `text`).
 + `admins`: `email` (unique), `name`, `password_hash` (scrypt), `failed_attempts`, `locked_until`.

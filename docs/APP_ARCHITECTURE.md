@@ -44,6 +44,9 @@ admin loader and every mutation calls first. The root layout is built by the aut
   + `data-state.ts`: the `DataState<T>` type and helpers
   + `raw-data.ts`: validation helpers for `fromRawData` (no `as` casts)
   + `circular-neighbors.ts`: previous/next with wrap-around
+  + `list-query.ts`: pages (`paginate`), chunks for infinite scroll (`sliceFrom`), word search
+    (`matchesQuery`) and the parsing of `q`/`sort`/`page` parameters
+  + `resources.ts`: the link-with-description type and its validation
 + `src/shared/{name}/`: same shape as a feature, for code used by several features (a folder may
   have only the layers it needs). Today: `shared/database` (data only: Drizzle schema and client),
   `shared/ui` and `shared/go-board` (presentation only).

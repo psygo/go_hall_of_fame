@@ -12,6 +12,14 @@ retired). The app talks to it with `pg`, so any Postgres works.
   go through a connection pooler). Optional.
 + The Neon integration also sets `PGHOST`, `POSTGRES_URL`, `POSTGRES_PRISMA_URL` and others. The app
   ignores those.
++ `SITE_URL` (optional): the public address, such as `https://hall.example.com`, used for the link in
+  password-reset emails and to make share-preview (Open Graph) image links absolute. When empty on
+  Vercel, `VERCEL_PROJECT_PRODUCTION_URL` is used. Set it if you have a custom domain.
++ `RESEND_API_KEY` and `EMAIL_FROM` (optional, needed for password reset by email): create a
+  [Resend](https://resend.com) account, verify the domain you send from, and put an API key and a From
+  address (`Go Hall of Fame <noreply@your-domain>`) here. Without them the reset form still answers
+  "a link is on its way", but nothing is sent (the server log says why). The fallback is
+  `pnpm admin:create` with the same email, which sets a new password.
 + No other secrets exist: sessions are random tokens stored hashed in the database, so there is no
   signing key to manage.
 
@@ -40,6 +48,10 @@ retired). The app talks to it with `pg`, so any Postgres works.
 `db:reset` refuses to run against any database that is not on localhost.
 
 ## Things to know
+
++ **Migrations since the first deploy.** `0002` adds the resources table, the Black/White player
+  links and the stored SGF text; `0003` adds the password-reset links table. Run `pnpm db:migrate`
+  against the hosted database before deploying code that needs them.
 
 + **Previews and the database.** If Preview deployments get the same `DATABASE_URL` as Production,
   anything done in a preview (including admin edits and nominations) hits the production data.
