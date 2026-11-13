@@ -23,6 +23,7 @@ const rawGame = {
   hasUploadedSgf: false,
   highlightMove: null,
   tags: [],
+  isDraft: false,
   sequence: 1,
 }
 
@@ -30,9 +31,11 @@ function buildRepository(
   dataSource: Partial<
     Record<keyof GamesDataSource, ReturnType<typeof vi.fn>>
   >,
+  canSeeDrafts: () => Promise<boolean> = async () => false,
 ) {
   return new GamesRepositoryImpl(
     dataSource as unknown as GamesDataSource,
+    canSeeDrafts,
   )
 }
 
@@ -91,6 +94,7 @@ describe("GamesRepositoryImpl", () => {
 
       expect(fetchDetailBySlug).toHaveBeenCalledWith(
         "ear-reddening",
+        false,
       )
       expect(state).toEqual({
         status: "success",
@@ -209,6 +213,7 @@ describe("GamesRepositoryImpl", () => {
       sequence: 1,
       highlightMove: null,
       tags: [],
+      isDraft: false,
       blackPlayerSlug: "shusaku",
       whitePlayerSlug: null,
       playerSlugs: ["shusaku"],
@@ -269,6 +274,93 @@ describe("GamesRepositoryImpl", () => {
         status: "failure",
         error: cause,
       })
+    })
+  })
+
+  describe("draft visibility", () => {
+    it.each([
+      [true, true],
+      [false, false],
+    ])(
+      "canSeeDrafts %s gives includeDrafts ",
+      async (canSee, expected) => {
+        {
+          const fetchAll = vi.fn(async () => [])
+          const repository = buildRepository(
+            { fetchAll },
+            async () => canSee,
+          )
+          await repository.listAll()
+          expect(fetchAll).toHaveBeenCalledWith(expected)
+        }
+        {
+          const fetchDetailBySlug = vi.fn(async () => null)
+          const repository = buildRepository(
+            { fetchDetailBySlug },
+            async () => canSee,
+          )
+          await repository.findDetailBySlug("x")
+          expect(fetchDetailBySlug).toHaveBeenCalledWith(
+            "x",
+            expected,
+          )
+        }
+        {
+          const fetchSgfTextBySlug = vi.fn(async () => null)
+          const repository = buildRepository(
+            { fetchSgfTextBySlug },
+            async () => canSee,
+          )
+          await repository.findSgfTextBySlug("x")
+          expect(fetchSgfTextBySlug).toHaveBeenCalledWith(
+            "x",
+            expected,
+          )
+        }
+        {
+          const listPlayerOptions = vi.fn(async () => [])
+          const repository = buildRepository(
+            { listPlayerOptions },
+            async () => canSee,
+          )
+          await repository.listPlayerOptions()
+          expect(listPlayerOptions).toHaveBeenCalledWith(
+            expected,
+          )
+        }
+      },
+    )
+
+    it("evaluates canSeeDrafts on every call", async () => {
+      const fetchAll = vi.fn(async () => [])
+      let admin = true
+      const repository = buildRepository(
+        { fetchAll },
+        async () => admin,
+      )
+
+      await repository.listAll()
+      admin = false
+      await repository.listAll()
+
+      expect(fetchAll.mock.calls).toEqual([[true], [false]])
+    })
+
+    it("turns a rejecting canSeeDrafts into a failure without reading", async () => {
+      const cause = new Error("auth down")
+      const fetchAll = vi.fn(async () => [])
+      const repository = buildRepository(
+        { fetchAll },
+        async () => {
+          throw cause
+        },
+      )
+
+      expect(await repository.listAll()).toEqual({
+        status: "failure",
+        error: cause,
+      })
+      expect(fetchAll).not.toHaveBeenCalled()
     })
   })
 })

@@ -1,5 +1,6 @@
 import Link from "next/link"
 
+import { DraftBadge } from "@/shared/ui/presentation/draft-badge"
 import { Markdown } from "@/shared/ui/presentation/markdown"
 
 import type { TimelinePlacement } from "../../domain/entities/timeline-layout"
@@ -35,6 +36,7 @@ export function TimelineItem({
         <div className="text-accent text-[28px] leading-none font-bold min-[720px]:text-[40px]">
           {event.year}
         </div>
+        <DraftBadge isDraft={event.isDraft} />
         <div className="text-[22px] leading-[1.15] font-bold">
           {event.game === null ? (
             event.title

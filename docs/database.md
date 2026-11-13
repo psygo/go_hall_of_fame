@@ -50,6 +50,7 @@ generated into `drizzle/` and tracked in git.
   `used_at`). Only the token's SHA-256 is stored.
 + `timeline_events`: `game_id` (nullable, `set null` on delete) links an event to a game. Also `year` (free text), `position` (set by dragging in the admin), `title`, `text`.
 + `feedback`: what visitors send from the About page: `email`, `description`, `is_read`, `created_at`.
++ `players`, `games` and `timeline_events` each have `is_draft` (default false): drafts are visible to admins only.
 + `criteria`: the four induction criteria (`position` unique, `title`, `text`).
 + `admins`: `email` (unique), `name`, `password_hash` (scrypt), `failed_attempts`, `locked_until`.
 + `admin_sessions`: `admin_id` (cascade), `token_hash` (unique, SHA-256 of the cookie token),

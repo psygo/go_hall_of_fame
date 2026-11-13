@@ -15,6 +15,7 @@ const eventWithId = (id: number): TimelineEvent => ({
   title: "T",
   text: "x",
   game: null,
+  isDraft: false,
 })
 
 function build(

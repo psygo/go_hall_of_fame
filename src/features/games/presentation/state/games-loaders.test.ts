@@ -43,6 +43,7 @@ const game: Game = {
   hasUploadedSgf: false,
   highlightMove: null,
   tags: [],
+  isDraft: false,
   sequence: 0,
 }
 

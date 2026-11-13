@@ -47,6 +47,11 @@ export async function AdminPlayersScreen({
               <span className="font-bold">
                 {player.name}
               </span>
+              {player.isDraft && (
+                <span className="tag tag-outline ml-3">
+                  Draft
+                </span>
+              )}
               <span className="ml-3 text-sm opacity-70">
                 {player.country}
               </span>

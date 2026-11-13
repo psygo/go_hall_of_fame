@@ -24,6 +24,7 @@ function buildGame(slug: string): Game {
     hasUploadedSgf: false,
     highlightMove: null,
     tags: [],
+    isDraft: false,
     sequence: 0,
   }
 }
@@ -53,6 +54,7 @@ function buildForm(
     sequence: "1",
     highlightMove: "",
     tags: "",
+    isDraft: false,
     sgfFileText: "",
     sgfFileTooLarge: false,
     removeSgf: false,
@@ -100,6 +102,7 @@ describe("validateGameForm", () => {
         sequence: 1,
         highlightMove: null,
         tags: [],
+        isDraft: false,
         blackPlayerSlug: "lee-sedol",
         whitePlayerSlug: null,
         playerSlugs: ["lee-sedol"],
@@ -623,6 +626,17 @@ describe("validateGameForm", () => {
           }),
         ).resources,
       ).toMatch(/not a valid link/)
+    })
+  })
+
+  it("carries the draft flag through, false by default", () => {
+    expect(validate(buildForm())).toEqual({
+      valid: true,
+      draft: expect.objectContaining({ isDraft: false }),
+    })
+    expect(validate(buildForm({ isDraft: true }))).toEqual({
+      valid: true,
+      draft: expect.objectContaining({ isDraft: true }),
     })
   })
 

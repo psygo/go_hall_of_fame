@@ -199,6 +199,12 @@ export function GameForm({
           error={errors.sequence}
         />
       </div>
+      <CheckboxField
+        name="isDraft"
+        label="Draft"
+        defaultChecked={values.isDraft}
+        hint="Only admins can see a draft."
+      />
       {state.status === "failed" && (
         <FormMessage message={state.message} />
       )}

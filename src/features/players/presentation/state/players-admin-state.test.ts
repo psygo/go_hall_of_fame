@@ -48,6 +48,7 @@ const player: Player = {
   photoUrl: null,
   photoPosition: "50% 50%",
   tags: [],
+  isDraft: false,
 }
 const detail: PlayerDetail = {
   ...player,
@@ -258,7 +259,23 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       originalSlug: null,
-      form: { ...fields, resources: [] },
+      form: { ...fields, isDraft: false, resources: [] },
+    })
+  })
+
+  it("reads the isDraft flag: 'on' is true, missing is false", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        buildFormData({ ...fields, isDraft: "on" }),
+      ),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({ isDraft: true }),
     })
   })
 
@@ -283,6 +300,7 @@ describe("saveFromForm", () => {
         photoPosition: "",
         inductionNumber: "",
         tags: "",
+        isDraft: false,
         resources: [],
       },
     })
@@ -350,6 +368,7 @@ describe("saveFromForm", () => {
       values: {
         ...fields,
         name: "",
+        isDraft: false,
         resources: [],
       },
     })
@@ -377,7 +396,7 @@ describe("saveFromForm", () => {
       status: "failed",
       message:
         "The player could not be saved. Try again in a moment.",
-      values: { ...fields, resources: [] },
+      values: { ...fields, isDraft: false, resources: [] },
     })
     expect(logged).toHaveBeenCalledWith(
       "Could not save the player:",

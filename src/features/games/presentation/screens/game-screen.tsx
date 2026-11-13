@@ -1,6 +1,7 @@
 import { gamesLoaders } from "@/config/di"
 import { GoBoardPlayer } from "@/shared/go-board/presentation/go-board-player"
 import { BackLink } from "@/shared/ui/presentation/back-link"
+import { DraftBadge } from "@/shared/ui/presentation/draft-badge"
 import { LabelledFact } from "@/shared/ui/presentation/labelled-fact"
 import { Markdown } from "@/shared/ui/presentation/markdown"
 import { NeighborBar } from "@/shared/ui/presentation/neighbor-bar"
@@ -32,9 +33,12 @@ export async function GameScreen({
     <>
       <BackLink href="/games">All games</BackLink>
       <article className="border-divider flex flex-col gap-[22px] border-b px-4 pt-10 pb-12">
-        <span className="tag tag-accent self-start">
-          {detail.year}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="tag tag-accent self-start">
+            {detail.year}
+          </span>
+          <DraftBadge isDraft={detail.isDraft} />
+        </div>
         <h1 className={displayTitleClass}>{detail.name}</h1>
         <div className="border-divider grid grid-cols-[repeat(auto-fit,minmax(min(150px,100%),1fr))] border-y">
           <LabelledFact label="Black">

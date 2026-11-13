@@ -12,6 +12,7 @@ export type TimelineEventForm = {
   readonly text: string
   /** The slug of the game the event links to, or "" for none. */
   readonly gameSlug: string
+  readonly isDraft: boolean
 }
 
 export type TimelineEventDraft = {
@@ -19,6 +20,7 @@ export type TimelineEventDraft = {
   readonly title: string
   readonly text: string
   readonly gameSlug: string | null
+  readonly isDraft: boolean
 }
 
 export type TimelineEventErrors = FieldErrors
@@ -69,6 +71,7 @@ export function validateTimelineEventForm(
       title,
       text,
       gameSlug: gameSlug || null,
+      isDraft: form.isDraft,
     },
   }
 }

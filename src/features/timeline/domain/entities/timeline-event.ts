@@ -11,4 +11,6 @@ export type TimelineEvent = {
   readonly title: string
   readonly text: string
   readonly game: TimelineGameReference | null
+  /** Only admins see a draft. */
+  readonly isDraft: boolean
 }

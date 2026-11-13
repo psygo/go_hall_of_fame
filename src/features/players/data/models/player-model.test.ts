@@ -19,6 +19,7 @@ const validPlayer = {
   photoUrl: "https://example.com/p.jpg",
   photoPosition: "center top",
   tags: ["opening", "famous"],
+  isDraft: false,
 }
 
 const validGames = [
@@ -136,6 +137,25 @@ describe("PlayerModel", () => {
     expect(() =>
       PlayerModel.fromRawData({ ...validPlayer, tags }),
     ).toThrow(InvalidRawDataError)
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "true"],
+    ["null", null],
+  ])("throws when isDraft is %s", (_label, isDraft) => {
+    expect(() =>
+      PlayerModel.fromRawData({ ...validPlayer, isDraft }),
+    ).toThrow('"isDraft" must be a boolean')
+  })
+
+  it("keeps isDraft true", () => {
+    expect(
+      PlayerModel.fromRawData({
+        ...validPlayer,
+        isDraft: true,
+      }).isDraft,
+    ).toBe(true)
   })
 
   it("converts to a plain entity equal to the fields", () => {

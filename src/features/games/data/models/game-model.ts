@@ -32,6 +32,7 @@ export class GameModel implements Game {
   declare readonly hasUploadedSgf: boolean
   declare readonly highlightMove: number | null
   declare readonly tags: readonly string[]
+  declare readonly isDraft: boolean
   declare readonly sequence: number
 
   protected constructor(fields: Game) {
@@ -106,6 +107,7 @@ function parseGameFields(raw: unknown): Game {
       "highlightMove",
     ),
     tags: readStringArray(record, "tags"),
+    isDraft: readBoolean(record, "isDraft"),
     sequence: readInteger(record, "sequence"),
   }
 }

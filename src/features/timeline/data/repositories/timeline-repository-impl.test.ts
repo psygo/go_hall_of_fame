@@ -10,6 +10,7 @@ const rawEvent = {
   year: "1612",
   title: "Founded",
   text: "Text",
+  isDraft: false,
 }
 
 const draft: TimelineEventDraft = {
@@ -17,6 +18,7 @@ const draft: TimelineEventDraft = {
   title: "Founded",
   text: "Text",
   gameSlug: null,
+  isDraft: false,
 }
 
 function buildRepository(
@@ -26,9 +28,11 @@ function buildRepository(
       ReturnType<typeof vi.fn>
     >
   >,
+  canSeeDrafts: () => Promise<boolean> = async () => false,
 ) {
   return new TimelineRepositoryImpl(
     dataSource as unknown as TimelineDataSource,
+    canSeeDrafts,
   )
 }
 
@@ -103,7 +107,7 @@ describe("TimelineRepositoryImpl", () => {
         fetchById,
       }).findById(7)
 
-      expect(fetchById).toHaveBeenCalledWith(7)
+      expect(fetchById).toHaveBeenCalledWith(7, false)
       expect(state).toEqual({
         status: "success",
         data: { ...rawEvent, game: null },
@@ -207,6 +211,81 @@ describe("TimelineRepositoryImpl", () => {
           delete: throwing(cause),
         }).delete(7),
       ).toEqual({ status: "failure", error: cause })
+    })
+  })
+
+  describe("draft visibility", () => {
+    it.each([
+      [true, true],
+      [false, false],
+    ])(
+      "canSeeDrafts %s gives includeDrafts ",
+      async (canSee, expected) => {
+        {
+          const fetchAll = vi.fn(async () => [])
+          const repository = buildRepository(
+            { fetchAll },
+            async () => canSee,
+          )
+          await repository.listAll()
+          expect(fetchAll).toHaveBeenCalledWith(expected)
+        }
+        {
+          const fetchById = vi.fn(async () => null)
+          const repository = buildRepository(
+            { fetchById },
+            async () => canSee,
+          )
+          await repository.findById(7)
+          expect(fetchById).toHaveBeenCalledWith(
+            7,
+            expected,
+          )
+        }
+        {
+          const listGameOptions = vi.fn(async () => [])
+          const repository = buildRepository(
+            { listGameOptions },
+            async () => canSee,
+          )
+          await repository.listGameOptions()
+          expect(listGameOptions).toHaveBeenCalledWith(
+            expected,
+          )
+        }
+      },
+    )
+
+    it("evaluates canSeeDrafts on every call", async () => {
+      const fetchAll = vi.fn(async () => [])
+      let admin = true
+      const repository = buildRepository(
+        { fetchAll },
+        async () => admin,
+      )
+
+      await repository.listAll()
+      admin = false
+      await repository.listAll()
+
+      expect(fetchAll.mock.calls).toEqual([[true], [false]])
+    })
+
+    it("turns a rejecting canSeeDrafts into a failure without reading", async () => {
+      const cause = new Error("auth down")
+      const fetchAll = vi.fn(async () => [])
+      const repository = buildRepository(
+        { fetchAll },
+        async () => {
+          throw cause
+        },
+      )
+
+      expect(await repository.listAll()).toEqual({
+        status: "failure",
+        error: cause,
+      })
+      expect(fetchAll).not.toHaveBeenCalled()
     })
   })
 })

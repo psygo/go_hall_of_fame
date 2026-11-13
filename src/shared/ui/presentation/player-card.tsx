@@ -1,5 +1,6 @@
 import Link from "next/link"
 
+import { DraftBadge } from "./draft-badge"
 import { Portrait } from "./portrait"
 import { TagList } from "./tag-list"
 
@@ -13,6 +14,7 @@ export type PlayerCardPlayer = {
   readonly photoUrl: string | null
   readonly photoPosition: string
   readonly tags: readonly string[]
+  readonly isDraft?: boolean
 }
 
 /** A player as a tile of the players list; the whole tile opens the profile. */
@@ -41,8 +43,11 @@ export function PlayerCard({
               "0",
             )}
           </span>
-          <span className="tag tag-outline">
-            {player.country}
+          <span className="flex items-center gap-1.5">
+            <DraftBadge isDraft={player.isDraft} />
+            <span className="tag tag-outline">
+              {player.country}
+            </span>
           </span>
         </div>
         <div className="mt-1.5 text-2xl leading-[1.05] font-bold">

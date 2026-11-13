@@ -6,6 +6,7 @@ import { ResourceFields } from "@/shared/ui/presentation/resource-fields"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { idleAdminForm } from "@/core/admin-form-state"
 import {
+  CheckboxField,
   FormActions,
   MARKDOWN_HINT,
   FormMessage,
@@ -142,6 +143,12 @@ export function PlayerForm({
       <ResourceFields
         initial={values.resources}
         error={errors.resources}
+      />
+      <CheckboxField
+        name="isDraft"
+        label="Draft"
+        defaultChecked={values.isDraft}
+        hint="Only admins can see a draft."
       />
       {state.status === "failed" && (
         <FormMessage message={state.message} />

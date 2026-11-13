@@ -13,6 +13,7 @@ const eventIn = (year: number): TimelineEvent => ({
   title: `T${year}`,
   text: "x",
   game: null,
+  isDraft: false,
 })
 
 function buildRepository(

@@ -39,6 +39,7 @@ const player: Player = {
   bio: "Bio",
   photoUrl: null,
   tags: [],
+  isDraft: false,
   photoPosition: "center",
 }
 

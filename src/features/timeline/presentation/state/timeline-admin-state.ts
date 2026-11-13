@@ -14,7 +14,10 @@ import {
   type SaveResult,
 } from "@/core/validation"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
-import { readFormText } from "@/shared/ui/presentation/form-data"
+import {
+  readFormFlag,
+  readFormText,
+} from "@/shared/ui/presentation/form-data"
 
 import type {
   TimelineEvent,
@@ -114,6 +117,7 @@ export function createTimelineAdminState(
       title: readFormText(formData, "title"),
       text: readFormText(formData, "text"),
       gameSlug: readFormText(formData, "gameSlug"),
+      isDraft: readFormFlag(formData, "isDraft"),
     }
     const id =
       idParam === "new" ? null : parseInteger(idParam)

@@ -11,11 +11,12 @@ import { SavePlayer } from "@/features/players/domain/use-cases/save-player"
 import { createPlayersAdminState } from "@/features/players/presentation/state/players-admin-state"
 import { createPlayersLoaders } from "@/features/players/presentation/state/players-loaders"
 
-import { requireAdmin } from "./auth"
+import { canSeeDrafts, requireAdmin } from "./auth"
 import { database } from "./infrastructure"
 
 const repository = new PlayersRepositoryImpl(
   new PlayersDataSource(database),
+  canSeeDrafts,
 )
 const listPlayers = new ListPlayers(repository)
 

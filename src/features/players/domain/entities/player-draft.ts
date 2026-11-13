@@ -35,6 +35,7 @@ export type PlayerForm = {
   readonly inductionNumber: string
   /** Comma-separated, optional. */
   readonly tags: string
+  readonly isDraft: boolean
   readonly resources: readonly ResourceRow[]
 }
 
@@ -50,6 +51,7 @@ export type PlayerDraft = {
   readonly photoPosition: string
   readonly inductionNumber: number
   readonly tags: readonly string[]
+  readonly isDraft: boolean
   readonly resources: readonly ResourceLink[]
 }
 
@@ -162,6 +164,7 @@ export function validatePlayerForm(
       photoPosition,
       inductionNumber,
       tags: tags.tags,
+      isDraft: form.isDraft,
       resources: resources.links,
     },
   }

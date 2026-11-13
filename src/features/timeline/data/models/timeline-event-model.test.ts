@@ -9,6 +9,7 @@ const validRaw = {
   year: "c. 1612",
   title: "Founded",
   text: "Text",
+  isDraft: false,
 }
 
 describe("TimelineEventModel", () => {
@@ -58,6 +59,27 @@ describe("TimelineEventModel", () => {
         year: 1612,
       }),
     ).toThrow('"year" must be a string')
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "true"],
+  ])("throws when isDraft is %s", (_label, isDraft) => {
+    expect(() =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        isDraft,
+      }),
+    ).toThrow('"isDraft" must be a boolean')
+  })
+
+  it("keeps isDraft true", () => {
+    expect(
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        isDraft: true,
+      }).isDraft,
+    ).toBe(true)
   })
 
   it("throws when the raw data is not an object", () => {

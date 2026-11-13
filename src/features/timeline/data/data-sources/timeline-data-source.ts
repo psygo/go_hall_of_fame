@@ -1,5 +1,6 @@
-import { asc, eq, max } from "drizzle-orm"
+import { and, asc, eq, max } from "drizzle-orm"
 
+import { isVisible } from "@/shared/database/data/drafts"
 import type { Database } from "@/shared/database/data/database"
 import {
   gamesTable,
@@ -16,19 +17,26 @@ const eventSelection = {
   text: timelineEventsTable.text,
   gameSlug: gamesTable.slug,
   gameName: gamesTable.name,
+  isDraft: timelineEventsTable.isDraft,
 }
 
 export class TimelineDataSource {
   constructor(private readonly database: Database) {}
 
-  async fetchAll(): Promise<TimelineEventModel[]> {
+  async fetchAll(
+    includeDrafts: boolean,
+  ): Promise<TimelineEventModel[]> {
     const rows = await this.database
       .select(eventSelection)
       .from(timelineEventsTable)
       .leftJoin(
         gamesTable,
-        eq(timelineEventsTable.gameId, gamesTable.id),
+        and(
+          eq(timelineEventsTable.gameId, gamesTable.id),
+          isVisible(gamesTable, includeDrafts),
+        ),
       )
+      .where(isVisible(timelineEventsTable, includeDrafts))
       .orderBy(
         asc(timelineEventsTable.position),
         asc(timelineEventsTable.id),
@@ -40,27 +48,37 @@ export class TimelineDataSource {
 
   async fetchById(
     id: number,
+    includeDrafts: boolean,
   ): Promise<TimelineEventModel | null> {
     const [row] = await this.database
       .select(eventSelection)
       .from(timelineEventsTable)
       .leftJoin(
         gamesTable,
-        eq(timelineEventsTable.gameId, gamesTable.id),
+        and(
+          eq(timelineEventsTable.gameId, gamesTable.id),
+          isVisible(gamesTable, includeDrafts),
+        ),
       )
-      .where(eq(timelineEventsTable.id, id))
+      .where(
+        and(
+          eq(timelineEventsTable.id, id),
+          isVisible(timelineEventsTable, includeDrafts),
+        ),
+      )
     return row === undefined
       ? null
       : TimelineEventModel.fromRawData(row)
   }
 
-  async listGameOptions() {
+  async listGameOptions(includeDrafts: boolean) {
     const rows = await this.database
       .select({
         slug: gamesTable.slug,
         name: gamesTable.name,
       })
       .from(gamesTable)
+      .where(isVisible(gamesTable, includeDrafts))
       .orderBy(
         asc(gamesTable.year),
         asc(gamesTable.sequence),

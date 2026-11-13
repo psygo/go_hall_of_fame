@@ -1,6 +1,7 @@
 import {
   asRecord,
   readInteger,
+  readBoolean,
   readNullableString,
   readString,
 } from "@/core/raw-data"
@@ -16,6 +17,7 @@ export class TimelineEventModel implements TimelineEvent {
   declare readonly title: string
   declare readonly text: string
   declare readonly game: TimelineGameReference | null
+  declare readonly isDraft: boolean
 
   private constructor(fields: TimelineEvent) {
     Object.assign(this, fields)
@@ -29,6 +31,7 @@ export class TimelineEventModel implements TimelineEvent {
       title: readString(record, "title"),
       text: readString(record, "text"),
       game: parseGame(record),
+      isDraft: readBoolean(record, "isDraft"),
     })
   }
 

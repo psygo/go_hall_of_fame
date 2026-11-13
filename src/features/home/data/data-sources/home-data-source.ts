@@ -1,6 +1,7 @@
 import { alias } from "drizzle-orm/pg-core"
-import { eq, sql } from "drizzle-orm"
+import { and, eq, sql } from "drizzle-orm"
 
+import { isVisible } from "@/shared/database/data/drafts"
 import type { Database } from "@/shared/database/data/database"
 import {
   gamesTable,
@@ -26,7 +27,9 @@ function yearBound(bound: "min" | "max") {
 export class HomeDataSource {
   constructor(private readonly database: Database) {}
 
-  async fetchFacts(): Promise<HomeFactsModel> {
+  async fetchFacts(
+    includeDrafts: boolean,
+  ): Promise<HomeFactsModel> {
     const [
       playerCount,
       gameCount,
@@ -34,11 +37,11 @@ export class HomeDataSource {
       spotlightGame,
       spotlightPlayer,
     ] = await Promise.all([
-      this.countRows(playersTable),
-      this.countRows(gamesTable),
-      this.fetchTimelineSpan(),
-      this.fetchSpotlightGame(),
-      this.fetchSpotlightPlayer(),
+      this.countRows(playersTable, includeDrafts),
+      this.countRows(gamesTable, includeDrafts),
+      this.fetchTimelineSpan(includeDrafts),
+      this.fetchSpotlightGame(includeDrafts),
+      this.fetchSpotlightPlayer(includeDrafts),
     ])
     return HomeFactsModel.fromRawData({
       playerCount,
@@ -51,14 +54,16 @@ export class HomeDataSource {
 
   private async countRows(
     table: typeof playersTable | typeof gamesTable,
+    includeDrafts: boolean,
   ): Promise<number> {
     const [row] = await this.database
       .select({ count: sql<number>`count(*)::int` })
       .from(table)
+      .where(isVisible(table, includeDrafts))
     return row.count
   }
 
-  private async fetchTimelineSpan() {
+  private async fetchTimelineSpan(includeDrafts: boolean) {
     const [row] = await this.database
       .select({
         // The years are text now: use the first 3-4 digit number of each ("c. 1670" gives 1670).
@@ -66,11 +71,12 @@ export class HomeDataSource {
         lastYear: yearBound("max"),
       })
       .from(timelineEventsTable)
+      .where(isVisible(timelineEventsTable, includeDrafts))
     return row
   }
 
   /** A different game on every visit. The SGF text itself is never read, only whether there is one. */
-  private async fetchSpotlightGame() {
+  private async fetchSpotlightGame(includeDrafts: boolean) {
     const blackPlayer = alias(playersTable, "black_player")
     const whitePlayer = alias(playersTable, "white_player")
     const [row] = await this.database
@@ -92,21 +98,31 @@ export class HomeDataSource {
       .from(gamesTable)
       .leftJoin(
         blackPlayer,
-        eq(gamesTable.blackPlayerId, blackPlayer.id),
+        and(
+          eq(gamesTable.blackPlayerId, blackPlayer.id),
+          isVisible(blackPlayer, includeDrafts),
+        ),
       )
       .leftJoin(
         whitePlayer,
-        eq(gamesTable.whitePlayerId, whitePlayer.id),
+        and(
+          eq(gamesTable.whitePlayerId, whitePlayer.id),
+          isVisible(whitePlayer, includeDrafts),
+        ),
       )
+      .where(isVisible(gamesTable, includeDrafts))
       .orderBy(sql`random()`)
       .limit(1)
     return row ?? null
   }
 
-  private async fetchSpotlightPlayer() {
+  private async fetchSpotlightPlayer(
+    includeDrafts: boolean,
+  ) {
     const [row] = await this.database
       .select()
       .from(playersTable)
+      .where(isVisible(playersTable, includeDrafts))
       .orderBy(sql`random()`)
       .limit(1)
     return row ?? null

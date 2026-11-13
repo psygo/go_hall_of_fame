@@ -37,6 +37,7 @@ export type GameForm = {
   readonly highlightMove: string
   /** Comma-separated, optional. */
   readonly tags: string
+  readonly isDraft: boolean
   /** The slug of the Hall player who played Black / White, or "" for none. */
   readonly blackPlayerSlug: string
   readonly whitePlayerSlug: string
@@ -62,6 +63,7 @@ export type GameDraft = {
   readonly sequence: number
   readonly highlightMove: number | null
   readonly tags: readonly string[]
+  readonly isDraft: boolean
   readonly blackPlayerSlug: string | null
   readonly whitePlayerSlug: string | null
   /** The Black and White players, without repeats: the players listed on the game. */
@@ -202,6 +204,7 @@ export function validateGameForm(
       sequence,
       highlightMove,
       tags: tags.tags,
+      isDraft: form.isDraft,
       blackPlayerSlug: blackPlayerSlug || null,
       whitePlayerSlug: whitePlayerSlug || null,
       playerSlugs,

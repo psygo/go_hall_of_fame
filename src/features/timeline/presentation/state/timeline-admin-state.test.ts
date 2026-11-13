@@ -42,6 +42,7 @@ const event: TimelineEvent = {
   title: "Founded",
   text: "Text",
   game: null,
+  isDraft: false,
 }
 
 function buildFormData(
@@ -234,7 +235,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: fields,
+      form: { ...fields, isDraft: false },
     })
   })
 
@@ -247,7 +248,23 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: 3,
-      form: fields,
+      form: { ...fields, isDraft: false },
+    })
+  })
+
+  it("reads the isDraft flag: 'on' is true, missing is false", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        buildFormData({ ...fields, isDraft: "on" }),
+      ),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      id: null,
+      form: { ...fields, isDraft: true },
     })
   })
 
@@ -260,7 +277,13 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: { year: "", title: "", text: "", gameSlug: "" },
+      form: {
+        year: "",
+        title: "",
+        text: "",
+        gameSlug: "",
+        isDraft: false,
+      },
     })
   })
 
@@ -293,7 +316,7 @@ describe("saveFromForm", () => {
     ).toEqual({
       status: "invalid",
       errors,
-      values: { ...fields, year: "0" },
+      values: { ...fields, isDraft: false, year: "0" },
     })
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
@@ -319,7 +342,7 @@ describe("saveFromForm", () => {
       status: "failed",
       message:
         "The event could not be saved. Try again in a moment.",
-      values: fields,
+      values: { ...fields, isDraft: false },
     })
     expect(logged).toHaveBeenCalledWith(
       "Could not save the timeline event:",
@@ -482,7 +505,11 @@ describe("saveFromForm game link", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: { ...fields, gameSlug: "alphago-game-4" },
+      form: {
+        ...fields,
+        gameSlug: "alphago-game-4",
+        isDraft: false,
+      },
     })
   })
 })

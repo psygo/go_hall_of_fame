@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm"
+import { and, asc, eq } from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
 import {
@@ -11,6 +11,8 @@ import {
   playersTable,
 } from "@/shared/database/data/schema"
 
+import { isVisible } from "@/shared/database/data/drafts"
+
 import type { PlayerDraft } from "../../domain/entities/player-draft"
 import {
   PlayerDetailModel,
@@ -20,23 +22,35 @@ import {
 export class PlayersDataSource {
   constructor(private readonly database: Database) {}
 
-  async fetchAll(): Promise<PlayerModel[]> {
+  async fetchAll(
+    includeDrafts: boolean,
+  ): Promise<PlayerModel[]> {
     const rows = await this.database
       .select()
       .from(playersTable)
+      .where(isVisible(playersTable, includeDrafts))
       .orderBy(asc(playersTable.inductionNumber))
     return rows.map((row) => PlayerModel.fromRawData(row))
   }
 
   async fetchDetailBySlug(
     slug: string,
+    includeDrafts: boolean,
   ): Promise<PlayerDetailModel | null> {
     const [row] = await this.database
       .select()
       .from(playersTable)
-      .where(eq(playersTable.slug, slug))
+      .where(
+        and(
+          eq(playersTable.slug, slug),
+          isVisible(playersTable, includeDrafts),
+        ),
+      )
     if (row === undefined) return null
-    const games = await this.fetchGameReferences(row.id)
+    const games = await this.fetchGameReferences(
+      row.id,
+      includeDrafts,
+    )
     const resources = await selectResources(this.database, {
       kind: "player",
       id: row.id,
@@ -48,7 +62,10 @@ export class PlayersDataSource {
     })
   }
 
-  private fetchGameReferences(playerId: number) {
+  private fetchGameReferences(
+    playerId: number,
+    includeDrafts: boolean,
+  ) {
     return this.database
       .select({
         slug: gamesTable.slug,
@@ -60,7 +77,12 @@ export class PlayersDataSource {
         gamesTable,
         eq(gamePlayersTable.gameId, gamesTable.id),
       )
-      .where(eq(gamePlayersTable.playerId, playerId))
+      .where(
+        and(
+          eq(gamePlayersTable.playerId, playerId),
+          isVisible(gamesTable, includeDrafts),
+        ),
+      )
       .orderBy(
         asc(gamesTable.year),
         asc(gamesTable.sequence),

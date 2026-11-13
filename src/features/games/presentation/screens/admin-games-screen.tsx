@@ -41,6 +41,11 @@ export async function AdminGamesScreen({
                 {game.year}
               </span>
               <span className="font-bold">{game.name}</span>
+              {game.isDraft && (
+                <span className="tag tag-outline ml-3">
+                  Draft
+                </span>
+              )}
             </div>
             <div className="flex gap-2">
               <Link

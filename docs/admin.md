@@ -17,6 +17,11 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   introduction and card texts). A blank field restores the original text, which lives in
   `src/features/content/domain/entities/page-text.ts`. The home introduction accepts the placeholders
   `{playerCount}` and `{gameCount}`.
++ **Drafts.** Players, games and timeline events have a "Draft" checkbox. A draft is visible to signed-in
+  admins only (marked "Draft" in lists and on its page); visitors get a 404, and it is left out of the
+  lists, search, neighbors, the home page counts and picks, and the timeline. A published item that
+  links to a draft (a game's player, a timeline event's game) shows without the link. The rule lives in
+  the data layer (`CanSeeDrafts`, supplied by the composition root), so no screen can forget it.
 + **Players** (`/admin/players`): create, edit, delete. Fields: name, native name, country (Japan,
   China, Korea or Others), years,
   distinction, biography, slug, induction number, photo path and crop.

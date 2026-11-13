@@ -19,6 +19,7 @@ const validGame = {
   hasUploadedSgf: false,
   highlightMove: null,
   tags: ["ko"],
+  isDraft: false,
   sequence: 2,
 }
 
@@ -157,6 +158,23 @@ describe("GameModel", () => {
     expect(() =>
       GameModel.fromRawData({ ...validGame, tags }),
     ).toThrow(InvalidRawDataError)
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "true"],
+    ["null", null],
+  ])("throws when isDraft is %s", (_label, isDraft) => {
+    expect(() =>
+      GameModel.fromRawData({ ...validGame, isDraft }),
+    ).toThrow('"isDraft" must be a boolean')
+  })
+
+  it("keeps isDraft true", () => {
+    expect(
+      GameModel.fromRawData({ ...validGame, isDraft: true })
+        .isDraft,
+    ).toBe(true)
   })
 
   it("converts to a plain entity equal to the fields", () => {

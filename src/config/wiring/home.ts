@@ -5,10 +5,14 @@ import { HomeRepositoryImpl } from "@/features/home/data/repositories/home-repos
 import { GetHomeSummary } from "@/features/home/domain/use-cases/get-home-summary"
 import { createHomeLoaders } from "@/features/home/presentation/state/home-loaders"
 
+import { canSeeDrafts } from "./auth"
 import { database } from "./infrastructure"
 
 export const homeLoaders = createHomeLoaders({
   getHomeSummary: new GetHomeSummary(
-    new HomeRepositoryImpl(new HomeDataSource(database)),
+    new HomeRepositoryImpl(
+      new HomeDataSource(database),
+      canSeeDrafts,
+    ),
   ),
 })

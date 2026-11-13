@@ -20,6 +20,7 @@ const rawPlayer = {
   photoUrl: null,
   photoPosition: "center",
   tags: [],
+  isDraft: false,
 }
 
 function buildRepository(
@@ -29,9 +30,11 @@ function buildRepository(
       ReturnType<typeof vi.fn>
     >
   >,
+  canSeeDrafts: () => Promise<boolean> = async () => false,
 ) {
   return new PlayersRepositoryImpl(
     dataSource as unknown as PlayersDataSource,
+    canSeeDrafts,
   )
 }
 
@@ -92,6 +95,7 @@ describe("PlayersRepositoryImpl", () => {
 
       expect(fetchDetailBySlug).toHaveBeenCalledWith(
         "shusaku",
+        false,
       )
       expect(state).toEqual({
         status: "success",
@@ -141,6 +145,7 @@ describe("PlayersRepositoryImpl", () => {
       photoPosition: "center",
       inductionNumber: 3,
       tags: [],
+      isDraft: false,
       resources: [],
     }
 
@@ -204,6 +209,70 @@ describe("PlayersRepositoryImpl", () => {
         status: "failure",
         error: cause,
       })
+    })
+  })
+
+  describe("draft visibility", () => {
+    it.each([
+      [true, true],
+      [false, false],
+    ])(
+      "canSeeDrafts %s gives includeDrafts ",
+      async (canSee, expected) => {
+        {
+          const fetchAll = vi.fn(async () => [])
+          const repository = buildRepository(
+            { fetchAll },
+            async () => canSee,
+          )
+          await repository.listAll()
+          expect(fetchAll).toHaveBeenCalledWith(expected)
+        }
+        {
+          const fetchDetailBySlug = vi.fn(async () => null)
+          const repository = buildRepository(
+            { fetchDetailBySlug },
+            async () => canSee,
+          )
+          await repository.findDetailBySlug("x")
+          expect(fetchDetailBySlug).toHaveBeenCalledWith(
+            "x",
+            expected,
+          )
+        }
+      },
+    )
+
+    it("evaluates canSeeDrafts on every call", async () => {
+      const fetchAll = vi.fn(async () => [])
+      let admin = true
+      const repository = buildRepository(
+        { fetchAll },
+        async () => admin,
+      )
+
+      await repository.listAll()
+      admin = false
+      await repository.listAll()
+
+      expect(fetchAll.mock.calls).toEqual([[true], [false]])
+    })
+
+    it("turns a rejecting canSeeDrafts into a failure without reading", async () => {
+      const cause = new Error("auth down")
+      const fetchAll = vi.fn(async () => [])
+      const repository = buildRepository(
+        { fetchAll },
+        async () => {
+          throw cause
+        },
+      )
+
+      expect(await repository.listAll()).toEqual({
+        status: "failure",
+        error: cause,
+      })
+      expect(fetchAll).not.toHaveBeenCalled()
     })
   })
 })

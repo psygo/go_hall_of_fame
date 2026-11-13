@@ -12,11 +12,12 @@ import { SaveTimelineEvent } from "@/features/timeline/domain/use-cases/save-tim
 import { createTimelineAdminState } from "@/features/timeline/presentation/state/timeline-admin-state"
 import { createTimelineLoaders } from "@/features/timeline/presentation/state/timeline-loaders"
 
-import { requireAdmin } from "./auth"
+import { canSeeDrafts, requireAdmin } from "./auth"
 import { database } from "./infrastructure"
 
 const repository = new TimelineRepositoryImpl(
   new TimelineDataSource(database),
+  canSeeDrafts,
 )
 const listTimelineEvents = new ListTimelineEvents(
   repository,

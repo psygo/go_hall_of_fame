@@ -22,6 +22,7 @@ const existing: Game = {
   hasUploadedSgf: false,
   highlightMove: null,
   tags: [],
+  isDraft: false,
   sequence: 0,
 }
 
@@ -38,6 +39,7 @@ const form: GameForm = {
   sequence: "",
   highlightMove: "",
   tags: "",
+  isDraft: false,
   sgfFileText: "",
   sgfFileTooLarge: false,
   removeSgf: false,
@@ -85,6 +87,7 @@ describe("SaveGame", () => {
         sequence: 0,
         highlightMove: null,
         tags: [],
+        isDraft: false,
         blackPlayerSlug: "lee-sedol",
         whitePlayerSlug: null,
         playerSlugs: ["lee-sedol"],

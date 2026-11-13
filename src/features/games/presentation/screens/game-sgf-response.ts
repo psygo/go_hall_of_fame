@@ -21,8 +21,8 @@ export async function respondWithGameSgf(
       "x-content-type-options": "nosniff",
       "content-security-policy":
         "default-src 'none'; sandbox",
-      "cache-control":
-        "public, max-age=0, s-maxage=300, stale-while-revalidate=600",
+      // Never cached by a shared cache: an admin can be served the SGF of a draft game.
+      "cache-control": "private, no-store",
     },
   })
 }

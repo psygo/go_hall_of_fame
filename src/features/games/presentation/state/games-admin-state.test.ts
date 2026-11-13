@@ -55,6 +55,7 @@ const game: Game = {
   hasUploadedSgf: false,
   highlightMove: null,
   tags: [],
+  isDraft: false,
   sequence: 0,
 }
 const detail: GameDetail = {
@@ -81,6 +82,7 @@ const fields = {
 }
 
 const blankExtras = {
+  isDraft: false,
   sgfFileText: "",
   sgfFileTooLarge: false,
   highlightMove: "",
@@ -425,6 +427,22 @@ describe("saveFromForm", () => {
         sgfFileText: "",
         sgfFileTooLarge: true,
       }),
+    })
+  })
+
+  it("reads the isDraft flag: 'on' is true, missing is false", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        buildFormData({ ...fields, isDraft: "on" }),
+      ),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({ isDraft: true }),
     })
   })
 

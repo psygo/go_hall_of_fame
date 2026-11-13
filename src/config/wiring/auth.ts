@@ -19,6 +19,7 @@ import { SignIn } from "@/features/auth/domain/use-cases/sign-in"
 import { SignOut } from "@/features/auth/domain/use-cases/sign-out"
 import { createAuthState } from "@/features/auth/presentation/state/auth-state"
 import type { RequireAdmin } from "@/core/admin-guard"
+import type { CanSeeDrafts } from "@/core/draft-visibility"
 import { resolveSiteUrl } from "@/core/site-url"
 
 import { database } from "./infrastructure"
@@ -67,6 +68,10 @@ export const authState = createAuthState({
     clock,
   ),
 })
+
+/** Drafts are shown to a signed-in admin and to nobody else. */
+export const canSeeDrafts: CanSeeDrafts = async () =>
+  (await authState.loadCurrentAdmin()) !== null
 
 /** What the other features' admin handlers receive, so they never import the auth feature. */
 export const requireAdmin: RequireAdmin = async () => {

@@ -31,6 +31,7 @@ export async function AdminTimelineEditorScreen({
             title: event?.title ?? "",
             text: event?.text ?? "",
             gameSlug: event?.game?.slug ?? "",
+            isDraft: event?.isDraft ?? false,
           }}
           gameOptions={gameOptions}
         />

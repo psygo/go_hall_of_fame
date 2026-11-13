@@ -3,6 +3,7 @@
 import { useActionState } from "react"
 
 import {
+  CheckboxField,
   FormActions,
   MARKDOWN_HINT,
   FormMessage,
@@ -26,6 +27,7 @@ type TimelineEventFormProps = {
     readonly title: string
     readonly text: string
     readonly gameSlug: string
+    readonly isDraft: boolean
   }
   readonly gameOptions: readonly TimelineGameReference[]
 }
@@ -90,6 +92,12 @@ export function TimelineEventForm({
         ]}
         error={errors.gameSlug}
         hint="Optional: the event on the timeline links to this game's page."
+      />
+      <CheckboxField
+        name="isDraft"
+        label="Draft"
+        defaultChecked={values.isDraft}
+        hint="Only admins can see a draft."
       />
       {state.status === "failed" && (
         <FormMessage message={state.message} />

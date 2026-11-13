@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import { playersLoaders } from "@/config/di"
 import { BackLink } from "@/shared/ui/presentation/back-link"
+import { DraftBadge } from "@/shared/ui/presentation/draft-badge"
 import { LabelledFact } from "@/shared/ui/presentation/labelled-fact"
 import { Markdown } from "@/shared/ui/presentation/markdown"
 import { NeighborBar } from "@/shared/ui/presentation/neighbor-bar"
@@ -54,6 +55,7 @@ export async function PlayerScreen({
           <h1 className={displayTitleClass}>
             {detail.name}
           </h1>
+          <DraftBadge isDraft={detail.isDraft} />
           <div className="text-[28px]">
             {detail.nativeName}
           </div>

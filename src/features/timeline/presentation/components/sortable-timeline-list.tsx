@@ -14,6 +14,7 @@ type SortableEvent = {
   readonly id: number
   readonly year: string
   readonly title: string
+  readonly isDraft: boolean
 }
 
 const clamp = (position: number, length: number) =>
@@ -140,6 +141,11 @@ export function SortableTimelineList({
                 <span className="font-bold">
                   {event.title}
                 </span>
+                {event.isDraft && (
+                  <span className="tag tag-outline ml-3">
+                    Draft
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex gap-2">

@@ -20,11 +20,14 @@ export async function AdminTimelineScreen() {
         </Link>
       </PageHeader>
       <SortableTimelineList
-        events={events.map(({ id, year, title }) => ({
-          id,
-          year,
-          title,
-        }))}
+        events={events.map(
+          ({ id, year, title, isDraft }) => ({
+            id,
+            year,
+            title,
+            isDraft,
+          }),
+        )}
       />
     </>
   )

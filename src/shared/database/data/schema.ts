@@ -52,6 +52,8 @@ export const playersTable = pgTable("players", {
     .array()
     .notNull()
     .default(sql`'{}'::text[]`),
+  /** A draft is visible to admins only. */
+  isDraft: boolean("is_draft").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
@@ -88,6 +90,8 @@ export const gamesTable = pgTable("games", {
     .array()
     .notNull()
     .default(sql`'{}'::text[]`),
+  /** A draft is visible to admins only. */
+  isDraft: boolean("is_draft").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
@@ -156,6 +160,8 @@ export const timelineEventsTable = pgTable(
     position: integer().notNull().default(0),
     title: text().notNull(),
     text: text().notNull(),
+    /** A draft is visible to admins only. */
+    isDraft: boolean("is_draft").notNull().default(false),
   },
 )
 

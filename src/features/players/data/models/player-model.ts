@@ -5,6 +5,7 @@ import {
   readOneOf,
   readNullableString,
   readString,
+  readBoolean,
   readStringArray,
 } from "@/core/raw-data"
 
@@ -29,6 +30,7 @@ export class PlayerModel implements Player {
   declare readonly photoUrl: string | null
   declare readonly photoPosition: string
   declare readonly tags: readonly string[]
+  declare readonly isDraft: boolean
 
   protected constructor(fields: Player) {
     Object.assign(this, fields)
@@ -90,6 +92,7 @@ function parsePlayerFields(raw: unknown): Player {
     photoUrl: readNullableString(record, "photoUrl"),
     photoPosition: readString(record, "photoPosition"),
     tags: readStringArray(record, "tags"),
+    isDraft: readBoolean(record, "isDraft"),
   }
 }
 

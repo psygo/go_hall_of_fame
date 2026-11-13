@@ -42,6 +42,7 @@ export async function AdminPlayerEditorScreen({
                 ? ""
                 : String(player.inductionNumber),
             tags: formatTags(player?.tags ?? []),
+            isDraft: player?.isDraft ?? false,
             resources: (player?.resources ?? []).map(
               (resource) => ({
                 title: resource.title,

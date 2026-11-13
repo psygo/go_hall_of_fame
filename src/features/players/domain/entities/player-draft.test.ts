@@ -25,6 +25,7 @@ function buildPlayer(
     photoUrl: null,
     photoPosition: "50% 50%",
     tags: [],
+    isDraft: false,
   }
 }
 
@@ -48,6 +49,7 @@ function buildForm(
     photoPosition: "40% 20%",
     inductionNumber: "3",
     tags: "",
+    isDraft: false,
     resources: [],
     ...overrides,
   }
@@ -105,6 +107,7 @@ describe("validatePlayerForm", () => {
         photoPosition: "40% 20%",
         inductionNumber: 3,
         tags: [],
+        isDraft: false,
         resources: [],
       },
     })
@@ -444,6 +447,17 @@ describe("validatePlayerForm", () => {
           "lee-sedol",
         ).inductionNumber,
       ).toBe("Another player already has this number.")
+    })
+  })
+
+  it("carries the draft flag through, false by default", () => {
+    expect(validate(buildForm())).toEqual({
+      valid: true,
+      draft: expect.objectContaining({ isDraft: false }),
+    })
+    expect(validate(buildForm({ isDraft: true }))).toEqual({
+      valid: true,
+      draft: expect.objectContaining({ isDraft: true }),
     })
   })
 

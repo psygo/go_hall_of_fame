@@ -27,6 +27,7 @@ function buildPlayer(slug: string): Player {
     photoUrl: null,
     photoPosition: "center",
     tags: [],
+    isDraft: false,
   }
 }
 

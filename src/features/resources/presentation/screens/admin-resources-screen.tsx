@@ -14,7 +14,7 @@ export async function AdminResourcesScreen() {
         <SiteResourcesForm
           initial={resources.map((resource) => ({
             title: resource.title,
-                url: resource.url,
+            url: resource.url,
             description: resource.description ?? "",
           }))}
         />

@@ -3,6 +3,7 @@ import Link from "next/link"
 import { excerpt } from "@/core/markdown"
 import { GamePreviewBoard } from "@/shared/go-board/presentation/game-preview-board"
 
+import { DraftBadge } from "./draft-badge"
 import { PlayerName } from "./player-name"
 import { TagList } from "./tag-list"
 
@@ -20,6 +21,7 @@ export type GameCardGame = {
   /** Where the board loads the record from, or null for a game without one. */
   readonly sgf: string | null
   readonly highlightMove: number | null
+  readonly isDraft?: boolean
 }
 
 /**
@@ -37,6 +39,9 @@ export function GameCard({
       <article className="border-divider hover:bg-accent-100 has-[a:focus-visible]:outline-accent relative grid grid-cols-1 border-b has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 @[720px]:grid-cols-[160px_minmax(0,1fr)_280px]">
         <div className="text-accent @[720px]:border-divider px-4 pt-6 text-4xl leading-none font-bold @[720px]:border-r @[720px]:pb-6">
           {game.year}
+          <div className="mt-2 text-base font-normal">
+            <DraftBadge isDraft={game.isDraft} />
+          </div>
         </div>
         <div className="flex flex-col gap-2 px-4 py-6">
           <h2 className="m-0 text-[28px] leading-[1.05] font-bold">

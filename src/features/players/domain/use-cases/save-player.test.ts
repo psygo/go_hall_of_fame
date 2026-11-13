@@ -19,6 +19,7 @@ const existing: Player = {
   photoUrl: null,
   photoPosition: "50% 50%",
   tags: [],
+  isDraft: false,
 }
 
 const form: PlayerForm = {
@@ -33,6 +34,7 @@ const form: PlayerForm = {
   photoPosition: "",
   inductionNumber: "",
   tags: "",
+  isDraft: false,
   resources: [],
 }
 
@@ -70,6 +72,7 @@ describe("SavePlayer", () => {
         photoPosition: "50% 50%",
         inductionNumber: 2,
         tags: [],
+        isDraft: false,
         resources: [],
       },
       null,

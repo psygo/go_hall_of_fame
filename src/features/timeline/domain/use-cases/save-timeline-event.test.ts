@@ -10,6 +10,7 @@ const form = {
   title: " The Four Houses ",
   text: " Go gets state backing. ",
   gameSlug: "",
+  isDraft: false,
 }
 
 function buildRepository(
@@ -45,6 +46,7 @@ describe("SaveTimelineEvent", () => {
         title: "The Four Houses",
         text: "Go gets state backing.",
         gameSlug: null,
+        isDraft: false,
       },
       4,
     )

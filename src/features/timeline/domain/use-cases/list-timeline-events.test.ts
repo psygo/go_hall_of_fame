@@ -15,6 +15,7 @@ describe("ListTimelineEvents", () => {
         title: "Founded",
         text: "Text",
         game: null,
+        isDraft: false,
       },
     ]
     const repository: TimelineRepository = {

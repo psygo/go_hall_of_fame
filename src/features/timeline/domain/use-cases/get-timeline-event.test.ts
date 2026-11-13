@@ -19,6 +19,7 @@ describe("GetTimelineEvent", () => {
       title: "T",
       text: "x",
       game: null,
+      isDraft: false,
     }
     const findById = vi.fn(async () => succeed(data))
     const repo = buildRepository(findById)

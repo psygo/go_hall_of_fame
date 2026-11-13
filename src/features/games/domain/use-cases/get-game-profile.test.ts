@@ -29,6 +29,7 @@ function buildGame(slug: string): Game {
     hasUploadedSgf: false,
     highlightMove: null,
     tags: [],
+    isDraft: false,
     sequence: 0,
   }
 }

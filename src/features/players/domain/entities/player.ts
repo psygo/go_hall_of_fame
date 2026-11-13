@@ -23,6 +23,8 @@ export type Player = {
   readonly photoUrl: string | null
   readonly photoPosition: string
   readonly tags: readonly string[]
+  /** Only admins see a draft. */
+  readonly isDraft: boolean
 }
 
 export type PlayerGameReference = {

@@ -22,6 +22,8 @@ export type Game = {
   /** The move (1-based) the preview stops on and draws in the accent color; null means move 50. */
   readonly highlightMove: number | null
   readonly tags: readonly string[]
+  /** Only admins see a draft. */
+  readonly isDraft: boolean
   /** Orders games played in the same year. */
   readonly sequence: number
 }

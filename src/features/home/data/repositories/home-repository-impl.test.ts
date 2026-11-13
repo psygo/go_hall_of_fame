@@ -15,10 +15,12 @@ const rawFacts = {
 
 function buildRepository(
   fetchFacts: ReturnType<typeof vi.fn>,
+  canSeeDrafts: () => Promise<boolean> = async () => false,
 ) {
-  return new HomeRepositoryImpl({
-    fetchFacts,
-  } as unknown as HomeDataSource)
+  return new HomeRepositoryImpl(
+    { fetchFacts } as unknown as HomeDataSource,
+    canSeeDrafts,
+  )
 }
 
 describe("HomeRepositoryImpl", () => {
@@ -54,5 +56,58 @@ describe("HomeRepositoryImpl", () => {
       status: "failure",
       error: cause,
     })
+  })
+
+  it.each([
+    [true, true],
+    [false, false],
+  ])(
+    "canSeeDrafts %s gives includeDrafts %s",
+    async (canSee, expected) => {
+      const fetchFacts = vi.fn(async () =>
+        HomeFactsModel.fromRawData(rawFacts),
+      )
+
+      await buildRepository(
+        fetchFacts,
+        async () => canSee,
+      ).getFacts()
+
+      expect(fetchFacts).toHaveBeenCalledWith(expected)
+    },
+  )
+
+  it("evaluates canSeeDrafts on every call", async () => {
+    const fetchFacts = vi.fn(async () =>
+      HomeFactsModel.fromRawData(rawFacts),
+    )
+    let admin = true
+    const repository = buildRepository(
+      fetchFacts,
+      async () => admin,
+    )
+
+    await repository.getFacts()
+    admin = false
+    await repository.getFacts()
+
+    expect(fetchFacts.mock.calls).toEqual([[true], [false]])
+  })
+
+  it("turns a rejecting canSeeDrafts into a failure without reading", async () => {
+    const cause = new Error("auth down")
+    const fetchFacts = vi.fn()
+    const repository = buildRepository(
+      fetchFacts,
+      async () => {
+        throw cause
+      },
+    )
+
+    expect(await repository.getFacts()).toEqual({
+      status: "failure",
+      error: cause,
+    })
+    expect(fetchFacts).not.toHaveBeenCalled()
   })
 })

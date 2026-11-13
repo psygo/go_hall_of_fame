@@ -18,6 +18,7 @@ function buildForm(
     title: "Founded",
     text: "The academy opens.",
     gameSlug: "",
+    isDraft: false,
     ...overrides,
   }
 }
@@ -41,6 +42,7 @@ describe("validateTimelineEventForm", () => {
         title: "Founded",
         text: "The academy opens.",
         gameSlug: null,
+        isDraft: false,
       },
     })
   })
@@ -61,6 +63,7 @@ describe("validateTimelineEventForm", () => {
         title: "Founded",
         text: "Text",
         gameSlug: null,
+        isDraft: false,
       },
     })
   })
@@ -158,6 +161,17 @@ describe("validateTimelineEventForm", () => {
     })
   })
 
+  it("carries the draft flag through, false by default", () => {
+    expect(validate(buildForm())).toEqual({
+      valid: true,
+      draft: expect.objectContaining({ isDraft: false }),
+    })
+    expect(validate(buildForm({ isDraft: true }))).toEqual({
+      valid: true,
+      draft: expect.objectContaining({ isDraft: true }),
+    })
+  })
+
   it("reports every error at once", () => {
     expect(
       Object.keys(
@@ -166,6 +180,7 @@ describe("validateTimelineEventForm", () => {
           title: "",
           text: "",
           gameSlug: "ghost",
+          isDraft: false,
         }),
       ),
     ).toEqual(["year", "title", "text", "gameSlug"])

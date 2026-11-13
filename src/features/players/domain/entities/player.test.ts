@@ -29,6 +29,7 @@ function buildPlayer(
     photoUrl: null,
     photoPosition: "center",
     tags: [],
+    isDraft: false,
     ...overrides,
   }
 }

@@ -13,11 +13,12 @@ import { SaveGame } from "@/features/games/domain/use-cases/save-game"
 import { createGamesAdminState } from "@/features/games/presentation/state/games-admin-state"
 import { createGamesLoaders } from "@/features/games/presentation/state/games-loaders"
 
-import { requireAdmin } from "./auth"
+import { canSeeDrafts, requireAdmin } from "./auth"
 import { database } from "./infrastructure"
 
 const repository = new GamesRepositoryImpl(
   new GamesDataSource(database),
+  canSeeDrafts,
 )
 const listGames = new ListGames(repository)
 

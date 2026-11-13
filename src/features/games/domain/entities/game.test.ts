@@ -31,6 +31,7 @@ function buildGame(
     hasUploadedSgf: false,
     highlightMove: null,
     tags: [],
+    isDraft: false,
     sequence: 0,
     ...overrides,
   }
