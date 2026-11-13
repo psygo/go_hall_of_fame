@@ -119,4 +119,4 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   queries go through Drizzle's parameterization.
 + Not done: rate limiting (by IP, and of the public feedback and nomination forms, which have only a hidden
   field for bots),  two-factor sign-in, an audit log, per-admin roles (every admin can do
-  everything), and email for password resets.
+  everything).
