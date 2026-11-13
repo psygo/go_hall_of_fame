@@ -3,6 +3,10 @@ import { describe, expect, it } from "vitest"
 import {
   findNeighborsOfGame,
   searchGames,
+  DEFAULT_GAME_SORT,
+  GAME_SORTS,
+  highlightMoveOf,
+  DEFAULT_HIGHLIGHT_MOVE,
   sgfSourceOf,
   sortGames,
   type Game,
@@ -27,6 +31,7 @@ function buildGame(
     whitePlayerSlug: null,
     sgfUrl: null,
     hasUploadedSgf: false,
+    highlightMove: null,
     featured: false,
     sequence: 0,
     ...overrides,
@@ -132,5 +137,22 @@ describe("sortGames", () => {
     expect(
       sortGames(games, "name").map((g) => g.name),
     ).toEqual(["alpha", "Beta", "Zeta"])
+  })
+})
+
+describe("highlightMoveOf", () => {
+  it("uses the game's move, or the default of 50", () => {
+    expect(highlightMoveOf({ highlightMove: 78 })).toBe(78)
+    expect(highlightMoveOf({ highlightMove: null })).toBe(
+      DEFAULT_HIGHLIGHT_MOVE,
+    )
+    expect(DEFAULT_HIGHLIGHT_MOVE).toBe(50)
+  })
+})
+
+describe("sort defaults", () => {
+  it("lists newest first and defaults to it", () => {
+    expect(GAME_SORTS).toEqual(["newest", "oldest", "name"])
+    expect(DEFAULT_GAME_SORT).toBe("newest")
   })
 })

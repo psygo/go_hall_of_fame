@@ -24,6 +24,7 @@ function buildGame(slug: string): Game {
     whitePlayerSlug: null,
     sgfUrl: null,
     hasUploadedSgf: false,
+    highlightMove: null,
     featured: false,
     sequence: 0,
   }
@@ -54,6 +55,7 @@ function buildForm(
     legacy: "It endures.",
     sgfUrl: "/sgf/game-4.sgf",
     sequence: "1",
+    highlightMove: "",
     featured: false,
     sgfFileText: "",
     sgfFileTooLarge: false,
@@ -102,6 +104,7 @@ describe("validateGameForm", () => {
         legacy: "It endures.",
         sgfUrl: "/sgf/game-4.sgf",
         sequence: 1,
+        highlightMove: null,
         featured: false,
         blackPlayerSlug: "lee-sedol",
         whitePlayerSlug: null,
@@ -297,6 +300,50 @@ describe("validateGameForm", () => {
           "Use a path such as /sgf/name.sgf, or an https URL.",
       })
     })
+  })
+
+  describe("highlightMove", () => {
+    it("is null when blank", () => {
+      expect(
+        validate(buildForm({ highlightMove: "  " })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          highlightMove: null,
+        }),
+      })
+    })
+
+    it("accepts 1 and the maximum, trimmed", () => {
+      expect(
+        validate(buildForm({ highlightMove: " 78 " })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          highlightMove: 78,
+        }),
+      })
+      for (const move of [
+        1,
+        GAME_LIMITS.maxHighlightMove,
+      ]) {
+        expect(
+          validate(
+            buildForm({ highlightMove: String(move) }),
+          ).valid,
+        ).toBe(true)
+      }
+    })
+
+    it.each(["0", "-5", "1001", "x", "1.5"])(
+      "rejects %j",
+      (highlightMove) => {
+        expect(
+          errorsOf(buildForm({ highlightMove }))
+            .highlightMove,
+        ).toMatch(/between 1 and 1000/)
+      },
+    )
   })
 
   describe("sequence", () => {

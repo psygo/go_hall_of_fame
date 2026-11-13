@@ -12,7 +12,10 @@ export async function AdminTimelineEditorScreen({
   params,
 }: AdminTimelineEditorScreenProps) {
   const { id } = await params
-  const event = await timelineAdminState.loadEditor(id)
+  const [event, gameOptions] = await Promise.all([
+    timelineAdminState.loadEditor(id),
+    timelineAdminState.loadGameOptions(),
+  ])
 
   return (
     <>
@@ -27,7 +30,9 @@ export async function AdminTimelineEditorScreen({
             year: event === null ? "" : String(event.year),
             title: event?.title ?? "",
             text: event?.text ?? "",
+            gameSlug: event?.game?.slug ?? "",
           }}
+          gameOptions={gameOptions}
         />
       </AdminSection>
     </>

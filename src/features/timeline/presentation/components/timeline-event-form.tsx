@@ -4,13 +4,16 @@ import { useActionState } from "react"
 
 import {
   FormActions,
+  MARKDOWN_HINT,
   FormMessage,
+  SelectField,
   TextAreaField,
   TextField,
 } from "@/shared/ui/presentation/admin-fields"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { idleAdminForm } from "@/core/admin-form-state"
 
+import type { TimelineGameReference } from "../../domain/entities/timeline-event"
 import { TIMELINE_LIMITS } from "../../domain/entities/timeline-event-draft"
 import { saveTimelineEventAction } from "../state/timeline-admin-actions"
 import type { TimelineFormState } from "../state/timeline-admin-state"
@@ -22,12 +25,15 @@ type TimelineEventFormProps = {
     readonly year: string
     readonly title: string
     readonly text: string
+    readonly gameSlug: string
   }
+  readonly gameOptions: readonly TimelineGameReference[]
 }
 
 export function TimelineEventForm({
   idParam,
   initial,
+  gameOptions,
 }: TimelineEventFormProps) {
   const [state, formAction, isPending] = useActionState<
     TimelineFormState,
@@ -69,6 +75,21 @@ export function TimelineEventForm({
         defaultValue={values.text}
         maxLength={TIMELINE_LIMITS.text}
         error={errors.text}
+        hint={MARKDOWN_HINT}
+      />
+      <SelectField
+        name="gameSlug"
+        label="Links to the game"
+        defaultValue={values.gameSlug}
+        options={[
+          { value: "", label: "No game" },
+          ...gameOptions.map((game) => ({
+            value: game.slug,
+            label: game.name,
+          })),
+        ]}
+        error={errors.gameSlug}
+        hint="Optional: the event on the timeline links to this game's page."
       />
       {state.status === "failed" && (
         <FormMessage message={state.message} />

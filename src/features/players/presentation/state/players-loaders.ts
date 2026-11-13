@@ -18,6 +18,7 @@ import type { UseCase } from "@/core/use-case"
 
 import {
   COUNTRIES,
+  DEFAULT_PLAYER_SORT,
   isCountry,
   PLAYER_SORTS,
   type Country,
@@ -69,7 +70,7 @@ export function createPlayersLoaders(
     const sort = readChoice(
       params.sort,
       PLAYER_SORTS,
-      "number",
+      DEFAULT_PLAYER_SORT,
     )
     const players = unwrapDataState(
       await dependencies.searchPlayers.call({

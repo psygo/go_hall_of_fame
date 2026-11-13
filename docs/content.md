@@ -28,6 +28,8 @@ shipped yet, so no board is shown.
 
 `packages/goban-web` and `packages/goban-web-react` are copies of the built packages from the
 neofanaro.io project (source: the `goban_web` project). Update them by copying the new `dist/` and
-`package.json` over, then `pnpm install`. The React wrapper is used in
+`package.json` over, then `pnpm install`. Copying over the whole `dist/` would drop the Go Hall of
+Fame edits (the `washi` theme and the highlighted move): see "The board" in [design.md](./design.md)
+and redo them. The React wrapper is used in
 `src/shared/go-board/presentation/go-board-player-client.tsx`, loaded with `ssr: false` because the
 library registers custom elements.

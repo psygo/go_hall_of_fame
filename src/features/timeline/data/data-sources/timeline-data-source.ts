@@ -1,18 +1,34 @@
 import { asc, eq } from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
-import { timelineEventsTable } from "@/shared/database/data/schema"
+import {
+  gamesTable,
+  timelineEventsTable,
+} from "@/shared/database/data/schema"
 
 import type { TimelineEventDraft } from "../../domain/entities/timeline-event-draft"
 import { TimelineEventModel } from "../models/timeline-event-model"
+
+const eventSelection = {
+  id: timelineEventsTable.id,
+  year: timelineEventsTable.year,
+  title: timelineEventsTable.title,
+  text: timelineEventsTable.text,
+  gameSlug: gamesTable.slug,
+  gameName: gamesTable.name,
+}
 
 export class TimelineDataSource {
   constructor(private readonly database: Database) {}
 
   async fetchAll(): Promise<TimelineEventModel[]> {
     const rows = await this.database
-      .select()
+      .select(eventSelection)
       .from(timelineEventsTable)
+      .leftJoin(
+        gamesTable,
+        eq(timelineEventsTable.gameId, gamesTable.id),
+      )
       .orderBy(
         asc(timelineEventsTable.year),
         asc(timelineEventsTable.id),
@@ -26,28 +42,61 @@ export class TimelineDataSource {
     id: number,
   ): Promise<TimelineEventModel | null> {
     const [row] = await this.database
-      .select()
+      .select(eventSelection)
       .from(timelineEventsTable)
+      .leftJoin(
+        gamesTable,
+        eq(timelineEventsTable.gameId, gamesTable.id),
+      )
       .where(eq(timelineEventsTable.id, id))
     return row === undefined
       ? null
       : TimelineEventModel.fromRawData(row)
   }
 
+  async listGameOptions() {
+    const rows = await this.database
+      .select({
+        slug: gamesTable.slug,
+        name: gamesTable.name,
+      })
+      .from(gamesTable)
+      .orderBy(
+        asc(gamesTable.year),
+        asc(gamesTable.sequence),
+        asc(gamesTable.id),
+      )
+    return rows.map(({ slug, name }) => ({ slug, name }))
+  }
+
   async upsert(
     draft: TimelineEventDraft,
     id: number | null,
   ): Promise<void> {
+    const { gameSlug, ...fields } = draft
+    const gameId = await this.findGameId(gameSlug)
+    const values = { ...fields, gameId }
     if (id === null) {
       await this.database
         .insert(timelineEventsTable)
-        .values(draft)
+        .values(values)
       return
     }
     await this.database
       .update(timelineEventsTable)
-      .set(draft)
+      .set(values)
       .where(eq(timelineEventsTable.id, id))
+  }
+
+  private async findGameId(
+    slug: string | null,
+  ): Promise<number | null> {
+    if (slug === null) return null
+    const [row] = await this.database
+      .select({ id: gamesTable.id })
+      .from(gamesTable)
+      .where(eq(gamesTable.slug, slug))
+    return row?.id ?? null
   }
 
   async delete(id: number): Promise<void> {

@@ -61,6 +61,15 @@ export function readInteger(
   return value
 }
 
+export function readNullableInteger(
+  record: RawRecord,
+  key: string,
+): number | null {
+  const value = record[key]
+  if (value === null || value === undefined) return null
+  return readInteger(record, key)
+}
+
 export function readOneOf<T extends string>(
   record: RawRecord,
   key: string,

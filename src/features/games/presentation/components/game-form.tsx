@@ -9,6 +9,7 @@ import {
   CheckboxField,
   FileField,
   FormActions,
+  MARKDOWN_HINT,
   FormMessage,
   SelectField,
   TextAreaField,
@@ -139,6 +140,7 @@ export function GameForm({
         defaultValue={values.hook}
         maxLength={GAME_LIMITS.hook}
         error={errors.hook}
+        hint={MARKDOWN_HINT}
       />
       <TextAreaField
         name="moment"
@@ -147,6 +149,7 @@ export function GameForm({
         defaultValue={values.moment}
         maxLength={GAME_LIMITS.moment}
         error={errors.moment}
+        hint={MARKDOWN_HINT}
       />
       <TextAreaField
         name="legacy"
@@ -155,6 +158,7 @@ export function GameForm({
         defaultValue={values.legacy}
         maxLength={GAME_LIMITS.legacy}
         error={errors.legacy}
+        hint={MARKDOWN_HINT}
       />
       <TextField
         name="sgfUrl"
@@ -177,6 +181,14 @@ export function GameForm({
           defaultChecked={values.removeSgf}
         />
       )}
+      <TextField
+        name="highlightMove"
+        label="Highlighted move"
+        type="number"
+        defaultValue={values.highlightMove}
+        hint="Optional. The move drawn in orange; the list preview plays up to it. Blank means move 50."
+        error={errors.highlightMove}
+      />
       <ResourceFields
         initial={values.resources}
         error={errors.resources}

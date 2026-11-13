@@ -64,3 +64,18 @@ The second version of the handoff changed mostly the timeline and the type:
 + Portraits get the ink-on-paper treatment: grayscale with contrast 1.1, blended with `multiply`
   over the paper colour (light) or `screen` over the surface colour (dark).
 
+
+## The board (goban-web)
+
++ `packages/goban-web` is vendored from the neofanaro.io project and then changed for this site; the
+  changes live in `packages/goban-web/dist/goban-web.js` and are small. Rebuilding the package from
+  its own repository would drop them, so redo them if you do.
++ A `washi` theme draws the board like the diagram on the home page: no board fill (the paper shows
+  through), an ink grid with a framed edge, ink and paper stones with a bold ink outline. Its colours
+  are the site's CSS variables (`--ink`, `--stone`, `--stone-black`), so dark mode follows the page.
+  Both boards (`go-board-player-client`, `game-preview-board-client`) use `theme="washi"`.
++ The theme also supports `gridStrokeWidth`, `frameStroke` and `frameStrokeWidth`.
++ The `highlight-move` attribute (a 1-based move) draws that move's stone in `--accent` once the game
+  has reached it. The games list and the game page set it from the game's highlighted move.
++ The panels around the board (players, komi, the controls) read the `--goban-*` variables that
+  `globals.css` sets on `:root`, and `--goban-radius: 0` squares their corners.

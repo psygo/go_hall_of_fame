@@ -16,6 +16,7 @@ import {
 import type { UseCase } from "@/core/use-case"
 
 import {
+  DEFAULT_GAME_SORT,
   GAME_SORTS,
   type Game,
   type GameProfile,
@@ -63,7 +64,7 @@ export function createGamesLoaders(
     const sort = readChoice(
       params.sort,
       GAME_SORTS,
-      "oldest",
+      DEFAULT_GAME_SORT,
     )
     const games = unwrapDataState(
       await dependencies.searchGames.call({

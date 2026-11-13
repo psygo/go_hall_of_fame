@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 import { contentLoaders, homeLoaders } from "@/config/di"
+import { stripMarkdown } from "@/core/markdown"
 import { fillPlaceholders } from "@/core/placeholders"
 import { HeroBoard } from "@/shared/go-board/presentation/hero-board"
 import { Portrait } from "@/shared/ui/presentation/portrait"
@@ -128,7 +129,7 @@ export async function HomeScreen() {
               {featuredGame.white}
             </div>
             <p className="max-w-[50ch]">
-              {featuredGame.hook}
+              {stripMarkdown(featuredGame.hook)}
             </p>
             <Link href={`/games/${featuredGame.slug}`}>
               Read the game →

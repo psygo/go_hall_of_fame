@@ -3,6 +3,7 @@ import Link from "next/link"
 import { playersLoaders } from "@/config/di"
 import { BackLink } from "@/shared/ui/presentation/back-link"
 import { LabelledFact } from "@/shared/ui/presentation/labelled-fact"
+import { Markdown } from "@/shared/ui/presentation/markdown"
 import { NeighborBar } from "@/shared/ui/presentation/neighbor-bar"
 import { displayTitleClass } from "@/shared/ui/presentation/page-header"
 import { Portrait } from "@/shared/ui/presentation/portrait"
@@ -63,9 +64,9 @@ export async function PlayerScreen({
               {detail.distinction}
             </LabelledFact>
           </div>
-          <p className="max-w-[56ch] text-lg">
+          <Markdown className="max-w-[56ch] text-lg">
             {detail.bio}
-          </p>
+          </Markdown>
           <ResourceList resources={detail.resources} />
           {detail.games.length > 0 && (
             <div className="flex flex-col gap-1.5">

@@ -55,6 +55,7 @@ const game: Game = {
   whitePlayerSlug: null,
   sgfUrl: null,
   hasUploadedSgf: false,
+  highlightMove: null,
   featured: false,
   sequence: 0,
 }
@@ -86,6 +87,7 @@ const blankExtras = {
   featured: false,
   sgfFileText: "",
   sgfFileTooLarge: false,
+  highlightMove: "",
   removeSgf: false,
   blackPlayerSlug: "",
   whitePlayerSlug: "",
@@ -335,6 +337,24 @@ describe("saveFromForm", () => {
         blackPlayerSlug: "shusaku",
         whitePlayerSlug: "lee-sedol",
       },
+    })
+  })
+
+  it("reads the highlight move field", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        buildFormData({ ...fields, highlightMove: "78" }),
+      ),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({
+        highlightMove: "78",
+      }),
     })
   })
 

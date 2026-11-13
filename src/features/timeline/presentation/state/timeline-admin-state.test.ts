@@ -26,7 +26,10 @@ import { notFound, redirect } from "next/navigation"
 import { fail, succeed } from "@/core/data-state"
 import type { SaveResult } from "@/core/validation"
 
-import type { TimelineEvent } from "../../domain/entities/timeline-event"
+import type {
+  TimelineEvent,
+  TimelineGameReference,
+} from "../../domain/entities/timeline-event"
 import type { TimelineEventErrors } from "../../domain/entities/timeline-event-draft"
 import {
   createTimelineAdminState,
@@ -38,6 +41,7 @@ const event: TimelineEvent = {
   year: 1612,
   title: "Founded",
   text: "Text",
+  game: null,
 }
 
 function buildFormData(
@@ -54,6 +58,7 @@ const fields = {
   year: "1612",
   title: "Founded",
   text: "Text",
+  gameSlug: "",
 }
 
 function buildState({
@@ -62,6 +67,9 @@ function buildState({
   getResult = succeed<TimelineEvent | null>(event),
   listResult = succeed<readonly TimelineEvent[]>([event]),
   deleteResult = succeed(undefined),
+  gameOptionsResult = succeed<
+    readonly TimelineGameReference[]
+  >([{ slug: "alphago-game-4", name: "AlphaGo" }]),
 }: {
   requireAdmin?: ReturnType<typeof vi.fn>
   saveResult?: SaveResult<TimelineEventErrors>
@@ -74,12 +82,18 @@ function buildState({
   deleteResult?:
     | ReturnType<typeof succeed<void>>
     | ReturnType<typeof fail>
+  gameOptionsResult?:
+    | ReturnType<
+        typeof succeed<readonly TimelineGameReference[]>
+      >
+    | ReturnType<typeof fail>
 } = {}) {
   const useCases = {
     list: vi.fn(async () => listResult),
     get: vi.fn(async () => getResult),
     save: vi.fn(async () => saveResult),
     remove: vi.fn(async () => deleteResult),
+    gameOptions: vi.fn(async () => gameOptionsResult),
   }
   const dependencies: TimelineAdminDependencies = {
     requireAdmin,
@@ -87,6 +101,7 @@ function buildState({
     getTimelineEvent: { call: useCases.get },
     saveTimelineEvent: { call: useCases.save },
     deleteTimelineEvent: { call: useCases.remove },
+    listGameOptions: { call: useCases.gameOptions },
   }
   return {
     state: createTimelineAdminState(dependencies),
@@ -244,7 +259,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: { year: "", title: "", text: "" },
+      form: { year: "", title: "", text: "", gameSlug: "" },
     })
   })
 
@@ -384,5 +399,62 @@ describe("loadAdminTimeline pagination", () => {
     expect((await state.loadAdminTimeline("x")).page).toBe(
       1,
     )
+  })
+})
+
+describe("loadGameOptions", () => {
+  it("returns the options after checking the admin", async () => {
+    const { state, requireAdmin, gameOptions } =
+      buildState()
+
+    expect(await state.loadGameOptions()).toEqual([
+      { slug: "alphago-game-4", name: "AlphaGo" },
+    ])
+    expect(
+      requireAdmin.mock.invocationCallOrder[0],
+    ).toBeLessThan(gameOptions.mock.invocationCallOrder[0])
+  })
+
+  it("does not list anything when the admin check rejects", async () => {
+    const { state, gameOptions } = buildState({
+      requireAdmin: rejectingAdmin(),
+    })
+
+    await expect(state.loadGameOptions()).rejects.toThrow(
+      "NEXT_REDIRECT:/admin/sign-in",
+    )
+    expect(gameOptions).not.toHaveBeenCalled()
+  })
+
+  it("throws the original error when the use case fails", async () => {
+    const cause = new Error("db down")
+    const { state } = buildState({
+      gameOptionsResult: fail(cause),
+    })
+
+    await expect(state.loadGameOptions()).rejects.toBe(
+      cause,
+    )
+  })
+})
+
+describe("saveFromForm game link", () => {
+  it("passes the gameSlug field", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        buildFormData({
+          ...fields,
+          gameSlug: "alphago-game-4",
+        }),
+      ),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      id: null,
+      form: { ...fields, gameSlug: "alphago-game-4" },
+    })
   })
 })

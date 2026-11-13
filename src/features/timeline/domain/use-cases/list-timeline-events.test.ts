@@ -9,10 +9,17 @@ import { ListTimelineEvents } from "./list-timeline-events"
 describe("ListTimelineEvents", () => {
   it("returns the events of the repository", async () => {
     const events: TimelineEvent[] = [
-      { id: 1, year: 1612, title: "Founded", text: "Text" },
+      {
+        id: 1,
+        year: 1612,
+        title: "Founded",
+        text: "Text",
+        game: null,
+      },
     ]
     const repository: TimelineRepository = {
       findById: vi.fn(),
+      listGameOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       listAll: vi.fn(async () => succeed(events)),
@@ -27,6 +34,7 @@ describe("ListTimelineEvents", () => {
     const failure = fail(new Error("db down"))
     const repository: TimelineRepository = {
       findById: vi.fn(),
+      listGameOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       listAll: vi.fn(async () => failure),

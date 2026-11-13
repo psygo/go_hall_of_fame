@@ -29,6 +29,7 @@ function buildGame(slug: string): Game {
     whitePlayerSlug: null,
     sgfUrl: null,
     hasUploadedSgf: false,
+    highlightMove: null,
     featured: false,
     sequence: 0,
   }

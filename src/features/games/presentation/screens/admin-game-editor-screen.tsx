@@ -39,6 +39,10 @@ export async function AdminGameEditorScreen({
             legacy: game?.legacy ?? "",
             sgfUrl: game?.sgfUrl ?? "",
             sequence: String(game?.sequence ?? 0),
+            highlightMove:
+              game?.highlightMove == null
+                ? ""
+                : String(game.highlightMove),
             featured: game?.featured ?? false,
             sgfFileText: "",
             sgfFileTooLarge: false,

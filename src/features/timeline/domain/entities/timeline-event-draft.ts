@@ -5,16 +5,21 @@ import {
   type Validation,
 } from "@/core/validation"
 
+import type { TimelineGameReference } from "./timeline-event"
+
 export type TimelineEventForm = {
   readonly year: string
   readonly title: string
   readonly text: string
+  /** The slug of the game the event links to, or "" for none. */
+  readonly gameSlug: string
 }
 
 export type TimelineEventDraft = {
   readonly year: number
   readonly title: string
   readonly text: string
+  readonly gameSlug: string | null
 }
 
 export type TimelineEventErrors = FieldErrors
@@ -28,10 +33,12 @@ export const TIMELINE_LIMITS = {
 
 export function validateTimelineEventForm(
   form: TimelineEventForm,
+  gameOptions: readonly TimelineGameReference[],
 ): Validation<TimelineEventDraft, TimelineEventErrors> {
   const year = parseInteger(form.year)
   const title = form.title.trim()
   const text = form.text.trim()
+  const gameSlug = form.gameSlug.trim()
   const errors = collectErrors({
     year: yearError(year),
     title: requiredError(
@@ -44,11 +51,24 @@ export function validateTimelineEventForm(
       TIMELINE_LIMITS.text,
       "a description",
     ),
+    gameSlug:
+      gameSlug === "" ||
+      gameOptions.some((game) => game.slug === gameSlug)
+        ? undefined
+        : "Choose a game that is in the Hall.",
   })
   if (Object.keys(errors).length > 0 || year === null) {
     return { valid: false, errors }
   }
-  return { valid: true, draft: { year, title, text } }
+  return {
+    valid: true,
+    draft: {
+      year,
+      title,
+      text,
+      gameSlug: gameSlug || null,
+    },
+  }
 }
 
 function yearError(

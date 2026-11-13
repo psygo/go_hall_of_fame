@@ -19,6 +19,7 @@ const validGame = {
   whitePlayerSlug: null,
   sgfUrl: "https://example.com/g.sgf",
   hasUploadedSgf: false,
+  highlightMove: null,
   featured: false,
   sequence: 2,
 }
@@ -52,6 +53,7 @@ describe("GameModel", () => {
           "sgfUrl",
           "blackPlayerSlug",
           "whitePlayerSlug",
+          "highlightMove",
         ].includes(key),
     ),
   )("throws when %s is missing", (key) => {
@@ -86,6 +88,32 @@ describe("GameModel", () => {
 
     expect(model.blackPlayerSlug).toBeNull()
     expect(model.whitePlayerSlug).toBeNull()
+  })
+
+  it("reads the highlight move, null or missing as null", () => {
+    expect(
+      GameModel.fromRawData({
+        ...validGame,
+        highlightMove: 78,
+      }).highlightMove,
+    ).toBe(78)
+    expect(
+      GameModel.fromRawData(validGame).highlightMove,
+    ).toBeNull()
+    expect(
+      GameModel.fromRawData(
+        without(validGame, "highlightMove"),
+      ).highlightMove,
+    ).toBeNull()
+  })
+
+  it("throws when the highlight move is not an integer", () => {
+    expect(() =>
+      GameModel.fromRawData({
+        ...validGame,
+        highlightMove: "7",
+      }),
+    ).toThrow('"highlightMove" must be an integer')
   })
 
   it("reads a null SGF URL as null", () => {

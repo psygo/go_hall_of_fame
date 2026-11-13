@@ -34,6 +34,8 @@ export type GameForm = {
   /** Delete the SGF uploaded earlier. */
   readonly removeSgf: boolean
   readonly sequence: string
+  /** The move to highlight, or "" for the default (move 50). */
+  readonly highlightMove: string
   readonly featured: boolean
   /** The slug of the Hall player who played Black / White, or "" for none. */
   readonly blackPlayerSlug: string
@@ -60,6 +62,7 @@ export type GameDraft = {
   readonly legacy: string
   readonly sgfUrl: string | null
   readonly sequence: number
+  readonly highlightMove: number | null
   readonly featured: boolean
   readonly blackPlayerSlug: string | null
   readonly whitePlayerSlug: string | null
@@ -82,6 +85,7 @@ export const GAME_LIMITS = {
   minYear: 1,
   maxYear: 2999,
   maxSequence: 99,
+  maxHighlightMove: 1000,
   maxSgfBytes: 400_000,
 } as const
 
@@ -103,6 +107,10 @@ export function validateGameForm(
     form.sequence.trim() === ""
       ? 0
       : parseInteger(form.sequence)
+  const highlightMove =
+    form.highlightMove.trim() === ""
+      ? null
+      : parseInteger(form.highlightMove)
   const sgfUrl = form.sgfUrl.trim()
   const blackPlayerSlug = form.blackPlayerSlug.trim()
   const whitePlayerSlug = form.whitePlayerSlug.trim()
@@ -168,6 +176,7 @@ export function validateGameForm(
       GAME_LIMITS.maxSequence,
       "an order from 0",
     ),
+    highlightMove: highlightMoveError(highlightMove, form),
     sgfFile: sgfFileError(form),
     blackPlayerSlug: knownPlayerError(
       blackPlayerSlug,
@@ -204,6 +213,7 @@ export function validateGameForm(
       legacy: form.legacy.trim(),
       sgfUrl: sgfUrl === "" ? null : sgfUrl,
       sequence,
+      highlightMove,
       featured: form.featured,
       blackPlayerSlug: blackPlayerSlug || null,
       whitePlayerSlug: whitePlayerSlug || null,
@@ -306,4 +316,18 @@ function sgfChangeOf(form: GameForm): SgfChange {
   return form.removeSgf
     ? { kind: "remove" }
     : { kind: "keep" }
+}
+
+function highlightMoveError(
+  move: number | null,
+  form: GameForm,
+): string | undefined {
+  if (form.highlightMove.trim() === "") return undefined
+  const valid =
+    move !== null &&
+    move >= 1 &&
+    move <= GAME_LIMITS.maxHighlightMove
+  return valid
+    ? undefined
+    : `Enter a move between 1 and ${GAME_LIMITS.maxHighlightMove}, or leave it blank for move 50.`
 }

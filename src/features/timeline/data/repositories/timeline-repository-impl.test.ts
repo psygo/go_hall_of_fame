@@ -16,6 +16,7 @@ const draft: TimelineEventDraft = {
   year: 1612,
   title: "Founded",
   text: "Text",
+  gameSlug: null,
 }
 
 function buildRepository(
@@ -50,7 +51,7 @@ describe("TimelineRepositoryImpl", () => {
 
       expect(state).toEqual({
         status: "success",
-        data: [rawEvent],
+        data: [{ ...rawEvent, game: null }],
       })
       if (state.status === "success") {
         expect(Object.getPrototypeOf(state.data[0])).toBe(
@@ -70,6 +71,28 @@ describe("TimelineRepositoryImpl", () => {
     })
   })
 
+  describe("listGameOptions", () => {
+    it("returns the options of the data source", async () => {
+      const options = [{ slug: "a", name: "A" }]
+
+      expect(
+        await buildRepository({
+          listGameOptions: vi.fn(async () => options),
+        }).listGameOptions(),
+      ).toEqual({ status: "success", data: options })
+    })
+
+    it("returns a failure when the data source throws", async () => {
+      const cause = new Error("db down")
+
+      expect(
+        await buildRepository({
+          listGameOptions: throwing(cause),
+        }).listGameOptions(),
+      ).toEqual({ status: "failure", error: cause })
+    })
+  })
+
   describe("findById", () => {
     it("maps the model to a plain entity", async () => {
       const fetchById = vi.fn(async () =>
@@ -83,7 +106,7 @@ describe("TimelineRepositoryImpl", () => {
       expect(fetchById).toHaveBeenCalledWith(7)
       expect(state).toEqual({
         status: "success",
-        data: rawEvent,
+        data: { ...rawEvent, game: null },
       })
     })
 

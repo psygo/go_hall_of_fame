@@ -70,18 +70,20 @@ export function findNeighborsOfPlayer(
 export const PLAYERS_PAGE_SIZE = 12
 
 export const PLAYER_SORTS = [
-  "number",
   "newest",
+  "number",
   "name",
   "country",
 ] as const
 
 export type PlayerSort = (typeof PLAYER_SORTS)[number]
 
+export const DEFAULT_PLAYER_SORT: PlayerSort = "newest"
+
 export const PLAYER_SORT_LABELS: Readonly<
   Record<PlayerSort, string>
 > = {
-  number: "Induction number",
+  number: "Earliest inducted",
   newest: "Latest inducted",
   name: "Name A–Z",
   country: "Country",

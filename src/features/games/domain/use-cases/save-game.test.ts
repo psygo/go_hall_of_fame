@@ -22,6 +22,7 @@ const existing: Game = {
   whitePlayerSlug: null,
   sgfUrl: null,
   hasUploadedSgf: false,
+  highlightMove: null,
   featured: false,
   sequence: 0,
 }
@@ -39,6 +40,7 @@ const form: GameForm = {
   legacy: "Legacy",
   sgfUrl: "",
   sequence: "",
+  highlightMove: "",
   featured: true,
   sgfFileText: "",
   sgfFileTooLarge: false,
@@ -87,6 +89,7 @@ describe("SaveGame", () => {
         legacy: "Legacy",
         sgfUrl: null,
         sequence: 0,
+        highlightMove: null,
         featured: true,
         blackPlayerSlug: "lee-sedol",
         whitePlayerSlug: null,

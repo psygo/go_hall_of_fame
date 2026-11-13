@@ -5,6 +5,7 @@ import { TimelineRepositoryImpl } from "@/features/timeline/data/repositories/ti
 import { DeleteTimelineEvent } from "@/features/timeline/domain/use-cases/delete-timeline-event"
 import { GetTimelineEvent } from "@/features/timeline/domain/use-cases/get-timeline-event"
 import { ListTimelineChunk } from "@/features/timeline/domain/use-cases/list-timeline-chunk"
+import { ListTimelineGameOptions } from "@/features/timeline/domain/use-cases/list-timeline-game-options"
 import { ListTimelineEvents } from "@/features/timeline/domain/use-cases/list-timeline-events"
 import { SaveTimelineEvent } from "@/features/timeline/domain/use-cases/save-timeline-event"
 import { createTimelineAdminState } from "@/features/timeline/presentation/state/timeline-admin-state"
@@ -28,6 +29,7 @@ export const timelineAdminState = createTimelineAdminState({
   requireAdmin,
   listTimelineEvents,
   getTimelineEvent: new GetTimelineEvent(repository),
+  listGameOptions: new ListTimelineGameOptions(repository),
   saveTimelineEvent: new SaveTimelineEvent(repository),
   deleteTimelineEvent: new DeleteTimelineEvent(repository),
 })

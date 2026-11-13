@@ -185,6 +185,7 @@ async function readGameForm(
     legacy: readFormText(formData, "legacy"),
     sgfUrl: readFormText(formData, "sgfUrl"),
     sequence: readFormText(formData, "sequence"),
+    highlightMove: readFormText(formData, "highlightMove"),
     featured: readFormFlag(formData, "featured"),
     ...(await readSgfFile(formData)),
     removeSgf: readFormFlag(formData, "removeSgf"),

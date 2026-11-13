@@ -12,6 +12,7 @@ const eventIn = (year: number) => ({
   year,
   title: `T${year}`,
   text: "x",
+  game: null,
 })
 
 const layoutOf = (years: readonly number[]) =>

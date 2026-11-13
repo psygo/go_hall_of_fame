@@ -285,6 +285,26 @@ const ct = "ABCDEFGHJKLMNOPQRSTUVWXYZ", G = ["top", "bottom", "left", "right"], 
   // A flat black-ink-on-paper look modeled on printed Go book diagrams —
   // no gradients or wood grain, bolder stone outlines so a white stone
   // still reads clearly against the light board.
+  // The Go Hall of Fame look (added here, not in the upstream package): paper shows through, ink
+  // grid with a framed edge, ink and paper stones with a bold ink outline, as on the home page
+  // diagram. Colors are the site's CSS variables, so light and dark mode follow the page.
+  washi: {
+    boardFill: "none",
+    gridStroke: "var(--ink, #1c1a17)",
+    gridStrokeWidth: 0.055,
+    frameStroke: "var(--ink, #1c1a17)",
+    frameStrokeWidth: 0.1,
+    starFill: "var(--ink, #1c1a17)",
+    coordText: "var(--ink, #1c1a17)",
+    blackStoneFill: "var(--stone-black, #1c1a17)",
+    blackStoneStroke: "var(--ink, #1c1a17)",
+    whiteStoneFill: "var(--stone, #f6f0e0)",
+    whiteStoneStroke: "var(--ink, #1c1a17)",
+    stoneStrokeWidth: 0.1,
+    markLight: "var(--stone, #f6f0e0)",
+    markDark: "var(--ink, #1c1a17)",
+    stoneShadow: !1
+  },
   bookish: {
     boardFill: "#ffffff",
     gridStroke: "#111111",
@@ -999,7 +1019,8 @@ class At extends HTMLElement {
           </mask>
         </defs>
         <rect class="board-bg" x="0" y="0" width="${n}" height="${h}" rx="${I}" ry="${I}" fill="${L.boardFill}" />
-        <g class="grid" stroke="${L.gridStroke}" stroke-width="0.035" mask="url(#grid-mask)">${B.join("")}</g>
+        <g class="grid" stroke="${L.gridStroke}" stroke-width="${L.gridStrokeWidth ?? 0.035}" mask="url(#grid-mask)">${B.join("")}</g>
+        ${L.frameStroke ? `<rect class="frame" x="${g + s}" y="${p + i}" width="${r - s}" height="${l - i}" fill="none" stroke="${L.frameStroke}" stroke-width="${L.frameStrokeWidth ?? 0.07}" />` : ""}
         <g class="star-points" fill="${L.starFill}">${J}</g>
         ${tt}
         <g class="stones"></g>
@@ -1029,15 +1050,28 @@ class At extends HTMLElement {
       }
     return `<g class="coordinates">${v.join("")}</g>`;
   }
+  /**
+   * The point of the move named by the `highlight-move` attribute (1-based), once the game has
+   * reached it: that stone is drawn in the accent color. Added for the Go Hall of Fame site.
+   */
+  highlightVertex() {
+    const n = Number(this.getAttribute("highlight-move"));
+    if (!this._sgfMainLine || !Number.isInteger(n) || n < 1 || this._moveIndex < n) return null;
+    const node = this._sgfMainLine[n - 1];
+    return F(node, "B")[0] ?? F(node, "W")[0] ?? null;
+  }
   render() {
     if (!this.stonesGroup) return;
     this.stonesGroup.replaceChildren();
     const t = this.computeLayout(), { xStart: e, xEnd: s, yStart: r, yEnd: i, gridOffsetX: l, gridOffsetY: d } = t, n = this.moveNumbersEnabled;
+    const hv = this.highlightVertex();
     for (let h = r; h <= i; h++)
       for (let g = e; g <= s; g++) {
         const p = this._board.get(g, h);
         if (p === b.Empty) continue;
-        this.stonesGroup.appendChild(this.createStone(g, h, p, l, d));
+        const st = this.createStone(g, h, p, l, d);
+        hv && hv.x === g && hv.y === h && (st.style.fill = "var(--accent, #c1321e)", st.style.stroke = "var(--accent, #c1321e)");
+        this.stonesGroup.appendChild(st);
         const m = n ? this.moveNumbers[this.moveNumberIndex(g, h)] : null;
         m != null && this.stonesGroup.appendChild(this.createMoveNumber(m, g, h, l, d));
       }
@@ -1343,7 +1377,7 @@ const w = "data-go-field", N = "data-go-action", Lt = "data-go-revealed", Tt = `
     padding: 0.6rem 0.75rem;
     background: var(--go-meta-panel-bg);
     border: 1px solid var(--go-meta-panel-border);
-    border-radius: 10px;
+    border-radius: var(--goban-radius, 10px);
     box-shadow: var(--go-meta-panel-shadow);
     box-sizing: border-box;
   }
@@ -1387,7 +1421,7 @@ const w = "data-go-field", N = "data-go-action", Lt = "data-go-revealed", Tt = `
     padding: 0.7rem 0.85rem;
     background: var(--go-meta-card-bg);
     border: 1px solid var(--go-meta-card-border);
-    border-radius: 10px;
+    border-radius: var(--goban-radius, 10px);
     box-shadow: var(--go-meta-card-shadow);
     box-sizing: border-box;
   }

@@ -8,6 +8,8 @@ import {
   sortPlayers,
   type Country,
   type Player,
+  DEFAULT_PLAYER_SORT,
+  PLAYER_SORTS,
 } from "./player"
 
 function buildPlayer(
@@ -195,5 +197,12 @@ describe("sortPlayers", () => {
       "c",
       "a",
     ])
+  })
+})
+
+describe("default player sort", () => {
+  it("is newest and listed first", () => {
+    expect(DEFAULT_PLAYER_SORT).toBe("newest")
+    expect(PLAYER_SORTS[0]).toBe(DEFAULT_PLAYER_SORT)
   })
 })

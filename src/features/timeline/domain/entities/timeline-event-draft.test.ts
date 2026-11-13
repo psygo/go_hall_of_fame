@@ -6,6 +6,10 @@ import {
   type TimelineEventForm,
 } from "./timeline-event-draft"
 
+const gameOptions = [
+  { slug: "alphago-game-4", name: "AlphaGo Game 4" },
+]
+
 function buildForm(
   overrides: Partial<TimelineEventForm> = {},
 ): TimelineEventForm {
@@ -13,31 +17,37 @@ function buildForm(
     year: "1612",
     title: "Founded",
     text: "The academy opens.",
+    gameSlug: "",
     ...overrides,
   }
 }
 
+function validate(form: TimelineEventForm) {
+  return validateTimelineEventForm(form, gameOptions)
+}
+
 function errorsOf(form: TimelineEventForm) {
-  const result = validateTimelineEventForm(form)
+  const result = validate(form)
   if (result.valid) throw new Error("expected invalid")
   return result.errors
 }
 
 describe("validateTimelineEventForm", () => {
   it("accepts a valid form and returns the draft", () => {
-    expect(validateTimelineEventForm(buildForm())).toEqual({
+    expect(validate(buildForm())).toEqual({
       valid: true,
       draft: {
         year: 1612,
         title: "Founded",
         text: "The academy opens.",
+        gameSlug: null,
       },
     })
   })
 
   it("trims every field", () => {
     expect(
-      validateTimelineEventForm(
+      validate(
         buildForm({
           year: " 1612 ",
           title: "  Founded ",
@@ -46,20 +56,22 @@ describe("validateTimelineEventForm", () => {
       ),
     ).toEqual({
       valid: true,
-      draft: { year: 1612, title: "Founded", text: "Text" },
+      draft: {
+        year: 1612,
+        title: "Founded",
+        text: "Text",
+        gameSlug: null,
+      },
     })
   })
 
   describe("year", () => {
     it("accepts the boundaries 1 and 2999", () => {
+      expect(validate(buildForm({ year: "1" })).valid).toBe(
+        true,
+      )
       expect(
-        validateTimelineEventForm(buildForm({ year: "1" }))
-          .valid,
-      ).toBe(true)
-      expect(
-        validateTimelineEventForm(
-          buildForm({ year: "2999" }),
-        ).valid,
+        validate(buildForm({ year: "2999" })).valid,
       ).toBe(true)
     })
 
@@ -86,9 +98,8 @@ describe("validateTimelineEventForm", () => {
     it("accepts the limit and rejects one over", () => {
       const limit = TIMELINE_LIMITS.title
       expect(
-        validateTimelineEventForm(
-          buildForm({ title: "a".repeat(limit) }),
-        ).valid,
+        validate(buildForm({ title: "a".repeat(limit) }))
+          .valid,
       ).toBe(true)
       expect(
         errorsOf(
@@ -103,7 +114,7 @@ describe("validateTimelineEventForm", () => {
       const limit = TIMELINE_LIMITS.title
 
       expect(
-        validateTimelineEventForm(
+        validate(
           buildForm({ title: ` ${"a".repeat(limit)} ` }),
         ).valid,
       ).toBe(true)
@@ -120,9 +131,8 @@ describe("validateTimelineEventForm", () => {
     it("accepts the limit and rejects one over", () => {
       const limit = TIMELINE_LIMITS.text
       expect(
-        validateTimelineEventForm(
-          buildForm({ text: "a".repeat(limit) }),
-        ).valid,
+        validate(buildForm({ text: "a".repeat(limit) }))
+          .valid,
       ).toBe(true)
       expect(
         errorsOf(
@@ -137,8 +147,35 @@ describe("validateTimelineEventForm", () => {
   it("reports every error at once", () => {
     expect(
       Object.keys(
-        errorsOf({ year: "x", title: "", text: "" }),
+        errorsOf({
+          year: "x",
+          title: "",
+          text: "",
+          gameSlug: "ghost",
+        }),
       ),
-    ).toEqual(["year", "title", "text"])
+    ).toEqual(["year", "title", "text", "gameSlug"])
+  })
+  describe("gameSlug", () => {
+    it("links a known game, trimmed", () => {
+      expect(
+        validate(
+          buildForm({ gameSlug: " alphago-game-4 " }),
+        ),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          gameSlug: "alphago-game-4",
+        }),
+      })
+    })
+
+    it("rejects a game that is not in the Hall", () => {
+      expect(
+        errorsOf(buildForm({ gameSlug: "ghost" })),
+      ).toEqual({
+        gameSlug: "Choose a game that is in the Hall.",
+      })
+    })
   })
 })

@@ -23,6 +23,12 @@ export class TimelineRepositoryImpl implements TimelineRepository {
     })
   }
 
+  listGameOptions() {
+    return captureDataState(() =>
+      this.dataSource.listGameOptions(),
+    )
+  }
+
   save(draft: TimelineEventDraft, id: number | null) {
     return captureDataState(() =>
       this.dataSource.upsert(draft, id),

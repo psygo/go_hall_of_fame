@@ -1,3 +1,7 @@
+import Link from "next/link"
+
+import { Markdown } from "@/shared/ui/presentation/markdown"
+
 import type { TimelinePlacement } from "../../domain/entities/timeline-layout"
 
 const cardPlacementClass = {
@@ -40,7 +44,15 @@ export function TimelineItem({
         <div className="text-[22px] leading-[1.15] font-bold">
           {event.title}
         </div>
-        <div>{event.text}</div>
+        <Markdown>{event.text}</Markdown>
+        {event.game !== null && (
+          <Link
+            href={`/games/${event.game.slug}`}
+            className="font-bold"
+          >
+            {event.game.name} →
+          </Link>
+        )}
       </div>
       <div
         aria-hidden

@@ -12,6 +12,7 @@ const eventIn = (year: number): TimelineEvent => ({
   year,
   title: `T${year}`,
   text: "x",
+  game: null,
 })
 
 function buildRepository(
@@ -20,6 +21,7 @@ function buildRepository(
   return {
     listAll,
     findById: vi.fn(),
+    listGameOptions: vi.fn(),
     save: vi.fn(),
     delete: vi.fn(),
   }

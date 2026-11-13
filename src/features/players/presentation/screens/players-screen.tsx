@@ -7,6 +7,7 @@ import { PageHeader } from "@/shared/ui/presentation/page-header"
 import { Portrait } from "@/shared/ui/presentation/portrait"
 
 import {
+  DEFAULT_PLAYER_SORT,
   PLAYER_SORT_LABELS,
   PLAYER_SORTS,
 } from "../../domain/entities/player"
@@ -113,7 +114,7 @@ export async function PlayersScreen({
         params={{
           q: query,
           country: country ?? "",
-          sort: sort === "number" ? "" : sort,
+          sort: sort === DEFAULT_PLAYER_SORT ? "" : sort,
         }}
       />
     </>

@@ -75,6 +75,8 @@ export const gamesTable = pgTable("games", {
   sgfUrl: text("sgf_url"),
   /** The text of an uploaded SGF file. It wins over `sgfUrl` and is served at /games/{slug}/sgf. */
   sgfText: text("sgf_text"),
+  /** The move (1-based) the preview stops on and draws in the accent color; null means move 50. */
+  highlightMove: integer("highlight_move"),
   /** Orders games with the same year. */
   sequence: integer().notNull().default(0),
   featured: boolean().notNull().default(false),
@@ -129,6 +131,12 @@ export const timelineEventsTable = pgTable(
   "timeline_events",
   {
     id: serial().primaryKey(),
+    gameId: integer("game_id").references(
+      () => gamesTable.id,
+      {
+        onDelete: "set null",
+      },
+    ),
     year: integer().notNull(),
     title: text().notNull(),
     text: text().notNull(),

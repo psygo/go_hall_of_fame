@@ -20,6 +20,8 @@ export type Game = {
   readonly sgfUrl: string | null
   /** An SGF file was uploaded; its text is served at /games/{slug}/sgf. */
   readonly hasUploadedSgf: boolean
+  /** The move (1-based) the preview stops on and draws in the accent color; null means move 50. */
+  readonly highlightMove: number | null
   readonly featured: boolean
   /** Orders games played in the same year. */
   readonly sequence: number
@@ -53,13 +55,23 @@ export function findNeighborsOfGame(
 
 export const GAMES_PAGE_SIZE = 6
 
+export const DEFAULT_HIGHLIGHT_MOVE = 50
+
+export function highlightMoveOf(
+  game: Pick<Game, "highlightMove">,
+): number {
+  return game.highlightMove ?? DEFAULT_HIGHLIGHT_MOVE
+}
+
 export const GAME_SORTS = [
-  "oldest",
   "newest",
+  "oldest",
   "name",
 ] as const
 
 export type GameSort = (typeof GAME_SORTS)[number]
+
+export const DEFAULT_GAME_SORT: GameSort = "newest"
 
 export const GAME_SORT_LABELS: Readonly<
   Record<GameSort, string>

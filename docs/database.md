@@ -35,7 +35,8 @@ generated into `drizzle/` and tracked in git.
   + `black_player_id`, `white_player_id` (nullable, `set null` on delete): the Hall player behind the
     Black / White name. The name then links to that player's page, and the two players are the
     ones listed in `game_players`.
-  + `sgf_url`: URL of the SGF record, and `sgf_text`: the text of an uploaded SGF file (it wins over
+  + `highlight_move` (nullable: the move the preview stops on and draws in orange; null means 50),
+    `sgf_url`: URL of the SGF record, and `sgf_text`: the text of an uploaded SGF file (it wins over
     the URL and is served at `/games/<slug>/sgf`). When either is set, the game page renders the
     board with `goban-web`, and the games list shows a preview. Lists never read `sgf_text`; they
     only learn whether it is set.
@@ -47,7 +48,7 @@ generated into `drizzle/` and tracked in git.
   (`player_id`): a check constraint requires exactly one of the two. `position` keeps the order.
 + `password_resets`: one-time reset links (`admin_id` cascade, `token_hash` unique, `expires_at`,
   `used_at`). Only the token's SHA-256 is stored.
-+ `timeline_events`: `year`, `title`, `text`.
++ `timeline_events`: `game_id` (nullable, `set null` on delete) links an event to a game. Also `year`, `title`, `text`.
 + `criteria`: the four induction criteria (`position` unique, `title`, `text`).
 + `admins`: `email` (unique), `name`, `password_hash` (scrypt), `failed_attempts`, `locked_until`.
 + `admin_sessions`: `admin_id` (cascade), `token_hash` (unique, SHA-256 of the cookie token),

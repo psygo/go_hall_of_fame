@@ -27,7 +27,7 @@ describe("TimelineEventModel", () => {
       extra: "x",
     }).toEntity()
 
-    expect(entity).toEqual(validRaw)
+    expect(entity).toEqual({ ...validRaw, game: null })
   })
 
   it("throws when the id is not an integer", () => {
@@ -76,9 +76,43 @@ describe("TimelineEventModel", () => {
     const entity =
       TimelineEventModel.fromRawData(validRaw).toEntity()
 
-    expect(entity).toEqual(validRaw)
+    expect(entity).toEqual({ ...validRaw, game: null })
     expect(Object.getPrototypeOf(entity)).toBe(
       Object.prototype,
     )
+  })
+  it("has no game when gameSlug is null or missing", () => {
+    expect(
+      TimelineEventModel.fromRawData(validRaw).game,
+    ).toBeNull()
+    expect(
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        gameSlug: null,
+        gameName: null,
+      }).game,
+    ).toBeNull()
+  })
+
+  it("reads the linked game", () => {
+    expect(
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        gameSlug: "ear-reddening",
+        gameName: "Ear-Reddening",
+      }).toEntity().game,
+    ).toEqual({
+      slug: "ear-reddening",
+      name: "Ear-Reddening",
+    })
+  })
+
+  it("throws when a game slug comes without a name", () => {
+    expect(() =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        gameSlug: "ear-reddening",
+      }),
+    ).toThrow(InvalidRawDataError)
   })
 })

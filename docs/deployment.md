@@ -50,7 +50,8 @@ retired). The app talks to it with `pg`, so any Postgres works.
 ## Things to know
 
 + **Migrations since the first deploy.** `0002` adds the resources table, the Black/White player
-  links and the stored SGF text; `0003` adds the password-reset links table. Run `pnpm db:migrate`
+  links and the stored SGF text; `0003` adds the password-reset links table; `0004` adds the highlighted move and the timeline
+  game link. Run `pnpm db:migrate`
   against the hosted database before deploying code that needs them.
 
 + **Previews and the database.** If Preview deployments get the same `DATABASE_URL` as Production,
@@ -60,6 +61,9 @@ retired). The app talks to it with `pg`, so any Postgres works.
   (`pnpm db:generate`), run `pnpm db:migrate` against each database before deploying the code that
   needs it. (Putting `pnpm db:migrate &&` in the Vercel build command is an option, at the price of
   every build, previews included, needing the database to be reachable and migrating it.)
++ **SSL warning.** `pg` warns when a URL says `sslmode=require` (it will change meaning in a future
+  version). `createDatabase` and `drizzle.config.ts` rewrite `require`, `prefer` and `verify-ca` to
+  `verify-full`, which is what they already did, so the warning no longer appears.
 + **Connections.** `pg` is configured with a pool of at most 5 per server instance. Use the pooled
   `DATABASE_URL` at runtime so many instances do not exhaust the database's connection limit.
 + **Images.** Portraits are not in the database: `players.photo_url` holds a path under `public/` or

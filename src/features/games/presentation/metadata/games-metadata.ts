@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { gamesLoaders } from "@/config/di"
+import { stripMarkdown } from "@/core/markdown"
 import { pageMetadata } from "@/shared/ui/presentation/site-metadata"
 
 export const gamesMetadata: Metadata = pageMetadata({
@@ -19,6 +20,6 @@ export async function generateGameMetadata({
     await gamesLoaders.loadGameProfile(slug)
   return pageMetadata({
     title: detail.name,
-    description: detail.hook,
+    description: stripMarkdown(detail.hook),
   })
 }

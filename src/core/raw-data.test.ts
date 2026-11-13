@@ -8,6 +8,7 @@ import {
   readDate,
   readInteger,
   readNullableDate,
+  readNullableInteger,
   readNullableString,
   readOneOf,
   readString,
@@ -252,5 +253,23 @@ describe("readBoolean", () => {
     expect(() => readBoolean({}, "flag")).toThrow(
       InvalidRawDataError,
     )
+  })
+})
+
+describe("readNullableInteger", () => {
+  it("reads an integer", () => {
+    expect(readNullableInteger({ n: 50 }, "n")).toBe(50)
+    expect(readNullableInteger({ n: 0 }, "n")).toBe(0)
+  })
+
+  it("reads null and a missing key as null", () => {
+    expect(readNullableInteger({ n: null }, "n")).toBeNull()
+    expect(readNullableInteger({}, "n")).toBeNull()
+  })
+
+  it.each(["5", 1.5, true])("throws for %j", (value) => {
+    expect(() =>
+      readNullableInteger({ n: value }, "n"),
+    ).toThrow(InvalidRawDataError)
   })
 })

@@ -43,6 +43,7 @@ const game: Game = {
   whitePlayerSlug: null,
   sgfUrl: null,
   hasUploadedSgf: false,
+  highlightMove: null,
   featured: false,
   sequence: 0,
 }
@@ -118,9 +119,24 @@ describe("loadGamesPage", () => {
 
     expect(searchGames).toHaveBeenCalledWith({
       query: "",
-      sort: "oldest",
+      sort: "newest",
       page: 1,
     })
+  })
+
+  it("defaults to the newest games first", async () => {
+    const searchGames = vi.fn(async () =>
+      succeed(emptyPage),
+    )
+
+    const state = await buildLoaders({
+      searchGames,
+    }).loadGamesPage({})
+
+    expect(state.sort).toBe("newest")
+    expect(searchGames).toHaveBeenCalledWith(
+      expect.objectContaining({ sort: "newest" }),
+    )
   })
 
   it("throws the original error when the use case fails", async () => {

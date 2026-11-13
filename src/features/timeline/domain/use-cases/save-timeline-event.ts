@@ -22,7 +22,14 @@ export class SaveTimelineEvent implements UseCase<
   }: SaveTimelineEventParams): Promise<
     SaveResult<TimelineEventErrors>
   > {
-    const validation = validateTimelineEventForm(form)
+    const options = await this.timeline.listGameOptions()
+    if (options.status === "failure") {
+      return { status: "failed", error: options.error }
+    }
+    const validation = validateTimelineEventForm(
+      form,
+      options.data,
+    )
     if (!validation.valid) {
       return {
         status: "invalid",

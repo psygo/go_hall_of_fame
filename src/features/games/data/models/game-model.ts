@@ -3,6 +3,7 @@ import {
   readArray,
   readBoolean,
   readInteger,
+  readNullableInteger,
   readNullableString,
   readString,
 } from "@/core/raw-data"
@@ -30,6 +31,7 @@ export class GameModel implements Game {
   declare readonly legacy: string
   declare readonly sgfUrl: string | null
   declare readonly hasUploadedSgf: boolean
+  declare readonly highlightMove: number | null
   declare readonly featured: boolean
   declare readonly sequence: number
 
@@ -102,6 +104,10 @@ function parseGameFields(raw: unknown): Game {
     legacy: readString(record, "legacy"),
     sgfUrl: readNullableString(record, "sgfUrl"),
     hasUploadedSgf: readBoolean(record, "hasUploadedSgf"),
+    highlightMove: readNullableInteger(
+      record,
+      "highlightMove",
+    ),
     featured: readBoolean(record, "featured"),
     sequence: readInteger(record, "sequence"),
   }

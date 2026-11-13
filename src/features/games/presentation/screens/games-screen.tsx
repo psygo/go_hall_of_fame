@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { contentLoaders, gamesLoaders } from "@/config/di"
+import { stripMarkdown } from "@/core/markdown"
 import { GamePreviewBoard } from "@/shared/go-board/presentation/game-preview-board"
 import { ListControls } from "@/shared/ui/presentation/list-controls"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
@@ -8,8 +9,10 @@ import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PlayerName } from "@/shared/ui/presentation/player-name"
 
 import {
+  DEFAULT_GAME_SORT,
   GAME_SORT_LABELS,
   GAME_SORTS,
+  highlightMoveOf,
   sgfSourceOf,
 } from "../../domain/entities/game"
 import type { GamesSearchParams } from "../state/games-loaders"
@@ -53,9 +56,11 @@ export async function GamesScreen({
         {games.items.map((game) => {
           const sgf = sgfSourceOf(game)
           return (
+            // The title's link stretches over the whole card; the player links and the board sit
+            // above it (relative z-10), so they keep working.
             <article
               key={game.slug}
-              className="border-divider hover:bg-accent-100 grid grid-cols-1 border-b min-[720px]:grid-cols-[160px_1fr] min-[1000px]:grid-cols-[160px_1fr_300px]"
+              className="border-divider hover:bg-accent-100 has-[a:focus-visible]:outline-accent relative grid grid-cols-1 border-b has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 min-[720px]:grid-cols-[160px_minmax(0,1fr)_280px]"
             >
               <div className="text-accent min-[720px]:border-divider px-4 pt-6 text-4xl leading-none font-bold min-[720px]:border-r min-[720px]:pb-6">
                 {game.year}
@@ -64,36 +69,37 @@ export async function GamesScreen({
                 <h2 className="m-0 text-[28px] leading-[1.05] font-bold">
                   <Link
                     href={`/games/${game.slug}`}
-                    className="text-ink no-underline"
+                    className="text-ink no-underline after:absolute after:inset-0 after:content-['']"
                   >
                     {game.name}
                   </Link>
                 </h2>
                 <div className="text-[13px] font-bold">
-                  <PlayerName
-                    name={game.black}
-                    slug={game.blackPlayerSlug}
-                  />{" "}
+                  <span className="relative z-10">
+                    <PlayerName
+                      name={game.black}
+                      slug={game.blackPlayerSlug}
+                    />
+                  </span>{" "}
                   vs{" "}
-                  <PlayerName
-                    name={game.white}
-                    slug={game.whitePlayerSlug}
-                  />{" "}
+                  <span className="relative z-10">
+                    <PlayerName
+                      name={game.white}
+                      slug={game.whitePlayerSlug}
+                    />
+                  </span>{" "}
                   · {game.result}
                 </div>
                 <div className="max-w-[62ch]">
-                  {game.hook}
+                  {stripMarkdown(game.hook)}
                 </div>
-                <Link
-                  href={`/games/${game.slug}`}
-                  className="text-[13px] font-bold"
-                >
-                  Read the game →
-                </Link>
               </div>
               {sgf !== null && (
-                <div className="px-4 pb-6 min-[720px]:col-start-2 min-[1000px]:col-start-3 min-[1000px]:py-6">
-                  <GamePreviewBoard sgf={sgf} />
+                <div className="relative z-10 px-4 pb-6 min-[720px]:self-center min-[720px]:py-6 min-[720px]:pl-0">
+                  <GamePreviewBoard
+                    sgf={sgf}
+                    targetMove={highlightMoveOf(game)}
+                  />
                 </div>
               )}
             </article>
@@ -111,7 +117,7 @@ export async function GamesScreen({
         basePath="/games"
         params={{
           q: query,
-          sort: sort === "oldest" ? "" : sort,
+          sort: sort === DEFAULT_GAME_SORT ? "" : sort,
         }}
       />
     </>

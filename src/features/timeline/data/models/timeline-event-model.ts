@@ -1,16 +1,21 @@
 import {
   asRecord,
   readInteger,
+  readNullableString,
   readString,
 } from "@/core/raw-data"
 
-import type { TimelineEvent } from "../../domain/entities/timeline-event"
+import type {
+  TimelineEvent,
+  TimelineGameReference,
+} from "../../domain/entities/timeline-event"
 
 export class TimelineEventModel implements TimelineEvent {
   declare readonly id: number
   declare readonly year: number
   declare readonly title: string
   declare readonly text: string
+  declare readonly game: TimelineGameReference | null
 
   private constructor(fields: TimelineEvent) {
     Object.assign(this, fields)
@@ -23,10 +28,19 @@ export class TimelineEventModel implements TimelineEvent {
       year: readInteger(record, "year"),
       title: readString(record, "title"),
       text: readString(record, "text"),
+      game: parseGame(record),
     })
   }
 
   toEntity(): TimelineEvent {
     return { ...this }
   }
+}
+
+function parseGame(
+  record: Record<string, unknown>,
+): TimelineGameReference | null {
+  const slug = readNullableString(record, "gameSlug")
+  if (slug === null) return null
+  return { slug, name: readString(record, "gameName") }
 }

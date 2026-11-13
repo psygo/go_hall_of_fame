@@ -23,7 +23,10 @@ import {
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { readFormText } from "@/shared/ui/presentation/form-data"
 
-import type { TimelineEvent } from "../../domain/entities/timeline-event"
+import type {
+  TimelineEvent,
+  TimelineGameReference,
+} from "../../domain/entities/timeline-event"
 import type {
   TimelineEventErrors,
   TimelineEventForm,
@@ -47,6 +50,10 @@ export type TimelineAdminDependencies = {
   readonly getTimelineEvent: UseCase<
     TimelineEventIdParams,
     DataState<TimelineEvent | null>
+  >
+  readonly listGameOptions: UseCase<
+    NoParams,
+    DataState<readonly TimelineGameReference[]>
   >
   readonly saveTimelineEvent: UseCase<
     SaveTimelineEventParams,
@@ -92,6 +99,17 @@ export function createTimelineAdminState(
     return event
   }
 
+  /** The games an event can link to. */
+  async function loadGameOptions(): Promise<
+    readonly TimelineGameReference[]
+  > {
+    await connection()
+    await dependencies.requireAdmin()
+    return unwrapDataState(
+      await dependencies.listGameOptions.call({}),
+    )
+  }
+
   async function saveFromForm(
     idParam: string,
     formData: FormData,
@@ -101,6 +119,7 @@ export function createTimelineAdminState(
       year: readFormText(formData, "year"),
       title: readFormText(formData, "title"),
       text: readFormText(formData, "text"),
+      gameSlug: readFormText(formData, "gameSlug"),
     }
     const id =
       idParam === "new" ? null : parseInteger(idParam)
@@ -151,6 +170,7 @@ export function createTimelineAdminState(
   return {
     loadAdminTimeline,
     loadEditor,
+    loadGameOptions,
     saveFromForm,
     deleteById,
   }

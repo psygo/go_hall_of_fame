@@ -1,5 +1,9 @@
 import type { ReactNode } from "react"
 
+/** Shown under the long-text fields that render Markdown on the public pages. */
+export const MARKDOWN_HINT =
+  "Markdown works: **bold**, *italic*, [a link](https://example.com), - lists and > quotes."
+
 type FieldBase = {
   readonly name: string
   readonly label: string

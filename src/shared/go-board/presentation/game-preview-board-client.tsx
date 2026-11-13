@@ -24,7 +24,7 @@ export function GamePreviewBoardClient({
   sgf,
   targetMove = DEFAULT_TARGET_MOVE,
   intervalMs = DEFAULT_INTERVAL_MS,
-  theme = "bookish",
+  theme = "washi",
 }: GamePreviewBoardProps) {
   const frame = useRef<HTMLDivElement>(null)
   const board = useRef<GoBoardElement>(null)
@@ -47,6 +47,10 @@ export function GamePreviewBoardClient({
   useEffect(() => {
     const element = board.current
     if (!isLoaded || !isVisible || element === null) return
+    element.setAttribute(
+      "highlight-move",
+      String(targetMove),
+    )
     const last = Math.min(targetMove, element.moveCount)
     element.goToMove(0)
     if (

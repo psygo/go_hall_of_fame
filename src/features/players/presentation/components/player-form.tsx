@@ -8,6 +8,7 @@ import { idleAdminForm } from "@/core/admin-form-state"
 import {
   CheckboxField,
   FormActions,
+  MARKDOWN_HINT,
   FormMessage,
   SelectField,
   TextAreaField,
@@ -99,6 +100,7 @@ export function PlayerForm({
         defaultValue={values.bio}
         maxLength={PLAYER_LIMITS.bio}
         error={errors.bio}
+        hint={MARKDOWN_HINT}
       />
       <div className="grid gap-4 min-[560px]:grid-cols-2">
         <TextField

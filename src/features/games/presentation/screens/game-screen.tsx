@@ -4,13 +4,17 @@ import { gamesLoaders } from "@/config/di"
 import { GoBoardPlayer } from "@/shared/go-board/presentation/go-board-player"
 import { BackLink } from "@/shared/ui/presentation/back-link"
 import { LabelledFact } from "@/shared/ui/presentation/labelled-fact"
+import { Markdown } from "@/shared/ui/presentation/markdown"
 import { NeighborBar } from "@/shared/ui/presentation/neighbor-bar"
 import { displayTitleClass } from "@/shared/ui/presentation/page-header"
 import { PlayerName } from "@/shared/ui/presentation/player-name"
 import { ResourceList } from "@/shared/ui/presentation/resource-list"
 import { SectionLabel } from "@/shared/ui/presentation/section-label"
 
-import { sgfSourceOf } from "../../domain/entities/game"
+import {
+  highlightMoveOf,
+  sgfSourceOf,
+} from "../../domain/entities/game"
 
 type GameScreenProps = {
   readonly params: Promise<{ readonly slug: string }>
@@ -53,23 +57,30 @@ export async function GameScreen({
             {detail.setting}
           </LabelledFact>
         </div>
-        <p className="max-w-[56ch] text-xl">
+        <Markdown className="max-w-[56ch] text-xl">
           {detail.hook}
-        </p>
+        </Markdown>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-6">
           <div className="flex flex-col gap-1.5">
             <SectionLabel>The moment</SectionLabel>
-            <p className="max-w-[56ch]">{detail.moment}</p>
+            <Markdown className="max-w-[56ch]">
+              {detail.moment}
+            </Markdown>
           </div>
           <div className="flex flex-col gap-1.5">
             <SectionLabel>Why it endures</SectionLabel>
-            <p className="max-w-[56ch]">{detail.legacy}</p>
+            <Markdown className="max-w-[56ch]">
+              {detail.legacy}
+            </Markdown>
           </div>
         </div>
         {sgf !== null && (
           <div className="flex flex-col gap-1.5">
             <SectionLabel>The record</SectionLabel>
-            <GoBoardPlayer sgf={sgf} />
+            <GoBoardPlayer
+              sgf={sgf}
+              highlightMove={highlightMoveOf(detail)}
+            />
           </div>
         )}
         <ResourceList resources={detail.resources} />

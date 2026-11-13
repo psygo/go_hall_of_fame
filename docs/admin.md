@@ -27,9 +27,16 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + **SGF.** Two ways to give a game its record: a path or https URL, or an uploaded `.sgf` file (up to
   400 KB; its text is saved in the database). An uploaded file wins. If the form comes back with
   errors, choose the file again.
++ **Highlighted move.** An optional move number on the game form. The games-list preview plays up to
+  that move and draws it in the accent color (orange-red, like the diagram on the home page); the
+  game page draws the same stone once the game reaches it. Blank means move 50.
++ **Markdown.** The long-text fields (a player's biography, a game's hook, moment and why it endures,
+  a timeline event's description) accept Markdown: `**bold**`, `*italic*`, `[a link](https://…)`,
+  lists and `> quotes`. Raw HTML and images are ignored. Lists and link previews show the plain text.
 + **Resources.** Games and players have a Resources list: a link and an optional description each,
   shown as a bulleted list on the public page. Links must be https or a path on this site.
-+ **Timeline** (`/admin/timeline`): events with a year, title and text. The side an event appears on
++ **Timeline** (`/admin/timeline`): events with a year, title and text, and optionally a game: the
+  event then links to that game's page. The side an event appears on
   is computed: events alternate, and events within five years of the previous one stay on its side.
 + **Criteria** (`/admin/criteria`): the induction criteria.
 + **Nominations** (`/admin/nominations`): what visitors submitted. Mark each accepted or declined, or
@@ -37,6 +44,8 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 
 ## Public lists
 
++ Players and games are newest first by default (players: latest inducted; games: most recent year).
+  The other orders are in the Sort by menu.
 + Players, games, the timeline and the induction criteria have sorting. Players and games also have a
   search box that filters as you type, and players a country filter. All of it lives in the address
   (`?q=lee&sort=name&page=2`), so a result can be shared. The admin lists are paginated (15 a page).
