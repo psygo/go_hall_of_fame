@@ -4,7 +4,10 @@ import {
   asRecord,
   InvalidRawDataError,
   readArray,
+  readBoolean,
+  readDate,
   readInteger,
+  readNullableDate,
   readNullableString,
   readOneOf,
   readString,
@@ -170,6 +173,84 @@ describe("readArray", () => {
     )
     expect(() => readArray(record, "list")).toThrow(
       '"list" must be an array',
+    )
+  })
+})
+
+describe("readDate", () => {
+  const date = new Date("2026-03-04T05:06:07Z")
+
+  it("returns a valid Date", () => {
+    expect(readDate({ at: date }, "at")).toBe(date)
+  })
+
+  it.each([
+    ["an invalid Date", new Date("nope")],
+    ["an ISO string", "2026-03-04T05:06:07Z"],
+    ["a timestamp", 1_700_000_000_000],
+    ["null", null],
+    ["undefined", undefined],
+  ])("throws for %s", (_label, value) => {
+    expect(() => readDate({ at: value }, "at")).toThrow(
+      '"at" must be a valid date',
+    )
+  })
+
+  it("throws when the key is missing", () => {
+    expect(() => readDate({}, "at")).toThrow(
+      InvalidRawDataError,
+    )
+  })
+})
+
+describe("readNullableDate", () => {
+  it("returns a valid Date", () => {
+    const date = new Date("2026-03-04T05:06:07Z")
+
+    expect(readNullableDate({ at: date }, "at")).toBe(date)
+  })
+
+  it.each([
+    ["null", null],
+    ["undefined", undefined],
+  ])("returns null for %s", (_label, value) => {
+    expect(readNullableDate({ at: value }, "at")).toBeNull()
+  })
+
+  it("returns null when the key is missing", () => {
+    expect(readNullableDate({}, "at")).toBeNull()
+  })
+
+  it.each([
+    ["an invalid Date", new Date("nope")],
+    ["a string", "2026-03-04"],
+  ])("throws for %s", (_label, value) => {
+    expect(() =>
+      readNullableDate({ at: value }, "at"),
+    ).toThrow('"at" must be a valid date')
+  })
+})
+
+describe("readBoolean", () => {
+  it.each([true, false])("returns %s", (value) => {
+    expect(readBoolean({ flag: value }, "flag")).toBe(value)
+  })
+
+  it.each([
+    ["a string", "true"],
+    ["a number", 1],
+    ["zero", 0],
+    ["null", null],
+    ["undefined", undefined],
+  ])("throws for %s", (_label, value) => {
+    expect(() =>
+      readBoolean({ flag: value }, "flag"),
+    ).toThrow('"flag" must be a boolean')
+  })
+
+  it("throws when the key is missing", () => {
+    expect(() => readBoolean({}, "flag")).toThrow(
+      InvalidRawDataError,
     )
   })
 })

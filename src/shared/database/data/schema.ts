@@ -115,3 +115,51 @@ export const nominationsTable = pgTable("nominations", {
     .default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
+
+export const adminsTable = pgTable("admins", {
+  id: serial().primaryKey(),
+  email: text().notNull().unique(),
+  name: text().notNull(),
+  /** scrypt hash in the form scrypt$N$r$p$salt$hash. Never the password. */
+  passwordHash: text("password_hash").notNull(),
+  failedAttempts: integer("failed_attempts")
+    .notNull()
+    .default(0),
+  lockedUntil: timestamp("locked_until", {
+    withTimezone: true,
+  }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+})
+
+export const adminSessionsTable = pgTable(
+  "admin_sessions",
+  {
+    id: serial().primaryKey(),
+    adminId: integer("admin_id")
+      .notNull()
+      .references(() => adminsTable.id, {
+        onDelete: "cascade",
+      }),
+    /** SHA-256 of the cookie token. The token itself is never stored. */
+    tokenHash: text("token_hash").notNull().unique(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+    }).notNull(),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+)
+
+/** Editable page copy. A missing key falls back to the default in the content feature. */
+export const siteTextsTable = pgTable("site_texts", {
+  key: text().primaryKey(),
+  value: text().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+})

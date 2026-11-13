@@ -90,3 +90,41 @@ export function readArray(
   }
   return value
 }
+
+export function readDate(
+  record: RawRecord,
+  key: string,
+): Date {
+  const value = record[key]
+  if (
+    !(value instanceof Date) ||
+    Number.isNaN(value.getTime())
+  ) {
+    throw new InvalidRawDataError(
+      `"${key}" must be a valid date`,
+    )
+  }
+  return value
+}
+
+export function readNullableDate(
+  record: RawRecord,
+  key: string,
+): Date | null {
+  return record[key] === null || record[key] === undefined
+    ? null
+    : readDate(record, key)
+}
+
+export function readBoolean(
+  record: RawRecord,
+  key: string,
+): boolean {
+  const value = record[key]
+  if (typeof value !== "boolean") {
+    throw new InvalidRawDataError(
+      `"${key}" must be a boolean`,
+    )
+  }
+  return value
+}
