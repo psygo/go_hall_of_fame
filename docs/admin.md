@@ -23,7 +23,7 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   links to a draft (a game's player, a timeline event's game) shows without the link. The rule lives in
   the data layer (`CanSeeDrafts`, supplied by the composition root), so no screen can forget it.
 + **Players** (`/admin/players`): create, edit, delete. Fields: name, native name, country (Japan,
-  China, Korea or Others), years,
+  China, Korea or Others), years, **year of birth** (the Hall is listed chronologically by it),
   distinction, biography, slug, induction number, photo path and crop.
 + **Games** (`/admin/games`): create, edit, delete. A game has one Markdown description (it replaced
   the separate hook, moment and why-it-endures fields). Also the Black/White player links, the SGF, resources, the order within the
@@ -62,8 +62,9 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 
 ## Public lists
 
-+ Players and games are newest first by default (players: latest inducted; games: most recent year).
-  The other orders are in the Sort by menu.
++ Players are listed chronologically by year of birth by default (oldest born first) and games newest
+  first (most recent year). The other orders, including youngest born first and earliest or latest
+  inducted, are in the Sort by menu.
 + Players, games, the timeline and the induction criteria have sorting. Players and games also have a
   search box that filters as you type, and players a country filter. All of it lives in the address
   (`?q=lee&sort=name&page=2`), so a result can be shared. The admin lists are paginated (15 a page).

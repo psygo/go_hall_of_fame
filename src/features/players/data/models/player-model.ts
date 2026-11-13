@@ -25,6 +25,7 @@ export class PlayerModel implements Player {
   declare readonly nativeName: string
   declare readonly country: Player["country"]
   declare readonly years: string
+  declare readonly birthYear: number
   declare readonly distinction: string
   declare readonly bio: string
   declare readonly photoUrl: string | null
@@ -87,6 +88,7 @@ function parsePlayerFields(raw: unknown): Player {
     nativeName: readString(record, "nativeName"),
     country: readOneOf(record, "country", COUNTRIES),
     years: readString(record, "years"),
+    birthYear: readInteger(record, "birthYear"),
     distinction: readString(record, "distinction"),
     bio: readString(record, "bio"),
     photoUrl: readNullableString(record, "photoUrl"),

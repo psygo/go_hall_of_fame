@@ -29,7 +29,10 @@ export class PlayersDataSource {
       .select()
       .from(playersTable)
       .where(isVisible(playersTable, includeDrafts))
-      .orderBy(asc(playersTable.inductionNumber))
+      .orderBy(
+        asc(playersTable.birthYear),
+        asc(playersTable.inductionNumber),
+      )
     return rows.map((row) => PlayerModel.fromRawData(row))
   }
 

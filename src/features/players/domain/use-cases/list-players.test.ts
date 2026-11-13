@@ -13,6 +13,7 @@ function buildPlayer(
   return {
     slug,
     inductionNumber: 1,
+    birthYear: 1900,
     name: slug,
     nativeName: slug,
     country,

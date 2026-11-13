@@ -24,7 +24,8 @@ generated into `drizzle/` and tracked in git.
 + `players`: one row per inductee.
   + `slug` (unique, used in `/players/[slug]`), `induction_number` (unique, the "No. 01" of the
     Hall), `name`, `native_name`, `country` (enum `Japan | China | Korea | Others`), `years` (free text such
-    as `1645–1702` or `b. 1983`), `distinction`, `bio`.
+    as `1645–1702` or `b. 1983`), `birth_year` (integer: the lists are
+    chronological by it; migration 0015 numbered the existing players by it), `distinction`, `bio`.
   + `photo_url` (null falls back to the placeholder portrait; use a path under `public/`, since
     an absolute URL needs its host in `images.remotePatterns` in `next.config.ts`; the portraits in `public/portraits/` are linked as `https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/<slug>.jpg`, see [portraits.md](./portraits.md)) and `photo_position` (CSS
     `object-position`, so one photo can be cropped per player).

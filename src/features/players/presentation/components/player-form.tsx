@@ -86,6 +86,15 @@ export function PlayerForm({
         />
       </div>
       <TextField
+        name="birthYear"
+        label="Born (year)"
+        type="number"
+        defaultValue={values.birthYear}
+        error={errors.birthYear}
+        hint="The year of birth. The players are listed chronologically by it."
+        required
+      />
+      <TextField
         name="distinction"
         label="Distinction"
         defaultValue={values.distinction}

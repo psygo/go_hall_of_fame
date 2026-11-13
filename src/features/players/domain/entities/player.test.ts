@@ -6,10 +6,12 @@ import {
   isCountry,
   searchPlayers,
   sortPlayers,
+  compareChronologically,
   type Country,
   type Player,
   DEFAULT_PLAYER_SORT,
   PLAYER_SORTS,
+  PLAYER_SORT_LABELS,
 } from "./player"
 
 function buildPlayer(
@@ -20,6 +22,7 @@ function buildPlayer(
   return {
     slug,
     inductionNumber: 1,
+    birthYear: 1900,
     name: slug,
     nativeName: slug,
     country,
@@ -160,61 +163,133 @@ describe("searchPlayers", () => {
   })
 })
 
+describe("compareChronologically", () => {
+  const a = buildPlayer("a", "Japan", {
+    birthYear: 1800,
+    inductionNumber: 5,
+  })
+  const b = buildPlayer("b", "Japan", {
+    birthYear: 1900,
+    inductionNumber: 1,
+  })
+  const sameYear = buildPlayer("c", "Japan", {
+    birthYear: 1800,
+    inductionNumber: 9,
+  })
+
+  it("orders by birth year first", () => {
+    expect(compareChronologically(a, b)).toBeLessThan(0)
+    expect(compareChronologically(b, a)).toBeGreaterThan(0)
+  })
+
+  it("breaks ties by induction number", () => {
+    expect(
+      compareChronologically(a, sameYear),
+    ).toBeLessThan(0)
+    expect(
+      compareChronologically(sameYear, a),
+    ).toBeGreaterThan(0)
+  })
+
+  it("is zero for the same birth year and number", () => {
+    expect(compareChronologically(a, a)).toBe(0)
+  })
+})
+
 describe("sortPlayers", () => {
+  // Deliberately not in any of the sorted orders.
   const players = [
-    buildPlayer("a", "Korea", {
-      name: "Zed",
-      inductionNumber: 1,
-    }),
     buildPlayer("b", "China", {
       name: "alice",
-      inductionNumber: 2,
+      inductionNumber: 4,
+      birthYear: 1900,
     }),
-    buildPlayer("c", "China", {
+    buildPlayer("d", "Korea", {
+      name: "Zed",
+      inductionNumber: 1,
+      birthYear: 1990,
+    }),
+    buildPlayer("a", "China", {
       name: "Bob",
       inductionNumber: 3,
+      birthYear: 1800,
+    }),
+    buildPlayer("c", "Japan", {
+      name: "Cat",
+      inductionNumber: 2,
+      birthYear: 1900,
     }),
   ]
   const slugs = (list: readonly Player[]) =>
     list.map((player) => player.slug)
 
-  it("keeps the induction order for number", () => {
+  it("sorts chronologically: birth year, then induction number", () => {
+    expect(
+      slugs(sortPlayers(players, "chronological")),
+    ).toEqual(["a", "c", "b", "d"])
+  })
+
+  it("sorts youngest first as the reverse of chronological", () => {
+    expect(slugs(sortPlayers(players, "youngest"))).toEqual(
+      ["d", "b", "c", "a"],
+    )
+  })
+
+  it("sorts by induction number ascending", () => {
     expect(slugs(sortPlayers(players, "number"))).toEqual([
+      "d",
+      "c",
       "a",
       "b",
-      "c",
     ])
   })
 
-  it("reverses for newest without mutating the input", () => {
+  it("sorts newest by induction number descending", () => {
     expect(slugs(sortPlayers(players, "newest"))).toEqual([
-      "c",
       "b",
       "a",
+      "c",
+      "d",
     ])
-    expect(slugs(players)).toEqual(["a", "b", "c"])
   })
 
   it("sorts by name ignoring case", () => {
     expect(slugs(sortPlayers(players, "name"))).toEqual([
       "b",
-      "c",
       "a",
+      "c",
+      "d",
     ])
   })
 
-  it("sorts by country, then induction number", () => {
+  it("sorts by country, ties chronological", () => {
     expect(slugs(sortPlayers(players, "country"))).toEqual([
+      "a",
       "b",
       "c",
-      "a",
+      "d",
     ])
+  })
+
+  it("never mutates the input", () => {
+    const before = slugs(players)
+
+    for (const sort of PLAYER_SORTS)
+      sortPlayers(players, sort)
+
+    expect(slugs(players)).toEqual(before)
+  })
+
+  it("has a label for every sort", () => {
+    for (const sort of PLAYER_SORTS) {
+      expect(PLAYER_SORT_LABELS[sort]).toBeTruthy()
+    }
   })
 })
 
 describe("default player sort", () => {
-  it("is newest and listed first", () => {
-    expect(DEFAULT_PLAYER_SORT).toBe("newest")
+  it("is chronological and listed first", () => {
+    expect(DEFAULT_PLAYER_SORT).toBe("chronological")
     expect(PLAYER_SORTS[0]).toBe(DEFAULT_PLAYER_SORT)
   })
 })

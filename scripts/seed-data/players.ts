@@ -16,6 +16,7 @@ const players: readonly Omit<
     nativeName: "道策",
     country: "Japan",
     years: "1645–1702",
+    birthYear: 1645,
     distinction: "4th Honinbo",
     bio: "Called the Sage of Go. He raised the Edo-era game to a new standard of reading and positional judgement, and his style shaped the next two centuries of professional play.",
     photoUrl:
@@ -23,11 +24,25 @@ const players: readonly Omit<
     photoPosition: "50% 25%",
   },
   {
+    slug: "huang-longshi",
+    name: "Huang Longshi",
+    nativeName: "黃龍士",
+    country: "China",
+    years: "17th century",
+    birthYear: 1651,
+    distinction: "Master of the early Qing",
+    bio: "Regarded as the strongest player of China in the early Qing dynasty. His games were studied for generations, and the masters who followed him built the golden age of Chinese Go on what they learned from them.",
+    photoUrl:
+      "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/huang-longshi.jpeg",
+    photoPosition: "50% 20%",
+  },
+  {
     slug: "honinbo-shusaku",
     name: "Honinbo Shusaku",
     nativeName: "秀策",
     country: "Japan",
     years: "1829–1862",
+    birthYear: 1829,
     distinction: "19 straight castle-game wins",
     bio: "Died at 33 yet remains the model of classical Go. Unbeaten in his castle games before the shogun, he is remembered for the Ear-Reddening Game and a fuseki that still carries his name.",
     photoUrl:
@@ -40,6 +55,7 @@ const players: readonly Omit<
     nativeName: "木谷実",
     country: "Japan",
     years: "1909–1975",
+    birthYear: 1909,
     distinction: "Teacher of a generation",
     bio: "With Go Seigen he launched the New Fuseki movement in 1933, then ran a famous live-in school that produced champions, among them Cho Chikun.",
     photoUrl:
@@ -52,6 +68,7 @@ const players: readonly Omit<
     nativeName: "吳清源",
     country: "China",
     years: "1914–2014",
+    birthYear: 1914,
     distinction: "Won the ten-game matches",
     bio: "A prodigy from China who moved to Japan and rewrote opening theory. He played in the Game of the Century and, through the 1940s and 1950s, defeated every top rival in long jubango matches.",
     photoUrl:
@@ -64,6 +81,7 @@ const players: readonly Omit<
     nativeName: "坂田栄寿",
     country: "Japan",
     years: "1920–2010",
+    birthYear: 1920,
     distinction: "64 titles",
     bio: "Nicknamed Razor Sakata for his sharp, fighting style. He dominated postwar Japanese Go and won 64 titles.",
     photoUrl:
@@ -76,6 +94,7 @@ const players: readonly Omit<
     nativeName: "聶衛平",
     country: "China",
     years: "b. 1952",
+    birthYear: 1952,
     distinction: "11 straight Super Go wins",
     bio: "Hero of Chinese Go in the 1980s. His run in the China–Japan Super Go matches turned a national sport into a national event.",
     photoUrl:
@@ -88,6 +107,7 @@ const players: readonly Omit<
     nativeName: "曺薫鉉",
     country: "Korea",
     years: "b. 1953",
+    birthYear: 1953,
     distinction: "Mentor to Lee Changho",
     bio: "The father of modern Korean Go. He trained in Japan, returned to lead the Korean game, and taught Lee Changho.",
     photoUrl:
@@ -100,6 +120,7 @@ const players: readonly Omit<
     nativeName: "趙治勲",
     country: "Korea",
     years: "b. 1956",
+    birthYear: 1956,
     distinction: "75 titles",
     bio: "Born in Korea, raised in Kitani’s school in Japan. A relentless fighter with a record title count in the Japanese game.",
     photoUrl:
@@ -112,6 +133,7 @@ const players: readonly Omit<
     nativeName: "芮乃伟",
     country: "China",
     years: "b. 1963",
+    birthYear: 1963,
     distinction: "Women’s Go benchmark",
     bio: "The strongest woman player of the modern era. She competed on equal terms with the best men in China, Japan and Korea.",
     photoUrl:
@@ -124,6 +146,7 @@ const players: readonly Omit<
     nativeName: "李昌鎬",
     country: "Korea",
     years: "b. 1975",
+    birthYear: 1975,
     distinction: "17 world titles",
     bio: "Called the Stone Buddha for his calm. He turned over-the-board patience into the most successful world-title record of his era.",
     photoUrl:
@@ -136,6 +159,7 @@ const players: readonly Omit<
     nativeName: "李世乭",
     country: "Korea",
     years: "b. 1983",
+    birthYear: 1983,
     distinction: "18 world titles",
     bio: "Known as the Strong Stone. His fourth-game win over AlphaGo in 2016 remains the only human win against the program in a match.",
     photoUrl:
@@ -148,6 +172,7 @@ const players: readonly Omit<
     nativeName: "井山裕太",
     country: "Japan",
     years: "b. 1989",
+    birthYear: 1989,
     distinction: "Two-time Seven-Crown holder",
     bio: "Held all seven major Japanese titles at once, a feat he has achieved twice.",
     photoUrl:
@@ -160,6 +185,7 @@ const players: readonly Omit<
     nativeName: "柯潔",
     country: "China",
     years: "b. 1997",
+    birthYear: 1997,
     distinction: "World No. 1 for years",
     bio: "Reached the top as a teenager and led the Chinese ascent of the 2010s. In 2017 he faced AlphaGo in Wuzhen.",
     photoUrl:
@@ -172,23 +198,12 @@ const players: readonly Omit<
     nativeName: "申眞諝",
     country: "Korea",
     years: "b. 2000",
+    birthYear: 2000,
     distinction: "Top Korean of the 2020s",
     bio: "Trained with AI from his early teens and rose to the top of the world rankings, defining the current generation.",
     photoUrl:
       "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/shin-jinseo.webp",
     photoPosition: "50% 25%",
-  },
-  {
-    slug: "huang-longshi",
-    name: "Huang Longshi",
-    nativeName: "黃龍士",
-    country: "China",
-    years: "17th century",
-    distinction: "Master of the early Qing",
-    bio: "Regarded as the strongest player of China in the early Qing dynasty. His games were studied for generations, and the masters who followed him built the golden age of Chinese Go on what they learned from them.",
-    photoUrl:
-      "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/huang-longshi.jpeg",
-    photoPosition: "50% 20%",
   },
 ]
 

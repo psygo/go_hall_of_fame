@@ -28,6 +28,8 @@ export type PlayerForm = {
   readonly nativeName: string
   readonly country: string
   readonly years: string
+  /** The year of birth, as typed. */
+  readonly birthYear: string
   readonly distinction: string
   readonly bio: string
   readonly photoUrl: string
@@ -45,6 +47,7 @@ export type PlayerDraft = {
   readonly nativeName: string
   readonly country: Country
   readonly years: string
+  readonly birthYear: number
   readonly distinction: string
   readonly bio: string
   readonly photoUrl: string | null
@@ -64,6 +67,8 @@ export const PLAYER_LIMITS = {
   distinction: 120,
   bio: 2000,
   maxInductionNumber: 9999,
+  minBirthYear: 1,
+  maxBirthYear: 2999,
 } as const
 
 export const DEFAULT_PHOTO_POSITION = "50% 50%"
@@ -90,6 +95,7 @@ export function validatePlayerForm(
     form.inductionNumber.trim() === ""
       ? blankInductionNumber(context)
       : parseInteger(form.inductionNumber)
+  const birthYear = parseInteger(form.birthYear)
   const photoUrl = form.photoUrl.trim()
   const photoPosition =
     form.photoPosition.trim() || DEFAULT_PHOTO_POSITION
@@ -112,6 +118,7 @@ export function validatePlayerForm(
     country: isCountry(form.country)
       ? undefined
       : `Choose ${COUNTRIES.join(", ")}.`,
+    birthYear: birthYearError(birthYear),
     years: requiredText(
       form.years.trim(),
       PLAYER_LIMITS.years,
@@ -144,6 +151,7 @@ export function validatePlayerForm(
   if (
     Object.keys(errors).length > 0 ||
     inductionNumber === null ||
+    birthYear === null ||
     !isCountry(form.country) ||
     !resources.valid ||
     !tags.valid
@@ -158,6 +166,7 @@ export function validatePlayerForm(
       nativeName: form.nativeName.trim(),
       country: form.country,
       years: form.years.trim(),
+      birthYear,
       distinction: form.distinction.trim(),
       bio: form.bio.trim(),
       photoUrl: photoUrl === "" ? null : photoUrl,
@@ -204,6 +213,18 @@ function slugError(
   return others.some((player) => player.slug === slug)
     ? "Another player already uses this slug."
     : undefined
+}
+
+function birthYearError(
+  year: number | null,
+): string | undefined {
+  const isValid =
+    year !== null &&
+    year >= PLAYER_LIMITS.minBirthYear &&
+    year <= PLAYER_LIMITS.maxBirthYear
+  return isValid
+    ? undefined
+    : `Enter the year of birth, between ${PLAYER_LIMITS.minBirthYear} and ${PLAYER_LIMITS.maxBirthYear}.`
 }
 
 function inductionNumberError(

@@ -31,6 +31,10 @@ export async function AdminPlayerEditorScreen({
             nativeName: player?.nativeName ?? "",
             country: player?.country ?? "Japan",
             years: player?.years ?? "",
+            birthYear:
+              player === null
+                ? ""
+                : String(player.birthYear),
             distinction: player?.distinction ?? "",
             bio: player?.bio ?? "",
             photoUrl: player?.photoUrl ?? "",

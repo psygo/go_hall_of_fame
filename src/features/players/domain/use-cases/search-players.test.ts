@@ -22,6 +22,7 @@ function buildPlayer(
     photoUrl: null,
     photoPosition: "50% 50%",
     tags: [],
+    birthYear: 1900,
     isDraft: false,
   }
 }

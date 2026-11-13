@@ -18,6 +18,8 @@ export type Player = {
   readonly nativeName: string
   readonly country: Country
   readonly years: string
+  /** The year of birth, the chronological order of the Hall. */
+  readonly birthYear: number
   readonly distinction: string
   readonly bio: string
   readonly photoUrl: string | null
@@ -73,19 +75,24 @@ export function findNeighborsOfPlayer(
 export const PLAYERS_PAGE_SIZE = 12
 
 export const PLAYER_SORTS = [
-  "newest",
+  "chronological",
+  "youngest",
   "number",
+  "newest",
   "name",
   "country",
 ] as const
 
 export type PlayerSort = (typeof PLAYER_SORTS)[number]
 
-export const DEFAULT_PLAYER_SORT: PlayerSort = "newest"
+export const DEFAULT_PLAYER_SORT: PlayerSort =
+  "chronological"
 
 export const PLAYER_SORT_LABELS: Readonly<
   Record<PlayerSort, string>
 > = {
+  chronological: "Oldest born first",
+  youngest: "Youngest born first",
   number: "Earliest inducted",
   newest: "Latest inducted",
   name: "Name A–Z",
@@ -111,21 +118,48 @@ export function searchPlayers(
   )
 }
 
-/** The list arrives ordered by induction number. */
+/** Born earlier first; the induction number settles players born in the same year. */
+export function compareChronologically(
+  a: Player,
+  b: Player,
+) {
+  return (
+    a.birthYear - b.birthYear ||
+    a.inductionNumber - b.inductionNumber
+  )
+}
+
 export function sortPlayers(
   players: readonly Player[],
   sort: PlayerSort,
 ): readonly Player[] {
-  if (sort === "number") return players
-  if (sort === "newest") return [...players].reverse()
+  const sorted = [...players]
+  if (sort === "chronological") {
+    return sorted.sort(compareChronologically)
+  }
+  if (sort === "youngest") {
+    return sorted.sort((a, b) =>
+      compareChronologically(b, a),
+    )
+  }
+  if (sort === "number") {
+    return sorted.sort(
+      (a, b) => a.inductionNumber - b.inductionNumber,
+    )
+  }
+  if (sort === "newest") {
+    return sorted.sort(
+      (a, b) => b.inductionNumber - a.inductionNumber,
+    )
+  }
   if (sort === "name") {
-    return [...players].sort((a, b) =>
+    return sorted.sort((a, b) =>
       a.name.localeCompare(b.name),
     )
   }
-  return [...players].sort(
+  return sorted.sort(
     (a, b) =>
       a.country.localeCompare(b.country) ||
-      a.inductionNumber - b.inductionNumber,
+      compareChronologically(a, b),
   )
 }

@@ -11,6 +11,7 @@ import { PlayersRepositoryImpl } from "./players-repository-impl"
 const rawPlayer = {
   slug: "shusaku",
   inductionNumber: 3,
+  birthYear: 1900,
   name: "Honinbo Shusaku",
   nativeName: "本因坊秀策",
   country: "Japan",
@@ -144,6 +145,7 @@ describe("PlayersRepositoryImpl", () => {
       photoUrl: null,
       photoPosition: "center",
       inductionNumber: 3,
+      birthYear: 1900,
       tags: [],
       isDraft: false,
       resources: [],

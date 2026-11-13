@@ -163,6 +163,7 @@ function readPlayerForm(formData: FormData): PlayerForm {
     nativeName: readFormText(formData, "nativeName"),
     country: readFormText(formData, "country"),
     years: readFormText(formData, "years"),
+    birthYear: readFormText(formData, "birthYear"),
     distinction: readFormText(formData, "distinction"),
     bio: readFormText(formData, "bio"),
     photoUrl: readFormText(formData, "photoUrl"),

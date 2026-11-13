@@ -10,6 +10,7 @@ import { SavePlayer } from "./save-player"
 const existing: Player = {
   slug: "shusaku",
   inductionNumber: 1,
+  birthYear: 1900,
   name: "Shusaku",
   nativeName: "秀策",
   country: "Japan",
@@ -33,6 +34,7 @@ const form: PlayerForm = {
   photoUrl: "",
   photoPosition: "",
   inductionNumber: "",
+  birthYear: "1900",
   tags: "",
   isDraft: false,
   resources: [],
@@ -71,6 +73,7 @@ describe("SavePlayer", () => {
         photoUrl: null,
         photoPosition: "50% 50%",
         inductionNumber: 2,
+        birthYear: 1900,
         tags: [],
         isDraft: false,
         resources: [],
@@ -89,6 +92,7 @@ describe("SavePlayer", () => {
         ...form,
         slug: "shusaku",
         inductionNumber: "1",
+        birthYear: "1900",
       },
     })
 

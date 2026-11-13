@@ -39,6 +39,7 @@ import {
 const player: Player = {
   slug: "shusaku",
   inductionNumber: 1,
+  birthYear: 1900,
   name: "Shusaku",
   nativeName: "秀策",
   country: "Japan",
@@ -67,6 +68,7 @@ const fields = {
   photoUrl: "",
   photoPosition: "50% 50%",
   inductionNumber: "1",
+  birthYear: "1900",
   tags: "opening, famous",
 }
 
@@ -279,6 +281,22 @@ describe("saveFromForm", () => {
     })
   })
 
+  it("passes the birthYear field as typed", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        buildFormData({ ...fields, birthYear: "1829" }),
+      ),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({ birthYear: "1829" }),
+    })
+  })
+
   it("turns missing fields into empty strings and the missing flag into false", async () => {
     const { state, save } = buildState({
       saveResult: { status: "invalid", errors: {} },
@@ -299,6 +317,7 @@ describe("saveFromForm", () => {
         photoUrl: "",
         photoPosition: "",
         inductionNumber: "",
+        birthYear: "",
         tags: "",
         isDraft: false,
         resources: [],

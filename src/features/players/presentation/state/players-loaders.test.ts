@@ -31,6 +31,7 @@ import { createPlayersLoaders } from "./players-loaders"
 const player: Player = {
   slug: "shusaku",
   inductionNumber: 1,
+  birthYear: 1900,
   name: "Shusaku",
   nativeName: "秀策",
   country: "Japan",
@@ -156,7 +157,7 @@ describe("loadPlayersPage", () => {
     expect(searchPlayers).toHaveBeenCalledWith({
       country: null,
       query: "",
-      sort: "newest",
+      sort: "chronological",
       page: 1,
     })
   })

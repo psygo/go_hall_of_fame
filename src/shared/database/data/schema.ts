@@ -40,6 +40,8 @@ export const playersTable = pgTable("players", {
   country: countryEnum().notNull(),
   /** Free text such as "1645–1702" or "b. 1983". */
   years: text().notNull(),
+  /** The year of birth: players are listed chronologically by it. */
+  birthYear: integer("birth_year").notNull(),
   distinction: text().notNull(),
   bio: text().notNull(),
   photoUrl: text("photo_url"),

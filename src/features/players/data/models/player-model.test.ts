@@ -10,6 +10,7 @@ import {
 const validPlayer = {
   slug: "shusaku",
   inductionNumber: 3,
+  birthYear: 1900,
   name: "Honinbo Shusaku",
   nativeName: "本因坊秀策",
   country: "Japan",
@@ -156,6 +157,29 @@ describe("PlayerModel", () => {
         isDraft: true,
       }).isDraft,
     ).toBe(true)
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "1829"],
+    ["a decimal", 18.5],
+    ["null", null],
+  ])("throws when birthYear is %s", (_label, birthYear) => {
+    expect(() =>
+      PlayerModel.fromRawData({
+        ...validPlayer,
+        birthYear,
+      }),
+    ).toThrow('"birthYear" must be an integer')
+  })
+
+  it("reads the birth year", () => {
+    expect(
+      PlayerModel.fromRawData({
+        ...validPlayer,
+        birthYear: 1829,
+      }).birthYear,
+    ).toBe(1829)
   })
 
   it("converts to a plain entity equal to the fields", () => {

@@ -25,6 +25,7 @@ function buildPlayer(
     photoUrl: null,
     photoPosition: "50% 50%",
     tags: [],
+    birthYear: 1900,
     isDraft: false,
   }
 }
@@ -48,6 +49,7 @@ function buildForm(
     photoUrl: "/portraits/gu-li.webp",
     photoPosition: "40% 20%",
     inductionNumber: "3",
+    birthYear: "1900",
     tags: "",
     isDraft: false,
     resources: [],
@@ -106,6 +108,7 @@ describe("validatePlayerForm", () => {
         photoUrl: "/portraits/gu-li.webp",
         photoPosition: "40% 20%",
         inductionNumber: 3,
+        birthYear: 1900,
         tags: [],
         isDraft: false,
         resources: [],
@@ -125,6 +128,7 @@ describe("validatePlayerForm", () => {
         photoUrl: " /portraits/a.webp ",
         photoPosition: " 40% 20% ",
         inductionNumber: " 3 ",
+        birthYear: "1900",
       }),
     )
 
@@ -140,6 +144,7 @@ describe("validatePlayerForm", () => {
         photoUrl: "/portraits/a.webp",
         photoPosition: "40% 20%",
         inductionNumber: 3,
+        birthYear: 1900,
       }),
     })
   })
@@ -194,6 +199,7 @@ describe("validatePlayerForm", () => {
           buildForm({
             slug: "shusaku",
             inductionNumber: "1",
+            birthYear: "1900",
           }),
           "shusaku",
         ).valid,
@@ -206,6 +212,7 @@ describe("validatePlayerForm", () => {
           buildForm({
             slug: "lee-sedol",
             inductionNumber: "1",
+            birthYear: "1900",
           }),
           "shusaku",
         ).slug,
@@ -360,6 +367,36 @@ describe("validatePlayerForm", () => {
     ).toHaveProperty("photoPosition")
   })
 
+  describe("birthYear", () => {
+    it("is kept as a number, trimmed", () => {
+      expect(
+        validate(buildForm({ birthYear: " 1829 " })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({ birthYear: 1829 }),
+      })
+    })
+
+    it.each(["1", "2999"])(
+      "accepts the boundary %s",
+      (birthYear) => {
+        expect(
+          validate(buildForm({ birthYear })).valid,
+        ).toBe(true)
+      },
+    )
+
+    it.each(["", "0", "3000", "-5", "abc", "18.5"])(
+      "rejects %j",
+      (birthYear) => {
+        expect(errorsOf(buildForm({ birthYear }))).toEqual({
+          birthYear:
+            "Enter the year of birth, between 1 and 2999.",
+        })
+      },
+    )
+  })
+
   describe("inductionNumber", () => {
     it("defaults to the next number when blank", () => {
       expect(
@@ -368,6 +405,7 @@ describe("validatePlayerForm", () => {
         valid: true,
         draft: expect.objectContaining({
           inductionNumber: 3,
+          birthYear: 1900,
         }),
       })
     })
@@ -377,6 +415,7 @@ describe("validatePlayerForm", () => {
         validate(
           buildForm({
             inductionNumber: "",
+            birthYear: "1900",
             slug: "shusaku",
           }),
           "shusaku",
@@ -385,6 +424,7 @@ describe("validatePlayerForm", () => {
         valid: true,
         draft: expect.objectContaining({
           inductionNumber: 1,
+          birthYear: 1900,
         }),
       })
     })
@@ -398,6 +438,7 @@ describe("validatePlayerForm", () => {
         validate(
           buildForm({
             inductionNumber: "1",
+            birthYear: "1900",
             slug: "shusaku",
           }),
           "shusaku",
@@ -431,6 +472,7 @@ describe("validatePlayerForm", () => {
           buildForm({
             slug: "lee-sedol",
             inductionNumber: "2",
+            birthYear: "1900",
           }),
           "lee-sedol",
         ).valid,
@@ -443,6 +485,7 @@ describe("validatePlayerForm", () => {
           buildForm({
             slug: "lee-sedol",
             inductionNumber: "1",
+            birthYear: "1900",
           }),
           "lee-sedol",
         ).inductionNumber,
@@ -468,6 +511,7 @@ describe("validatePlayerForm", () => {
         country: "x",
         bio: "",
         inductionNumber: "x",
+        birthYear: "1900",
       }),
     )
 
