@@ -28,6 +28,7 @@ import type { SaveResult } from "@/core/validation"
 
 import type {
   TimelineEvent,
+  TimelineContributorReference,
   TimelineGameReference,
   TimelinePlayerReference,
 } from "../../domain/entities/timeline-event"
@@ -44,6 +45,7 @@ const event: TimelineEvent = {
   text: "Text",
   games: [],
   players: [],
+  contributors: [],
   isDraft: false,
 }
 
@@ -63,7 +65,11 @@ const fields = {
   text: "Text",
 }
 
-const noLinks = { gameSlugs: [], playerSlugs: [] }
+const noLinks = {
+  gameSlugs: [],
+  playerSlugs: [],
+  contributorSlugs: [],
+}
 
 function buildState({
   requireAdmin = vi.fn(async () => undefined),
@@ -75,6 +81,9 @@ function buildState({
   playerOptionsResult = succeed<
     readonly TimelinePlayerReference[]
   >([{ slug: "shusaku", name: "Shusaku" }]),
+  contributorOptionsResult = succeed<
+    readonly TimelineContributorReference[]
+  >([{ slug: "kgs", name: "KGS" }]),
   gameOptionsResult = succeed<
     readonly TimelineGameReference[]
   >([{ slug: "alphago-game-4", name: "AlphaGo" }]),
@@ -98,6 +107,13 @@ function buildState({
         typeof succeed<readonly TimelinePlayerReference[]>
       >
     | ReturnType<typeof fail>
+  contributorOptionsResult?:
+    | ReturnType<
+        typeof succeed<
+          readonly TimelineContributorReference[]
+        >
+      >
+    | ReturnType<typeof fail>
   gameOptionsResult?:
     | ReturnType<
         typeof succeed<readonly TimelineGameReference[]>
@@ -112,6 +128,9 @@ function buildState({
     reorderEvents: vi.fn(async () => reorderResult),
     gameOptions: vi.fn(async () => gameOptionsResult),
     playerOptions: vi.fn(async () => playerOptionsResult),
+    contributorOptions: vi.fn(
+      async () => contributorOptionsResult,
+    ),
   }
   const dependencies: TimelineAdminDependencies = {
     requireAdmin,
@@ -122,6 +141,9 @@ function buildState({
     reorderTimelineEvents: { call: useCases.reorderEvents },
     listGameOptions: { call: useCases.gameOptions },
     listPlayerOptions: { call: useCases.playerOptions },
+    listContributorOptions: {
+      call: useCases.contributorOptions,
+    },
   }
   return {
     state: createTimelineAdminState(dependencies),
@@ -299,6 +321,7 @@ describe("saveFromForm", () => {
         text: "",
         gameSlugs: [],
         playerSlugs: [],
+        contributorSlugs: [],
         isDraft: false,
       },
     })
@@ -549,6 +572,44 @@ describe("loadPlayerOptions", () => {
   })
 })
 
+describe("loadContributorOptions", () => {
+  it("returns the options after checking the admin", async () => {
+    const { state, requireAdmin, contributorOptions } =
+      buildState()
+
+    expect(await state.loadContributorOptions()).toEqual([
+      { slug: "kgs", name: "KGS" },
+    ])
+    expect(
+      requireAdmin.mock.invocationCallOrder[0],
+    ).toBeLessThan(
+      contributorOptions.mock.invocationCallOrder[0],
+    )
+  })
+
+  it("does not list anything when the admin check rejects", async () => {
+    const { state, contributorOptions } = buildState({
+      requireAdmin: rejectingAdmin(),
+    })
+
+    await expect(
+      state.loadContributorOptions(),
+    ).rejects.toThrow("NEXT_REDIRECT:/admin/sign-in")
+    expect(contributorOptions).not.toHaveBeenCalled()
+  })
+
+  it("throws the original error when the use case fails", async () => {
+    const cause = new Error("db down")
+    const { state } = buildState({
+      contributorOptionsResult: fail(cause),
+    })
+
+    await expect(
+      state.loadContributorOptions(),
+    ).rejects.toBe(cause)
+  })
+})
+
 describe("saveFromForm links", () => {
   it("reads the repeated gameSlug and playerSlug fields in order, blanks included", async () => {
     const { state, save } = buildState()
@@ -558,6 +619,8 @@ describe("saveFromForm links", () => {
     formData.append("gameSlug", "ear-reddening")
     formData.append("playerSlug", "shusaku")
     formData.append("playerSlug", "lee-sedol")
+    formData.append("contributorSlug", "kgs")
+    formData.append("contributorSlug", "")
 
     await expect(
       state.saveFromForm("new", formData),
@@ -569,6 +632,7 @@ describe("saveFromForm links", () => {
         ...fields,
         gameSlugs: ["alphago-game-4", "", "ear-reddening"],
         playerSlugs: ["shusaku", "lee-sedol"],
+        contributorSlugs: ["kgs", ""],
         isDraft: false,
       },
     })

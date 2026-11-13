@@ -15,6 +15,7 @@ import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { idleAdminForm } from "@/core/admin-form-state"
 
 import type {
+  TimelineContributorReference,
   TimelineGameReference,
   TimelinePlayerReference,
 } from "../../domain/entities/timeline-event"
@@ -31,10 +32,12 @@ type TimelineEventFormProps = {
     readonly text: string
     readonly gameSlugs: readonly string[]
     readonly playerSlugs: readonly string[]
+    readonly contributorSlugs: readonly string[]
     readonly isDraft: boolean
   }
   readonly gameOptions: readonly TimelineGameReference[]
   readonly playerOptions: readonly TimelinePlayerReference[]
+  readonly contributorOptions: readonly TimelineContributorReference[]
 }
 
 export function TimelineEventForm({
@@ -42,6 +45,7 @@ export function TimelineEventForm({
   initial,
   gameOptions,
   playerOptions,
+  contributorOptions,
 }: TimelineEventFormProps) {
   const [state, formAction, isPending] = useActionState<
     TimelineFormState,
@@ -107,6 +111,17 @@ export function TimelineEventForm({
         }))}
         initial={values.playerSlugs}
         error={errors.playerSlugs}
+      />
+      <LinkedSelectFields
+        name="contributorSlug"
+        legend="Linked contributors"
+        addLabel="Add another linked contributor"
+        options={contributorOptions.map((contributor) => ({
+          value: contributor.slug,
+          label: contributor.name,
+        }))}
+        initial={values.contributorSlugs}
+        error={errors.contributorSlugs}
       />
       <CheckboxField
         name="isDraft"

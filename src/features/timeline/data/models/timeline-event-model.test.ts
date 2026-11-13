@@ -11,6 +11,7 @@ const validRaw = {
   text: "Text",
   games: [],
   players: [],
+  contributors: [],
   isDraft: false,
 }
 
@@ -116,7 +117,7 @@ describe("TimelineEventModel", () => {
     expect(entity.players).toEqual(players)
   })
 
-  it.each(["games", "players"])(
+  it.each(["games", "players", "contributors"])(
     "throws when %s is missing or not an array",
     (key) => {
       const missing: Record<string, unknown> = {
@@ -136,6 +137,20 @@ describe("TimelineEventModel", () => {
     },
   )
 
+  it("reads the linked contributors in order", () => {
+    const contributors = [
+      { slug: "kgs", name: "KGS" },
+      { slug: "demis-hassabis", name: "Demis Hassabis" },
+    ]
+
+    expect(
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        contributors,
+      }).toEntity().contributors,
+    ).toEqual(contributors)
+  })
+
   it.each([
     ["not an object", "x"],
     ["without a name", { slug: "a" }],
@@ -152,6 +167,12 @@ describe("TimelineEventModel", () => {
       TimelineEventModel.fromRawData({
         ...validRaw,
         players: [item],
+      }),
+    ).toThrow(InvalidRawDataError)
+    expect(() =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        contributors: [item],
       }),
     ).toThrow(InvalidRawDataError)
   })

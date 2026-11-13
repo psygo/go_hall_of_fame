@@ -12,6 +12,7 @@ const rawEvent = {
   text: "Text",
   games: [],
   players: [],
+  contributors: [],
   isDraft: false,
 }
 
@@ -21,6 +22,7 @@ const draft: TimelineEventDraft = {
   text: "Text",
   gameSlugs: [],
   playerSlugs: [],
+  contributorSlugs: [],
   isDraft: false,
 }
 
@@ -118,6 +120,30 @@ describe("TimelineRepositoryImpl", () => {
         await buildRepository({
           listPlayerOptions: throwing(cause),
         }).listPlayerOptions(),
+      ).toEqual({ status: "failure", error: cause })
+    })
+  })
+
+  describe("listContributorOptions", () => {
+    it("returns the options of the data source", async () => {
+      const options = [{ slug: "a", name: "A" }]
+
+      expect(
+        await buildRepository({
+          listContributorOptions: vi.fn(
+            async () => options,
+          ),
+        }).listContributorOptions(),
+      ).toEqual({ status: "success", data: options })
+    })
+
+    it("returns a failure when the data source throws", async () => {
+      const cause = new Error("db down")
+
+      expect(
+        await buildRepository({
+          listContributorOptions: throwing(cause),
+        }).listContributorOptions(),
       ).toEqual({ status: "failure", error: cause })
     })
   })
@@ -288,6 +314,19 @@ describe("TimelineRepositoryImpl", () => {
           expect(listPlayerOptions).toHaveBeenCalledWith(
             expected,
           )
+        }
+        {
+          const listContributorOptions = vi.fn(
+            async () => [],
+          )
+          const repository = buildRepository(
+            { listContributorOptions },
+            async () => canSee,
+          )
+          await repository.listContributorOptions()
+          expect(
+            listContributorOptions,
+          ).toHaveBeenCalledWith(expected)
         }
       },
     )

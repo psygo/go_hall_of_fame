@@ -7,6 +7,7 @@ import {
 } from "@/core/raw-data"
 
 import type {
+  TimelineContributorReference,
   TimelineEvent,
   TimelineGameReference,
   TimelinePlayerReference,
@@ -19,6 +20,7 @@ export class TimelineEventModel implements TimelineEvent {
   declare readonly text: string
   declare readonly games: readonly TimelineGameReference[]
   declare readonly players: readonly TimelinePlayerReference[]
+  declare readonly contributors: readonly TimelineContributorReference[]
   declare readonly isDraft: boolean
 
   private constructor(fields: TimelineEvent) {
@@ -36,6 +38,9 @@ export class TimelineEventModel implements TimelineEvent {
       players: readArray(record, "players").map(
         parseReference,
       ),
+      contributors: readArray(record, "contributors").map(
+        parseReference,
+      ),
       isDraft: readBoolean(record, "isDraft"),
     })
   }
@@ -47,7 +52,9 @@ export class TimelineEventModel implements TimelineEvent {
 
 function parseReference(
   raw: unknown,
-): TimelineGameReference & TimelinePlayerReference {
+): TimelineGameReference &
+  TimelinePlayerReference &
+  TimelineContributorReference {
   const record = asRecord(raw, "linked item")
   return {
     slug: readString(record, "slug"),

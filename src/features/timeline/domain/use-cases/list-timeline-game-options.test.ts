@@ -13,6 +13,7 @@ function build(
     findById: vi.fn(),
     listGameOptions,
     listPlayerOptions: vi.fn(),
+    listContributorOptions: vi.fn(),
     save: vi.fn(),
     delete: vi.fn(),
     reorder: vi.fn(),

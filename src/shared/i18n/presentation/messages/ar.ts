@@ -16,7 +16,8 @@ export const ar: Messages = {
   aboutTitle: "حول Go | Hall of Fame",
   aboutIntro:
     "يكرّم Go | Hall of Fame لعبة الغو: لاعبيها الأسطوريين ومبارياتها الأسطورية والتاريخ الذي يربط بينها. إنه مشروع مفتوح المصدر يُبنى علنًا.",
-  contributors: "المساهمون",
+  contributors: "المساهمون في اللعبة",
+  builtBy: "من صنع الموقع",
   contributorsIntro: "الأشخاص الذين صنعوا هذا الموقع.",
   roleCreator: "المنشئ والمشرف",
   homeTitle:

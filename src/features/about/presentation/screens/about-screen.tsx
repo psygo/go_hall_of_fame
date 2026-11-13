@@ -33,7 +33,7 @@ export async function AboutScreen() {
       </PageHeader>
       <section className="px-4 py-8">
         <h2 className="text-2xl font-bold">
-          {messages.contributors}
+          {messages.builtBy}
         </h2>
         <p className="mt-1 mb-6">
           {messages.contributorsIntro}

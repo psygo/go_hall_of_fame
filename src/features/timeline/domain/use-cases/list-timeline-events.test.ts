@@ -16,6 +16,7 @@ describe("ListTimelineEvents", () => {
         text: "Text",
         games: [],
         players: [],
+        contributors: [],
         isDraft: false,
       },
     ]
@@ -23,6 +24,7 @@ describe("ListTimelineEvents", () => {
       findById: vi.fn(),
       listGameOptions: vi.fn(),
       listPlayerOptions: vi.fn(),
+      listContributorOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       reorder: vi.fn(),
@@ -40,6 +42,7 @@ describe("ListTimelineEvents", () => {
       findById: vi.fn(),
       listGameOptions: vi.fn(),
       listPlayerOptions: vi.fn(),
+      listContributorOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       reorder: vi.fn(),

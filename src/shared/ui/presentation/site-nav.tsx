@@ -13,6 +13,7 @@ import { UserMenu, type NavAdmin } from "./user-menu"
 
 const NAV_ITEMS = [
   { href: "/players", label: "players" },
+  { href: "/contributors", label: "contributors" },
   { href: "/games", label: "games" },
   { href: "/timeline", label: "timeline" },
   { href: "/induction", label: "induction" },

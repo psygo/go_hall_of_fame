@@ -113,6 +113,13 @@
       "when": 1794597352635,
       "tag": "0015_cool_toro",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1794598216538,
+      "tag": "0016_strange_lord_tyger",
+      "breakpoints": true
     }
   ]
 }

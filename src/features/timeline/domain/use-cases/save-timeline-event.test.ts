@@ -11,6 +11,7 @@ const form = {
   text: " Go gets state backing. ",
   gameSlugs: [],
   playerSlugs: [],
+  contributorSlugs: [],
   isDraft: false,
 }
 
@@ -27,6 +28,9 @@ function buildRepository(
     ),
     listPlayerOptions: vi.fn(async () =>
       succeed([{ slug: "shusaku", name: "Shusaku" }]),
+    ),
+    listContributorOptions: vi.fn(async () =>
+      succeed([{ slug: "kgs", name: "KGS" }]),
     ),
     save: vi.fn(async () => succeed(undefined)),
     delete: vi.fn(),
@@ -51,6 +55,7 @@ describe("SaveTimelineEvent", () => {
         text: "Go gets state backing.",
         gameSlugs: [],
         playerSlugs: [],
+        contributorSlugs: [],
         isDraft: false,
       },
       4,
@@ -164,5 +169,51 @@ describe("SaveTimelineEvent", () => {
       },
     })
     expect(repository.save).not.toHaveBeenCalled()
+  })
+
+  it("returns failed without saving when the contributor options cannot be listed", async () => {
+    const error = new Error("db down")
+    const repository = buildRepository({
+      listContributorOptions: vi.fn(async () =>
+        fail(error),
+      ),
+    })
+
+    expect(
+      await new SaveTimelineEvent(repository).call({
+        id: null,
+        form,
+      }),
+    ).toEqual({ status: "failed", error })
+    expect(repository.save).not.toHaveBeenCalled()
+  })
+
+  it("saves a known contributor and rejects an unknown one", async () => {
+    const repository = buildRepository()
+
+    expect(
+      await new SaveTimelineEvent(repository).call({
+        id: null,
+        form: { ...form, contributorSlugs: ["kgs"] },
+      }),
+    ).toEqual({ status: "saved" })
+    expect(repository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contributorSlugs: ["kgs"],
+      }),
+      null,
+    )
+    expect(
+      await new SaveTimelineEvent(repository).call({
+        id: null,
+        form: { ...form, contributorSlugs: ["ghost"] },
+      }),
+    ).toEqual({
+      status: "invalid",
+      errors: {
+        contributorSlugs:
+          "Choose a contributor who is listed.",
+      },
+    })
   })
 })

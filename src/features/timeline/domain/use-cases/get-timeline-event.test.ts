@@ -20,6 +20,7 @@ describe("GetTimelineEvent", () => {
       text: "x",
       games: [],
       players: [],
+      contributors: [],
       isDraft: false,
     }
     const findById = vi.fn(async () => succeed(data))

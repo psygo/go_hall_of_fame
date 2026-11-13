@@ -12,6 +12,10 @@ const STATIC_TARGETS: Readonly<
     label: "Edit players",
   },
   "/games": { href: "/admin/games", label: "Edit games" },
+  "/contributors": {
+    href: "/admin/contributors",
+    label: "Edit contributors",
+  },
   "/timeline": {
     href: "/admin/timeline",
     label: "Edit timeline",
@@ -26,6 +30,12 @@ const STATIC_TARGETS: Readonly<
   },
 }
 
+const DETAIL_LABELS: Readonly<Record<string, string>> = {
+  players: "Edit player",
+  games: "Edit game",
+  contributors: "Edit contributor",
+}
+
 /** Where an admin goes to edit the public page at `pathname`, or null for pages with no editor. */
 export function adminEditTargetFor(
   pathname: string,
@@ -34,13 +44,13 @@ export function adminEditTargetFor(
     pathname.length > 1
       ? pathname.replace(/\/$/, "")
       : pathname
-  const detail = /^\/(players|games)\/([^/]+)$/.exec(path)
+  const detail =
+    /^\/(players|games|contributors)\/([^/]+)$/.exec(path)
   if (detail !== null) {
     const [, section, slug] = detail
     return {
       href: `/admin/${section}/${slug}`,
-      label:
-        section === "players" ? "Edit player" : "Edit game",
+      label: DETAIL_LABELS[section] ?? "Edit",
     }
   }
   return STATIC_TARGETS[path] ?? null

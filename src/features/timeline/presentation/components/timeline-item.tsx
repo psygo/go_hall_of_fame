@@ -39,6 +39,10 @@ export function TimelineItem({
       href: `/players/${player.slug}`,
       label: player.name,
     })),
+    ...event.contributors.map((contributor) => ({
+      href: `/contributors/${contributor.slug}`,
+      label: contributor.name,
+    })),
   ]
 
   return (

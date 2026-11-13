@@ -15,6 +15,10 @@ const options = {
     { slug: "shusaku", name: "Shusaku" },
     { slug: "lee-sedol", name: "Lee Sedol" },
   ],
+  contributors: [
+    { slug: "demis-hassabis", name: "Demis Hassabis" },
+    { slug: "kgs", name: "KGS" },
+  ],
 }
 
 function buildForm(
@@ -26,6 +30,7 @@ function buildForm(
     text: "The academy opens.",
     gameSlugs: [],
     playerSlugs: [],
+    contributorSlugs: [],
     isDraft: false,
     ...overrides,
   }
@@ -51,6 +56,7 @@ describe("validateTimelineEventForm", () => {
         text: "The academy opens.",
         gameSlugs: [],
         playerSlugs: [],
+        contributorSlugs: [],
         isDraft: false,
       },
     })
@@ -73,6 +79,7 @@ describe("validateTimelineEventForm", () => {
         text: "Text",
         gameSlugs: [],
         playerSlugs: [],
+        contributorSlugs: [],
         isDraft: false,
       },
     })
@@ -191,6 +198,7 @@ describe("validateTimelineEventForm", () => {
           text: "",
           gameSlugs: ["ghost"],
           playerSlugs: ["ghost"],
+          contributorSlugs: ["ghost"],
           isDraft: false,
         }),
       ),
@@ -200,6 +208,7 @@ describe("validateTimelineEventForm", () => {
       "text",
       "gameSlugs",
       "playerSlugs",
+      "contributorSlugs",
     ])
   })
 
@@ -259,6 +268,41 @@ describe("validateTimelineEventForm", () => {
       })
     })
 
+    it("keeps known contributors, trimmed, distinct, in order", () => {
+      const draft = draftOf({
+        contributorSlugs: [
+          " kgs",
+          "",
+          "demis-hassabis",
+          "kgs ",
+        ],
+      })
+
+      expect(draft.contributorSlugs).toEqual([
+        "kgs",
+        "demis-hassabis",
+      ])
+    })
+
+    it("rejects an unknown contributor", () => {
+      expect(
+        errorsOf(
+          buildForm({ contributorSlugs: ["ghost"] }),
+        ),
+      ).toEqual({
+        contributorSlugs:
+          "Choose a contributor who is listed.",
+      })
+    })
+
+    it("does not accept a player slug as a contributor", () => {
+      expect(
+        errorsOf(
+          buildForm({ contributorSlugs: ["shusaku"] }),
+        ),
+      ).toHaveProperty("contributorSlugs")
+    })
+
     it("does not accept a player slug as a game", () => {
       expect(
         errorsOf(buildForm({ gameSlugs: ["shusaku"] })),
@@ -275,12 +319,16 @@ describe("validateTimelineEventForm", () => {
         players: many(TIMELINE_LIMITS.maxLinks + 1).map(
           (slug) => ({ slug, name: slug }),
         ),
+        contributors: many(
+          TIMELINE_LIMITS.maxLinks + 1,
+        ).map((slug) => ({ slug, name: slug })),
       }
       const check = (count: number) =>
         validateTimelineEventForm(
           buildForm({
             gameSlugs: many(count),
             playerSlugs: many(count),
+            contributorSlugs: many(count),
           }),
           big,
         )
@@ -293,6 +341,7 @@ describe("validateTimelineEventForm", () => {
         errors: {
           gameSlugs: `Link at most ${TIMELINE_LIMITS.maxLinks}.`,
           playerSlugs: `Link at most ${TIMELINE_LIMITS.maxLinks}.`,
+          contributorSlugs: `Link at most ${TIMELINE_LIMITS.maxLinks}.`,
         },
       })
     })

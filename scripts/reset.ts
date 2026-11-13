@@ -37,7 +37,7 @@ if (!isLocalDatabase(connectionString)) {
 
 createDatabase(connectionString)
   .execute(
-    sql`truncate game_players, games, players, timeline_events, criteria, nominations restart identity cascade`,
+    sql`truncate game_players, games, players, contributors, timeline_events, criteria, nominations restart identity cascade`,
   )
   .then(() =>
     console.log("Tables emptied. Run pnpm db:seed."),

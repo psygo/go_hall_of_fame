@@ -10,6 +10,12 @@ export type TimelinePlayerReference = {
   readonly name: string
 }
 
+/** A contributor an event points to. */
+export type TimelineContributorReference = {
+  readonly slug: string
+  readonly name: string
+}
+
 export type TimelineEvent = {
   readonly id: number
   /** As written: old events have no exact date ("c. 1670"). */
@@ -20,6 +26,8 @@ export type TimelineEvent = {
   readonly games: readonly TimelineGameReference[]
   /** The players the event is about, in the admin's order. */
   readonly players: readonly TimelinePlayerReference[]
+  /** The contributors the event is about, in the admin's order. */
+  readonly contributors: readonly TimelineContributorReference[]
   /** Only admins see a draft. */
   readonly isDraft: boolean
 }

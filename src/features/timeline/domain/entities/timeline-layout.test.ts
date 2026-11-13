@@ -13,6 +13,7 @@ const eventIn = (year: number) => ({
   text: "x",
   games: [],
   players: [],
+  contributors: [],
   isDraft: false,
 })
 

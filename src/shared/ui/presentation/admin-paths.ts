@@ -3,6 +3,7 @@ export const ADMIN_PATHS = {
   timeline: "/admin/timeline",
   players: "/admin/players",
   games: "/admin/games",
+  contributors: "/admin/contributors",
   criteria: "/admin/criteria",
   nominations: "/admin/nominations",
   feedback: "/admin/feedback",

@@ -16,6 +16,7 @@ const eventWithId = (id: number): TimelineEvent => ({
   text: "x",
   games: [],
   players: [],
+  contributors: [],
   isDraft: false,
 })
 
@@ -29,6 +30,7 @@ function build(
     findById: vi.fn(),
     listGameOptions: vi.fn(),
     listPlayerOptions: vi.fn(),
+    listContributorOptions: vi.fn(),
     save: vi.fn(),
     reorder: vi.fn(async () => succeed(undefined)),
     delete: vi.fn(),

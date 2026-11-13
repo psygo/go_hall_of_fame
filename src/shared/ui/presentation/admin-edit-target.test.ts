@@ -10,6 +10,11 @@ describe("adminEditTargetFor", () => {
     ["/timeline", "/admin/timeline", "Edit timeline"],
     ["/resources", "/admin/resources", "Edit resources"],
     ["/induction", "/admin/criteria", "Edit criteria"],
+    [
+      "/contributors",
+      "/admin/contributors",
+      "Edit contributors",
+    ],
   ])("sends %s to %s", (path, href, label) => {
     expect(adminEditTargetFor(path)).toEqual({
       href,
@@ -28,6 +33,11 @@ describe("adminEditTargetFor", () => {
       "/admin/games/ear-reddening",
       "Edit game",
     ],
+    [
+      "/contributors/demis-hassabis",
+      "/admin/contributors/demis-hassabis",
+      "Edit contributor",
+    ],
   ])(
     "sends the detail page %s to %s",
     (path, href, label) => {
@@ -45,6 +55,8 @@ describe("adminEditTargetFor", () => {
     ["/resources/", "/admin/resources"],
     ["/induction/", "/admin/criteria"],
     ["/players/shusaku/", "/admin/players/shusaku"],
+    ["/contributors/", "/admin/contributors"],
+    ["/contributors/a/", "/admin/contributors/a"],
   ])("ignores a trailing slash: %s", (path, href) => {
     expect(adminEditTargetFor(path)?.href).toBe(href)
   })
@@ -58,6 +70,7 @@ describe("adminEditTargetFor", () => {
     "/unknown",
     "/players/shusaku/extra",
     "/games/a/b",
+    "/contributors/a/b",
     "/timeline/1",
     "/induction/x",
     "",

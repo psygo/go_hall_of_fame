@@ -46,6 +46,14 @@ export class TimelineRepositoryImpl implements TimelineRepository {
     )
   }
 
+  listContributorOptions() {
+    return captureDataState(async () =>
+      this.dataSource.listContributorOptions(
+        await this.canSeeDrafts(),
+      ),
+    )
+  }
+
   save(draft: TimelineEventDraft, id: number | null) {
     return captureDataState(() =>
       this.dataSource.upsert(draft, id),

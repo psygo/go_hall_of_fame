@@ -16,7 +16,8 @@ export const tr: Messages = {
   aboutTitle: "Go | Hall of Fame hakkında",
   aboutIntro:
     "Go | Hall of Fame, Go oyununu onurlandırır: efsanevi oyuncularını, efsanevi oyunlarını ve onları birbirine bağlayan tarihi. Açık kaynaklı, herkesin gözü önünde geliştirilen bir projedir.",
-  contributors: "Katkıda bulunanlar",
+  contributors: "Oyuna katkıda bulunanlar",
+  builtBy: "Yapanlar",
   contributorsIntro: "Bu siteyi yapan kişiler.",
   roleCreator: "Yaratıcı ve bakımcı",
   homeTitle:

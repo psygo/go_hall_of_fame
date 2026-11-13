@@ -30,9 +30,15 @@ export class SaveTimelineEvent implements UseCase<
     if (players.status === "failure") {
       return { status: "failed", error: players.error }
     }
+    const contributors =
+      await this.timeline.listContributorOptions()
+    if (contributors.status === "failure") {
+      return { status: "failed", error: contributors.error }
+    }
     const validation = validateTimelineEventForm(form, {
       games: games.data,
       players: players.data,
+      contributors: contributors.data,
     })
     if (!validation.valid) {
       return {

@@ -21,6 +21,7 @@ generated into `drizzle/` and tracked in git.
 
 ## Tables
 
++ `contributors` (migration 0016): people and organizations that served the game; `kind` is person or organization. Entered through the admin, no seed data. `timeline_event_contributors` links them to timeline events.
 + `players`: one row per inductee.
   + `slug` (unique, used in `/players/[slug]`), `induction_number` (unique, the "No. 01" of the
     Hall), `name`, `native_name`, `country` (enum `Japan | China | Korea | Others`), `years` (free text such

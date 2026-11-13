@@ -1,6 +1,7 @@
 import type { DataState } from "@/core/data-state"
 
 import type {
+  TimelineContributorReference,
   TimelineEvent,
   TimelineGameReference,
   TimelinePlayerReference,
@@ -19,6 +20,10 @@ export interface TimelineRepository {
   /** Every player in the Hall, to choose from when an event points at one. */
   listPlayerOptions(): Promise<
     DataState<readonly TimelinePlayerReference[]>
+  >
+  /** Every contributor, to choose from when an event points at one. */
+  listContributorOptions(): Promise<
+    DataState<readonly TimelineContributorReference[]>
   >
   /** Updates the event with `id`, or inserts a new one when `id` is null. */
   save(

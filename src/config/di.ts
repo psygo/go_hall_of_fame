@@ -9,6 +9,10 @@ export {
   contentAdminState,
   contentLoaders,
 } from "./wiring/content"
+export {
+  contributorsAdminState,
+  contributorsLoaders,
+} from "./wiring/contributors"
 export { dashboardState } from "./wiring/dashboard"
 export {
   gamesAdminState,

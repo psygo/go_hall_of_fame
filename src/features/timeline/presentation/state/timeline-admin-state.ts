@@ -21,6 +21,7 @@ import {
 } from "@/shared/ui/presentation/form-data"
 
 import type {
+  TimelineContributorReference,
   TimelineEvent,
   TimelineGameReference,
   TimelinePlayerReference,
@@ -57,6 +58,10 @@ export type TimelineAdminDependencies = {
   readonly listPlayerOptions: UseCase<
     NoParams,
     DataState<readonly TimelinePlayerReference[]>
+  >
+  readonly listContributorOptions: UseCase<
+    NoParams,
+    DataState<readonly TimelineContributorReference[]>
   >
   readonly saveTimelineEvent: UseCase<
     SaveTimelineEventParams,
@@ -124,6 +129,17 @@ export function createTimelineAdminState(
     )
   }
 
+  /** The contributors an event can link to. */
+  async function loadContributorOptions(): Promise<
+    readonly TimelineContributorReference[]
+  > {
+    await connection()
+    await dependencies.requireAdmin()
+    return unwrapDataState(
+      await dependencies.listContributorOptions.call({}),
+    )
+  }
+
   async function saveFromForm(
     idParam: string,
     formData: FormData,
@@ -135,6 +151,10 @@ export function createTimelineAdminState(
       text: readFormText(formData, "text"),
       gameSlugs: readFormTexts(formData, "gameSlug"),
       playerSlugs: readFormTexts(formData, "playerSlug"),
+      contributorSlugs: readFormTexts(
+        formData,
+        "contributorSlug",
+      ),
       isDraft: readFormFlag(formData, "isDraft"),
     }
     const id =
@@ -204,6 +224,7 @@ export function createTimelineAdminState(
     loadEditor,
     loadGameOptions,
     loadPlayerOptions,
+    loadContributorOptions,
     saveFromForm,
     reorder,
     deleteById,

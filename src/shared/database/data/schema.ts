@@ -59,6 +59,32 @@ export const playersTable = pgTable("players", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
+export const contributorKindEnum = pgEnum(
+  "contributor_kind",
+  ["person", "organization"],
+)
+
+/** People and organizations that served the game without being legendary players. */
+export const contributorsTable = pgTable("contributors", {
+  id: serial().primaryKey(),
+  slug: text().notNull().unique(),
+  name: text().notNull(),
+  kind: contributorKindEnum().notNull(),
+  /** What they did for Go, in a line: "Co-founder of DeepMind". */
+  role: text().notNull(),
+  /** Free text such as "2014–2017" or "since 1990". */
+  period: text().notNull().default(""),
+  /** Markdown. */
+  bio: text().notNull(),
+  photoUrl: text("photo_url"),
+  photoPosition: text("photo_position")
+    .notNull()
+    .default("50% 50%"),
+  /** A draft is visible to admins only. */
+  isDraft: boolean("is_draft").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+})
+
 export const gamesTable = pgTable("games", {
   id: serial().primaryKey(),
   slug: text().notNull().unique(),
@@ -201,6 +227,29 @@ export const timelineEventPlayersTable = pgTable(
   (table) => [
     primaryKey({
       columns: [table.eventId, table.playerId],
+    }),
+  ],
+)
+
+/** The contributors an event is about, in the order the admin listed them. */
+export const timelineEventContributorsTable = pgTable(
+  "timeline_event_contributors",
+  {
+    eventId: integer("event_id")
+      .notNull()
+      .references(() => timelineEventsTable.id, {
+        onDelete: "cascade",
+      }),
+    contributorId: integer("contributor_id")
+      .notNull()
+      .references(() => contributorsTable.id, {
+        onDelete: "cascade",
+      }),
+    position: integer().notNull().default(0),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.eventId, table.contributorId],
     }),
   ],
 )

@@ -5,6 +5,7 @@ import {
 } from "@/core/validation"
 
 import type {
+  TimelineContributorReference,
   TimelineGameReference,
   TimelinePlayerReference,
 } from "./timeline-event"
@@ -16,6 +17,7 @@ export type TimelineEventForm = {
   /** The slugs of the linked games and players, as chosen (blank rows included). */
   readonly gameSlugs: readonly string[]
   readonly playerSlugs: readonly string[]
+  readonly contributorSlugs: readonly string[]
   readonly isDraft: boolean
 }
 
@@ -26,6 +28,7 @@ export type TimelineEventDraft = {
   /** Without blanks or repeats, in the chosen order. */
   readonly gameSlugs: readonly string[]
   readonly playerSlugs: readonly string[]
+  readonly contributorSlugs: readonly string[]
   readonly isDraft: boolean
 }
 
@@ -43,6 +46,7 @@ export const TIMELINE_LIMITS = {
 export type TimelineLinkOptions = {
   readonly games: readonly TimelineGameReference[]
   readonly players: readonly TimelinePlayerReference[]
+  readonly contributors: readonly TimelineContributorReference[]
 }
 
 export function validateTimelineEventForm(
@@ -54,6 +58,9 @@ export function validateTimelineEventForm(
   const text = form.text.trim()
   const gameSlugs = distinctSlugs(form.gameSlugs)
   const playerSlugs = distinctSlugs(form.playerSlugs)
+  const contributorSlugs = distinctSlugs(
+    form.contributorSlugs,
+  )
   const errors = collectErrors({
     year: requiredError(
       year,
@@ -80,6 +87,11 @@ export function validateTimelineEventForm(
       options.players,
       "a player who is in the Hall",
     ),
+    contributorSlugs: linkError(
+      contributorSlugs,
+      options.contributors,
+      "a contributor who is listed",
+    ),
   })
   if (Object.keys(errors).length > 0) {
     return { valid: false, errors }
@@ -92,6 +104,7 @@ export function validateTimelineEventForm(
       text,
       gameSlugs,
       playerSlugs,
+      contributorSlugs,
       isDraft: form.isDraft,
     },
   }

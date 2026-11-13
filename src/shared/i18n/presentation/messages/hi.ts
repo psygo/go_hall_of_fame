@@ -16,7 +16,8 @@ export const hi: Messages = {
   aboutTitle: "Go | Hall of Fame के बारे में",
   aboutIntro:
     "Go | Hall of Fame गो के खेल का सम्मान करता है: इसके महान खिलाड़ी, इसके महान खेल और उन्हें जोड़ने वाला इतिहास। यह एक ओपन-सोर्स परियोजना है, जो खुले में बनाई गई है।",
-  contributors: "योगदानकर्ता",
+  contributors: "खेल के योगदानकर्ता",
+  builtBy: "निर्माता",
   contributorsIntro: "वे लोग जिन्होंने यह साइट बनाई।",
   roleCreator: "निर्माता और अनुरक्षक",
   homeTitle: "गो के इतिहास की कलाकृतियाँ और महान खिलाड़ी।",

@@ -3,8 +3,10 @@ import { and, asc, eq, inArray, max } from "drizzle-orm"
 import type { Database } from "@/shared/database/data/database"
 import { isVisible } from "@/shared/database/data/drafts"
 import {
+  contributorsTable,
   gamesTable,
   playersTable,
+  timelineEventContributorsTable,
   timelineEventGamesTable,
   timelineEventPlayersTable,
   timelineEventsTable,
@@ -63,10 +65,12 @@ export class TimelineDataSource {
   ): Promise<TimelineEventModel[]> {
     if (events.length === 0) return []
     const ids = events.map((event) => event.id)
-    const [games, players] = await Promise.all([
-      this.fetchGameLinks(ids, includeDrafts),
-      this.fetchPlayerLinks(ids, includeDrafts),
-    ])
+    const [games, players, contributors] =
+      await Promise.all([
+        this.fetchGameLinks(ids, includeDrafts),
+        this.fetchPlayerLinks(ids, includeDrafts),
+        this.fetchContributorLinks(ids, includeDrafts),
+      ])
     const linksOf = (
       rows: readonly LinkRow[],
       id: number,
@@ -79,6 +83,7 @@ export class TimelineDataSource {
         ...event,
         games: linksOf(games, event.id),
         players: linksOf(players, event.id),
+        contributors: linksOf(contributors, event.id),
       }),
     )
   }
@@ -138,6 +143,47 @@ export class TimelineDataSource {
       .orderBy(asc(timelineEventPlayersTable.position))
   }
 
+  private fetchContributorLinks(
+    eventIds: readonly number[],
+    includeDrafts: boolean,
+  ): Promise<LinkRow[]> {
+    return this.database
+      .select({
+        eventId: timelineEventContributorsTable.eventId,
+        slug: contributorsTable.slug,
+        name: contributorsTable.name,
+      })
+      .from(timelineEventContributorsTable)
+      .innerJoin(
+        contributorsTable,
+        eq(
+          timelineEventContributorsTable.contributorId,
+          contributorsTable.id,
+        ),
+      )
+      .where(
+        and(
+          inArray(timelineEventContributorsTable.eventId, [
+            ...eventIds,
+          ]),
+          isVisible(contributorsTable, includeDrafts),
+        ),
+      )
+      .orderBy(asc(timelineEventContributorsTable.position))
+  }
+
+  async listContributorOptions(includeDrafts: boolean) {
+    const rows = await this.database
+      .select({
+        slug: contributorsTable.slug,
+        name: contributorsTable.name,
+      })
+      .from(contributorsTable)
+      .where(isVisible(contributorsTable, includeDrafts))
+      .orderBy(asc(contributorsTable.name))
+    return rows.map(({ slug, name }) => ({ slug, name }))
+  }
+
   async listGameOptions(includeDrafts: boolean) {
     const rows = await this.database
       .select({
@@ -170,12 +216,25 @@ export class TimelineDataSource {
     draft: TimelineEventDraft,
     id: number | null,
   ): Promise<void> {
-    const { gameSlugs, playerSlugs, ...fields } = draft
+    const {
+      gameSlugs,
+      playerSlugs,
+      contributorSlugs,
+      ...fields
+    } = draft
     await this.database.transaction(async (tx) => {
       const eventId = await this.writeEvent(tx, fields, id)
       await tx
         .delete(timelineEventGamesTable)
         .where(eq(timelineEventGamesTable.eventId, eventId))
+      await tx
+        .delete(timelineEventContributorsTable)
+        .where(
+          eq(
+            timelineEventContributorsTable.eventId,
+            eventId,
+          ),
+        )
       await tx
         .delete(timelineEventPlayersTable)
         .where(
@@ -209,6 +268,22 @@ export class TimelineDataSource {
           })),
         )
       }
+      const contributors = await this.idsOf(
+        tx,
+        contributorsTable,
+        contributorSlugs,
+      )
+      if (contributors.length > 0) {
+        await tx
+          .insert(timelineEventContributorsTable)
+          .values(
+            contributors.map((contributorId, position) => ({
+              eventId,
+              contributorId,
+              position,
+            })),
+          )
+      }
     })
   }
 
@@ -216,7 +291,7 @@ export class TimelineDataSource {
     tx: Pick<Database, "select" | "insert" | "update">,
     fields: Omit<
       TimelineEventDraft,
-      "gameSlugs" | "playerSlugs"
+      "gameSlugs" | "playerSlugs" | "contributorSlugs"
     >,
     id: number | null,
   ): Promise<number> {
@@ -244,7 +319,10 @@ export class TimelineDataSource {
   /** The ids for these slugs, in the order of the slugs. */
   private async idsOf(
     tx: Pick<Database, "select">,
-    table: typeof gamesTable | typeof playersTable,
+    table:
+      | typeof gamesTable
+      | typeof playersTable
+      | typeof contributorsTable,
     slugs: readonly string[],
   ): Promise<number[]> {
     if (slugs.length === 0) return []
