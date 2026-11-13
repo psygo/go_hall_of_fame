@@ -4,6 +4,14 @@ export type TimelineGameReference = {
   readonly name: string
 }
 
+/** A game an event is about, with what its small board needs. */
+export type TimelineLinkedGame = TimelineGameReference & {
+  /** Where the board loads the record from, or null for a game without one. */
+  readonly sgf: string | null
+  /** The move the board rests on, or null for the default. */
+  readonly highlightMove: number | null
+}
+
 /** A player an event points to. */
 export type TimelinePlayerReference = {
   readonly slug: string
@@ -23,7 +31,7 @@ export type TimelineEvent = {
   readonly title: string
   readonly text: string
   /** The games the event is about, in the admin's order. */
-  readonly games: readonly TimelineGameReference[]
+  readonly games: readonly TimelineLinkedGame[]
   /** The players the event is about, in the admin's order. */
   readonly players: readonly TimelinePlayerReference[]
   /** The contributors the event is about, in the admin's order. */

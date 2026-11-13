@@ -9,7 +9,6 @@ import {
 } from "@/core/validation"
 
 import {
-  CONTRIBUTOR_KINDS,
   isContributorKind,
   type Contributor,
   type ContributorKind,

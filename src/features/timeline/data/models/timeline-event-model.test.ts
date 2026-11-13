@@ -102,8 +102,18 @@ describe("TimelineEventModel", () => {
   })
   it("reads the linked games and players in order", () => {
     const games = [
-      { slug: "ear-reddening", name: "Ear-Reddening" },
-      { slug: "move-78", name: "Move 78" },
+      {
+        slug: "ear-reddening",
+        name: "Ear-Reddening",
+        sgf: "/sgf/a.sgf",
+        highlightMove: 127,
+      },
+      {
+        slug: "move-78",
+        name: "Move 78",
+        sgf: null,
+        highlightMove: null,
+      },
     ]
     const players = [{ slug: "shusaku", name: "Shusaku" }]
 
@@ -115,6 +125,69 @@ describe("TimelineEventModel", () => {
 
     expect(entity.games).toEqual(games)
     expect(entity.players).toEqual(players)
+  })
+
+  describe("linked game sgf and highlight move", () => {
+    const base = { slug: "g", name: "G" }
+    const parse = (game: Record<string, unknown>) =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        games: [game],
+      }).toEntity().games[0]
+
+    it("reads a string sgf and an integer highlight move", () => {
+      expect(
+        parse({
+          ...base,
+          sgf: "/sgf/g.sgf",
+          highlightMove: 50,
+        }),
+      ).toEqual({
+        ...base,
+        sgf: "/sgf/g.sgf",
+        highlightMove: 50,
+      })
+    })
+
+    it("reads null values as null", () => {
+      expect(
+        parse({ ...base, sgf: null, highlightMove: null }),
+      ).toEqual({ ...base, sgf: null, highlightMove: null })
+    })
+
+    it("reads missing keys as null", () => {
+      expect(parse(base)).toEqual({
+        ...base,
+        sgf: null,
+        highlightMove: null,
+      })
+    })
+
+    it("throws when the sgf is not a string", () => {
+      expect(() => parse({ ...base, sgf: 5 })).toThrow(
+        InvalidRawDataError,
+      )
+    })
+
+    it.each(["50", 1.5, true])(
+      "throws when the highlight move is %j",
+      (highlightMove) => {
+        expect(() =>
+          parse({ ...base, highlightMove }),
+        ).toThrow(InvalidRawDataError)
+      },
+    )
+
+    it("keeps players and contributors as slug and name only", () => {
+      const entity = TimelineEventModel.fromRawData({
+        ...validRaw,
+        players: [{ ...base, sgf: "x", highlightMove: 1 }],
+        contributors: [{ ...base, sgf: "x" }],
+      }).toEntity()
+
+      expect(entity.players).toEqual([base])
+      expect(entity.contributors).toEqual([base])
+    })
   })
 
   it.each(["games", "players", "contributors"])(

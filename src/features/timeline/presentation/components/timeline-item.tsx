@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { DraftBadge } from "@/shared/ui/presentation/draft-badge"
+import { GamePreviewBoard } from "@/shared/go-board/presentation/game-preview-board"
 import { Markdown } from "@/shared/ui/presentation/markdown"
 
 import type { TimelinePlacement } from "../../domain/entities/timeline-layout"
@@ -25,21 +26,26 @@ export function TimelineItem({
 }) {
   const { event, side, index } = placement
   const stoneClass = index % 2 === 0 ? "bg-ink" : "bg-stone"
-  // Players first, then games, then contributors.
+  // Players first, then contributors; the games follow as small boards (a chip when there is no record).
   const links = [
     ...event.players.map((player) => ({
       href: `/players/${player.slug}`,
       label: player.name,
     })),
-    ...event.games.map((game) => ({
-      href: `/games/${game.slug}`,
-      label: game.name,
-    })),
+    ...event.games
+      .filter((game) => game.sgf === null)
+      .map((game) => ({
+        href: `/games/${game.slug}`,
+        label: game.name,
+      })),
     ...event.contributors.map((contributor) => ({
       href: `/contributors/${contributor.slug}`,
       label: contributor.name,
     })),
   ]
+  const boardGames = event.games.filter(
+    (game) => game.sgf !== null,
+  )
 
   return (
     <li
@@ -75,6 +81,26 @@ export function TimelineItem({
             ))}
           </ul>
         )}
+        {boardGames.map((game) => (
+          <article
+            key={game.slug}
+            className="border-divider hover:bg-accent-100 relative flex w-full max-w-[240px] flex-col gap-1.5 border p-2 text-left min-[720px]:data-[side=left]:self-end"
+            data-side={side}
+          >
+            <Link
+              href={`/games/${game.slug}`}
+              className="text-ink hover:text-accent text-sm font-bold no-underline after:absolute after:inset-0 after:content-['']"
+            >
+              {game.name}
+            </Link>
+            {game.sgf !== null && (
+              <GamePreviewBoard
+                sgf={game.sgf}
+                targetMove={game.highlightMove ?? undefined}
+              />
+            )}
+          </article>
+        ))}
       </div>
       <div
         aria-hidden

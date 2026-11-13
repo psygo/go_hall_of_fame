@@ -1,4 +1,11 @@
-import { and, asc, eq, inArray, max } from "drizzle-orm"
+import {
+  and,
+  asc,
+  eq,
+  inArray,
+  max,
+  sql,
+} from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
 import { isVisible } from "@/shared/database/data/drafts"
@@ -19,6 +26,12 @@ type LinkRow = {
   readonly eventId: number
   readonly slug: string
   readonly name: string
+}
+
+type GameLinkRow = LinkRow & {
+  readonly sgfUrl: string | null
+  readonly hasUploadedSgf: boolean
+  readonly highlightMove: number | null
 }
 
 export class TimelineDataSource {
@@ -81,7 +94,17 @@ export class TimelineDataSource {
     return events.map((event) =>
       TimelineEventModel.fromRawData({
         ...event,
-        games: linksOf(games, event.id),
+        games: games
+          .filter((row) => row.eventId === event.id)
+          .map((row) => ({
+            slug: row.slug,
+            name: row.name,
+            // An uploaded record wins over a link, as on the games pages.
+            sgf: row.hasUploadedSgf
+              ? `/games/${row.slug}/sgf`
+              : row.sgfUrl,
+            highlightMove: row.highlightMove,
+          })),
         players: linksOf(players, event.id),
         contributors: linksOf(contributors, event.id),
       }),
@@ -91,12 +114,15 @@ export class TimelineDataSource {
   private fetchGameLinks(
     eventIds: readonly number[],
     includeDrafts: boolean,
-  ): Promise<LinkRow[]> {
+  ): Promise<GameLinkRow[]> {
     return this.database
       .select({
         eventId: timelineEventGamesTable.eventId,
         slug: gamesTable.slug,
         name: gamesTable.name,
+        sgfUrl: gamesTable.sgfUrl,
+        hasUploadedSgf: sql<boolean>`${gamesTable.sgfText} is not null`,
+        highlightMove: gamesTable.highlightMove,
       })
       .from(timelineEventGamesTable)
       .innerJoin(

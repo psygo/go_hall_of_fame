@@ -1,5 +1,7 @@
 import {
   asRecord,
+  readNullableInteger,
+  readNullableString,
   readArray,
   readInteger,
   readBoolean,
@@ -10,6 +12,7 @@ import type {
   TimelineContributorReference,
   TimelineEvent,
   TimelineGameReference,
+  TimelineLinkedGame,
   TimelinePlayerReference,
 } from "../../domain/entities/timeline-event"
 
@@ -18,7 +21,7 @@ export class TimelineEventModel implements TimelineEvent {
   declare readonly year: string
   declare readonly title: string
   declare readonly text: string
-  declare readonly games: readonly TimelineGameReference[]
+  declare readonly games: readonly TimelineLinkedGame[]
   declare readonly players: readonly TimelinePlayerReference[]
   declare readonly contributors: readonly TimelineContributorReference[]
   declare readonly isDraft: boolean
@@ -34,7 +37,9 @@ export class TimelineEventModel implements TimelineEvent {
       year: readString(record, "year"),
       title: readString(record, "title"),
       text: readString(record, "text"),
-      games: readArray(record, "games").map(parseReference),
+      games: readArray(record, "games").map(
+        parseLinkedGame,
+      ),
       players: readArray(record, "players").map(
         parseReference,
       ),
@@ -47,6 +52,19 @@ export class TimelineEventModel implements TimelineEvent {
 
   toEntity(): TimelineEvent {
     return { ...this }
+  }
+}
+
+function parseLinkedGame(raw: unknown): TimelineLinkedGame {
+  const record = asRecord(raw, "linked game")
+  return {
+    slug: readString(record, "slug"),
+    name: readString(record, "name"),
+    sgf: readNullableString(record, "sgf"),
+    highlightMove: readNullableInteger(
+      record,
+      "highlightMove",
+    ),
   }
 }
 
