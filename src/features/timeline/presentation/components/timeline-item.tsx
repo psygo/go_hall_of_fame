@@ -36,23 +36,28 @@ export function TimelineItem({
       className={`${ITEM_GRID} ${itemOverlapClass(placement)}`}
     >
       <div
-        className={`col-start-3 row-start-1 mb-8 flex max-w-[460px] flex-col gap-1.5 min-[720px]:mb-12 ${cardPlacementClass[side]}`}
+        className={`relative col-start-3 row-start-1 mb-8 flex max-w-[460px] flex-col gap-1.5 min-[720px]:mb-12 ${cardPlacementClass[side]}`}
       >
         <div className="text-accent text-[28px] leading-none font-bold min-[720px]:text-[40px]">
           {event.year}
         </div>
         <div className="text-[22px] leading-[1.15] font-bold">
-          {event.title}
+          {event.game === null ? (
+            event.title
+          ) : (
+            // The title's link stretches over the whole event; links inside the text stay above it.
+            <Link
+              href={`/games/${event.game.slug}`}
+              className="text-ink hover:text-accent no-underline after:absolute after:-inset-2 after:content-['']"
+              aria-label={`${event.title}: ${event.game.name}`}
+            >
+              {event.title}
+            </Link>
+          )}
         </div>
-        <Markdown>{event.text}</Markdown>
-        {event.game !== null && (
-          <Link
-            href={`/games/${event.game.slug}`}
-            className="font-bold"
-          >
-            {event.game.name} →
-          </Link>
-        )}
+        <div className="[&_a]:relative [&_a]:z-10">
+          <Markdown>{event.text}</Markdown>
+        </div>
       </div>
       <div
         aria-hidden

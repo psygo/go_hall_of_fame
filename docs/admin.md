@@ -43,7 +43,7 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + **Resources.** Games and players have a Resources list: a link and an optional description each,
   shown as a bulleted list on the public page. Links must be https or a path on this site.
 + **Timeline** (`/admin/timeline`): events with a year, title and text, and optionally a game: the
-  event then links to that game's page. The side an event appears on
+  whole event is then a link to that game's page (links inside its text still work). The side an event appears on
   is computed: events alternate, and events within five years of the previous one stay on its side.
 + **Resources** (`/admin/resources`): the links of the public Resources page (`/resources`): a link and
   an optional description each, as a bulleted list. Its heading and eyebrow are editable under Pages.
