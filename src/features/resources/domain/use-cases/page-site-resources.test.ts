@@ -15,7 +15,11 @@ function build(
 
 const links: ResourceLink[] = Array.from(
   { length: RESOURCES_PAGE_SIZE + 1 },
-  (_, i) => ({ url: `/r${i}`, description: null }),
+  (_, i) => ({
+    title: "T",
+    url: `/r${i}`,
+    description: null,
+  }),
 )
 
 describe("PageSiteResources", () => {

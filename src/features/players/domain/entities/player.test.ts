@@ -29,6 +29,7 @@ function buildPlayer(
     photoUrl: null,
     photoPosition: "center",
     featured: false,
+    tags: [],
     ...overrides,
   }
 }
@@ -138,6 +139,17 @@ describe("searchPlayers", () => {
     ])
     expect(searchPlayers(players, "alphago")).toEqual([
       players[1],
+    ])
+  })
+
+  it("matches a tag", () => {
+    const tagged = [
+      buildPlayer("a", "Japan", { tags: ["Ko Fighter"] }),
+      buildPlayer("b"),
+    ]
+
+    expect(searchPlayers(tagged, "fighter")).toEqual([
+      tagged[0],
     ])
   })
 

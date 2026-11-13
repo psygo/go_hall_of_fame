@@ -6,6 +6,7 @@ import { GamePreviewBoard } from "@/shared/go-board/presentation/game-preview-bo
 import { ListControls } from "@/shared/ui/presentation/list-controls"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 import { Pagination } from "@/shared/ui/presentation/pagination"
+import { TagList } from "@/shared/ui/presentation/tag-list"
 import { PlayerName } from "@/shared/ui/presentation/player-name"
 
 import {
@@ -93,6 +94,7 @@ export async function GamesScreen({
                 <div className="max-w-[62ch]">
                   {excerpt(game.description)}
                 </div>
+                <TagList tags={game.tags} />
               </div>
               {sgf !== null && (
                 <div className="px-4 pb-6 min-[720px]:self-center min-[720px]:py-6 min-[720px]:pl-0">

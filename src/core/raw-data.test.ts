@@ -11,6 +11,7 @@ import {
   readNullableInteger,
   readNullableString,
   readOneOf,
+  readStringArray,
   readString,
 } from "./raw-data"
 
@@ -271,5 +272,31 @@ describe("readNullableInteger", () => {
     expect(() =>
       readNullableInteger({ n: value }, "n"),
     ).toThrow(InvalidRawDataError)
+  })
+})
+
+describe("readStringArray", () => {
+  it("returns an array of strings", () => {
+    expect(
+      readStringArray({ tags: ["a", "b"] }, "tags"),
+    ).toEqual(["a", "b"])
+    expect(readStringArray({ tags: [] }, "tags")).toEqual(
+      [],
+    )
+  })
+
+  it("throws when the value is not an array", () => {
+    expect(() =>
+      readStringArray({ tags: "a" }, "tags"),
+    ).toThrow(InvalidRawDataError)
+    expect(() => readStringArray({}, "tags")).toThrow(
+      InvalidRawDataError,
+    )
+  })
+
+  it("throws when an item is not a string", () => {
+    expect(() =>
+      readStringArray({ tags: ["a", 1] }, "tags"),
+    ).toThrow('"tags" must be an array of strings')
   })
 })

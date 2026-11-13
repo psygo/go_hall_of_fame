@@ -171,6 +171,13 @@ export function GameForm({
         hint="Optional. The move drawn in orange; the list preview plays up to it. Blank means move 50."
         error={errors.highlightMove}
       />
+      <TextField
+        name="tags"
+        label="Tags"
+        defaultValue={values.tags}
+        hint="Optional, separated by commas (for example: ai, title match). Up to 8."
+        error={errors.tags}
+      />
       <ResourceFields
         initial={values.resources}
         error={errors.resources}

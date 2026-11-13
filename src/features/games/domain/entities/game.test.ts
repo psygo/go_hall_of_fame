@@ -31,6 +31,7 @@ function buildGame(
     hasUploadedSgf: false,
     highlightMove: null,
     featured: false,
+    tags: [],
     sequence: 0,
     ...overrides,
   }
@@ -114,6 +115,17 @@ describe("searchGames", () => {
 
     expect(searchGames(described, "reddening")).toEqual([
       described[0],
+    ])
+  })
+
+  it("matches a tag", () => {
+    const tagged = [
+      buildGame("a", { tags: ["ladder"] }),
+      buildGame("b"),
+    ]
+
+    expect(searchGames(tagged, "ladder")).toEqual([
+      tagged[0],
     ])
   })
 

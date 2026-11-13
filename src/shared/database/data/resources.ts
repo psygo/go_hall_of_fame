@@ -42,6 +42,7 @@ export function selectResources(
 ) {
   return executor
     .select({
+      title: resourcesTable.title,
       url: resourcesTable.url,
       description: resourcesTable.description,
     })
@@ -67,6 +68,7 @@ export async function replaceResources(
     links.map((link, position) => ({
       gameId: owner.kind === "game" ? owner.id : null,
       playerId: owner.kind === "player" ? owner.id : null,
+      title: link.title,
       url: link.url,
       description: link.description,
       position,

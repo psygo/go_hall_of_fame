@@ -72,7 +72,8 @@ export class PlayersDataSource {
     draft: PlayerDraft,
     originalSlug: string | null,
   ): Promise<void> {
-    const { resources, ...fields } = draft
+    const { resources, tags, ...rest } = draft
+    const fields = { ...rest, tags: [...tags] }
     await this.database.transaction(async (tx) => {
       if (draft.featured) {
         await tx

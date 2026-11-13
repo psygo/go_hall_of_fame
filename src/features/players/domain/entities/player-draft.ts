@@ -4,6 +4,7 @@ import {
   type ResourceLink,
   type ResourceRow,
 } from "@/core/resources"
+import { validateTags } from "@/core/tags"
 import {
   collectErrors,
   isReservedSlug,
@@ -33,6 +34,8 @@ export type PlayerForm = {
   readonly photoPosition: string
   readonly inductionNumber: string
   readonly featured: boolean
+  /** Comma-separated, optional. */
+  readonly tags: string
   readonly resources: readonly ResourceRow[]
 }
 
@@ -48,6 +51,7 @@ export type PlayerDraft = {
   readonly photoPosition: string
   readonly inductionNumber: number
   readonly featured: boolean
+  readonly tags: readonly string[]
   readonly resources: readonly ResourceLink[]
 }
 
@@ -91,8 +95,10 @@ export function validatePlayerForm(
     form.photoPosition.trim() || DEFAULT_PHOTO_POSITION
 
   const resources = validateResourceRows(form.resources)
+  const tags = validateTags(form.tags)
 
   const errors = collectErrors({
+    tags: tags.valid ? undefined : tags.error,
     resources: resources.valid
       ? undefined
       : resources.error,
@@ -139,7 +145,8 @@ export function validatePlayerForm(
     Object.keys(errors).length > 0 ||
     inductionNumber === null ||
     !isCountry(form.country) ||
-    !resources.valid
+    !resources.valid ||
+    !tags.valid
   ) {
     return { valid: false, errors }
   }
@@ -157,6 +164,7 @@ export function validatePlayerForm(
       photoPosition,
       inductionNumber,
       featured: form.featured,
+      tags: tags.tags,
       resources: resources.links,
     },
   }

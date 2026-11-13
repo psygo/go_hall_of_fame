@@ -1,4 +1,5 @@
 import { playersAdminState } from "@/config/di"
+import { formatTags } from "@/core/tags"
 import { AdminSection } from "@/shared/ui/presentation/admin-section"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
@@ -41,8 +42,10 @@ export async function AdminPlayerEditorScreen({
                 ? ""
                 : String(player.inductionNumber),
             featured: player?.featured ?? false,
+            tags: formatTags(player?.tags ?? []),
             resources: (player?.resources ?? []).map(
               (resource) => ({
+                title: resource.title,
                 url: resource.url,
                 description: resource.description ?? "",
               }),

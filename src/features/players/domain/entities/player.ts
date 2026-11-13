@@ -23,6 +23,7 @@ export type Player = {
   readonly photoUrl: string | null
   readonly photoPosition: string
   readonly featured: boolean
+  readonly tags: readonly string[]
 }
 
 export type PlayerGameReference = {
@@ -102,6 +103,7 @@ export function searchPlayers(
         player.country,
         player.distinction,
         player.years,
+        ...player.tags,
       ],
       query,
     ),

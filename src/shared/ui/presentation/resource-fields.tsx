@@ -14,7 +14,7 @@ type ResourceFieldsProps = {
 
 type KeyedRow = ResourceRow & { readonly key: number }
 
-/** The editor for a list of links with optional descriptions. Posts `resourceUrl` and `resourceDescription`. */
+/** The editor for a list of links with optional descriptions. Posts `resourceTitle`, `resourceUrl` and `resourceDescription`. */
 export function ResourceFields({
   initial,
   error,
@@ -27,7 +27,7 @@ export function ResourceFields({
   function addRow() {
     setRows([
       ...rows,
-      { url: "", description: "", key: nextKey },
+      { title: "", url: "", description: "", key: nextKey },
     ])
     setNextKey(nextKey + 1)
   }
@@ -56,8 +56,22 @@ export function ResourceFields({
         {rows.map((row) => (
           <li
             key={row.key}
-            className="border-divider grid gap-2 border p-3 min-[720px]:grid-cols-[1fr_1fr_auto]"
+            className="border-divider grid gap-2 border p-3 min-[720px]:grid-cols-[1fr_1fr_1fr_auto]"
           >
+            <input
+              name="resourceTitle"
+              type="text"
+              aria-label="Name"
+              placeholder="Name"
+              value={row.title}
+              onChange={(event) =>
+                changeRow(row.key, {
+                  title: event.target.value,
+                })
+              }
+              maxLength={RESOURCE_LIMITS.title}
+              className="input"
+            />
             <input
               name="resourceUrl"
               type="text"

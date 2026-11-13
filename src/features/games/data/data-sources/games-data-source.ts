@@ -39,6 +39,7 @@ const gameSelection = {
   hasUploadedSgf: sql<boolean>`${gamesTable.sgfText} is not null`,
   sequence: gamesTable.sequence,
   featured: gamesTable.featured,
+  tags: gamesTable.tags,
 }
 
 export class GamesDataSource {
@@ -167,6 +168,7 @@ export class GamesDataSource {
         highlightMove: draft.highlightMove,
         sequence: draft.sequence,
         featured: draft.featured,
+        tags: [...draft.tags],
         ...sgfColumn(draft),
       }
       const [row] =

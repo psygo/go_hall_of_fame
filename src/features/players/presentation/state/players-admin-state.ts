@@ -172,6 +172,7 @@ function readPlayerForm(formData: FormData): PlayerForm {
       "inductionNumber",
     ),
     featured: readFormFlag(formData, "featured"),
+    tags: readFormText(formData, "tags"),
     resources: readResourceRows(formData),
   }
 }

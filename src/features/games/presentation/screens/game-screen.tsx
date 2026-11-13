@@ -6,6 +6,7 @@ import { Markdown } from "@/shared/ui/presentation/markdown"
 import { NeighborBar } from "@/shared/ui/presentation/neighbor-bar"
 import { displayTitleClass } from "@/shared/ui/presentation/page-header"
 import { PlayerName } from "@/shared/ui/presentation/player-name"
+import { TagList } from "@/shared/ui/presentation/tag-list"
 import { ResourceList } from "@/shared/ui/presentation/resource-list"
 import { SectionLabel } from "@/shared/ui/presentation/section-label"
 
@@ -58,6 +59,7 @@ export async function GameScreen({
         <Markdown className="max-w-[56ch] text-lg">
           {detail.description}
         </Markdown>
+        <TagList tags={detail.tags} searchPath="/games" />
         {sgf !== null && (
           <div className="flex flex-col gap-1.5">
             <SectionLabel>The record</SectionLabel>

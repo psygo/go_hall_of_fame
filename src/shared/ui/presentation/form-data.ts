@@ -15,17 +15,23 @@ export function readFormFlag(
   return formData.get(key) !== null
 }
 
-/** The rows of the resource editor: the fields `resourceUrl` and `resourceDescription`, in order. */
+/** The rows of the resource editor: the fields `resourceTitle`, `resourceUrl` and `resourceDescription`, in order. */
 export function readResourceRows(
   formData: FormData,
 ): ResourceRow[] {
+  const titles = readFormTexts(formData, "resourceTitle")
   const urls = readFormTexts(formData, "resourceUrl")
   const descriptions = readFormTexts(
     formData,
     "resourceDescription",
   )
-  const count = Math.max(urls.length, descriptions.length)
+  const count = Math.max(
+    titles.length,
+    urls.length,
+    descriptions.length,
+  )
   return Array.from({ length: count }, (_, index) => ({
+    title: titles[index] ?? "",
     url: urls[index] ?? "",
     description: descriptions[index] ?? "",
   }))

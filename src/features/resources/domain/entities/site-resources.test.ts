@@ -8,18 +8,23 @@ describe("validateSiteResourcesForm", () => {
       validateSiteResourcesForm({
         resources: [
           {
+            title: "T",
             url: " https://a.example ",
             description: " A ",
           },
-          { url: "", description: "" },
-          { url: "/b", description: "" },
+          { title: "", url: "", description: "" },
+          { title: "T", url: "/b", description: "" },
         ],
       }),
     ).toEqual({
       valid: true,
       draft: [
-        { url: "https://a.example", description: "A" },
-        { url: "/b", description: null },
+        {
+          title: "T",
+          url: "https://a.example",
+          description: "A",
+        },
+        { title: "T", url: "/b", description: null },
       ],
     })
   })
@@ -37,7 +42,11 @@ describe("validateSiteResourcesForm", () => {
     expect(
       validateSiteResourcesForm({
         resources: [
-          { url: "http://a.example", description: "" },
+          {
+            title: "T",
+            url: "http://a.example",
+            description: "",
+          },
         ],
       }),
     ).toEqual({

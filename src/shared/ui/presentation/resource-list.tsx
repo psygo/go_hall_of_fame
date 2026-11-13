@@ -15,11 +15,11 @@ export function ResourceList({
       <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5">
         {resources.map((resource) => (
           <li
-            key={`${resource.url}-${resource.description}`}
+            key={`${resource.title || resource.url}-${resource.url}`}
           >
             <a
               href={resource.url}
-              className="font-bold break-all"
+              className="font-bold"
               {...(resource.url.startsWith("https://")
                 ? {
                     target: "_blank",
@@ -27,7 +27,7 @@ export function ResourceList({
                   }
                 : {})}
             >
-              {resource.url}
+              {resource.title || resource.url}
             </a>
             {resource.description !== null && (
               <span> — {resource.description}</span>

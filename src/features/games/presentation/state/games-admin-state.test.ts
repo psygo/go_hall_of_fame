@@ -55,6 +55,7 @@ const game: Game = {
   hasUploadedSgf: false,
   highlightMove: null,
   featured: false,
+  tags: [],
   sequence: 0,
 }
 const detail: GameDetail = {
@@ -77,6 +78,7 @@ const fields = {
   description: "H",
   sgfUrl: "",
   sequence: "0",
+  tags: "ko, famous",
 }
 
 const blankExtras = {
@@ -362,6 +364,8 @@ describe("saveFromForm", () => {
       new File(["(;GM[1])"], "game.sgf"),
     )
     formData.set("removeSgf", "on")
+    formData.append("resourceTitle", "T")
+    formData.append("resourceTitle", "T")
     formData.append("resourceUrl", "https://example.com")
     formData.append("resourceDescription", "Notes")
     formData.append("resourceUrl", "/local")
@@ -377,10 +381,11 @@ describe("saveFromForm", () => {
         removeSgf: true,
         resources: [
           {
+            title: "T",
             url: "https://example.com",
             description: "Notes",
           },
-          { url: "/local", description: "" },
+          { title: "T", url: "/local", description: "" },
         ],
       }),
     })

@@ -19,6 +19,7 @@ const validPlayer = {
   photoUrl: "https://example.com/p.jpg",
   photoPosition: "center top",
   featured: true,
+  tags: ["opening", "famous"],
 }
 
 const validGames = [
@@ -131,6 +132,26 @@ describe("PlayerModel", () => {
     )
   })
 
+  it("parses tags and reads an empty list", () => {
+    expect(
+      PlayerModel.fromRawData({ ...validPlayer }).tags,
+    ).toEqual(["opening", "famous"])
+    expect(
+      PlayerModel.fromRawData({ ...validPlayer, tags: [] })
+        .tags,
+    ).toEqual([])
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "ko"],
+    ["an array with a number", ["ko", 3]],
+  ])("throws when tags is %s", (_, tags) => {
+    expect(() =>
+      PlayerModel.fromRawData({ ...validPlayer, tags }),
+    ).toThrow(InvalidRawDataError)
+  })
+
   it("converts to a plain entity equal to the fields", () => {
     const entity = PlayerModel.fromRawData({
       ...validPlayer,
@@ -149,7 +170,11 @@ describe("PlayerDetailModel", () => {
     ...validPlayer,
     games: validGames,
     resources: [
-      { url: "https://example.com", description: "Notes" },
+      {
+        title: "T",
+        url: "https://example.com",
+        description: "Notes",
+      },
     ],
   }
 

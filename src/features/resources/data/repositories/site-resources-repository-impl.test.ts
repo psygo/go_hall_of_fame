@@ -19,7 +19,11 @@ function build(
 
 describe("SiteResourcesRepositoryImpl", () => {
   it("lists plain entities", async () => {
-    const link = { url: "/a", description: null }
+    const link = {
+      title: "T",
+      url: "/a",
+      description: null,
+    }
     const state = await build({
       fetchAll: vi.fn(async () => [
         ResourceLinkModel.fromRawData(link),
@@ -39,7 +43,9 @@ describe("SiteResourcesRepositoryImpl", () => {
 
   it("replaces all links through the data source", async () => {
     const replaceAll = vi.fn(async () => undefined)
-    const links = [{ url: "/a", description: "A" }]
+    const links = [
+      { title: "T", url: "/a", description: "A" },
+    ]
 
     expect(
       await build({ replaceAll }).replaceAll(links),

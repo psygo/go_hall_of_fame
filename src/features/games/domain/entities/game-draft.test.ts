@@ -24,6 +24,7 @@ function buildGame(slug: string): Game {
     hasUploadedSgf: false,
     highlightMove: null,
     featured: false,
+    tags: [],
     sequence: 0,
   }
 }
@@ -53,6 +54,7 @@ function buildForm(
     sequence: "1",
     highlightMove: "",
     featured: false,
+    tags: "",
     sgfFileText: "",
     sgfFileTooLarge: false,
     removeSgf: false,
@@ -100,6 +102,7 @@ describe("validateGameForm", () => {
         sequence: 1,
         highlightMove: null,
         featured: false,
+        tags: [],
         blackPlayerSlug: "lee-sedol",
         whitePlayerSlug: null,
         playerSlugs: ["lee-sedol"],
@@ -139,6 +142,43 @@ describe("validateGameForm", () => {
         sgfUrl: "/sgf/a.sgf",
         sequence: 2,
       }),
+    })
+  })
+
+  describe("tags", () => {
+    function tagsOf(tags: string) {
+      const result = validate(buildForm({ tags }))
+      if (!result.valid) throw new Error("expected valid")
+      return result.draft.tags
+    }
+
+    it("accepts blank tags as an empty list", () => {
+      expect(tagsOf("")).toEqual([])
+      expect(tagsOf(" , ")).toEqual([])
+    })
+
+    it("trims and removes repeated tags", () => {
+      expect(tagsOf(" ko , Ko,  seki ")).toEqual([
+        "ko",
+        "seki",
+      ])
+    })
+
+    it("rejects more than 8 tags under the tags key", () => {
+      const tags = Array.from(
+        { length: 9 },
+        (_, i) => `t${i}`,
+      )
+
+      expect(
+        errorsOf(buildForm({ tags: tags.join(",") })).tags,
+      ).toBe("Use at most 8 tags.")
+    })
+
+    it("rejects a tag over 24 characters", () => {
+      expect(
+        errorsOf(buildForm({ tags: "x".repeat(25) })).tags,
+      ).toMatch(/24 characters/)
     })
   })
 
@@ -540,11 +580,16 @@ describe("validateGameForm", () => {
           buildForm({
             resources: [
               {
+                title: "T",
                 url: " https://example.com/a ",
                 description: " A ",
               },
-              { url: "", description: "" },
-              { url: "/notes", description: "" },
+              { title: "", url: "", description: "" },
+              {
+                title: "T",
+                url: "/notes",
+                description: "",
+              },
             ],
           }),
         ),
@@ -553,10 +598,15 @@ describe("validateGameForm", () => {
         draft: expect.objectContaining({
           resources: [
             {
+              title: "T",
               url: "https://example.com/a",
               description: "A",
             },
-            { url: "/notes", description: null },
+            {
+              title: "T",
+              url: "/notes",
+              description: null,
+            },
           ],
         }),
       })
@@ -568,6 +618,7 @@ describe("validateGameForm", () => {
           buildForm({
             resources: [
               {
+                title: "T",
                 url: "javascript:alert(1)",
                 description: "",
               },

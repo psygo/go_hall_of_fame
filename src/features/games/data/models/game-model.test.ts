@@ -19,6 +19,7 @@ const validGame = {
   hasUploadedSgf: false,
   highlightMove: null,
   featured: false,
+  tags: ["ko"],
   sequence: 2,
 }
 
@@ -140,6 +141,26 @@ describe("GameModel", () => {
     )
   })
 
+  it("parses tags and reads an empty list", () => {
+    expect(
+      GameModel.fromRawData({ ...validGame }).tags,
+    ).toEqual(["ko"])
+    expect(
+      GameModel.fromRawData({ ...validGame, tags: [] })
+        .tags,
+    ).toEqual([])
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "ko"],
+    ["an array with a number", ["ko", 3]],
+  ])("throws when tags is %s", (_, tags) => {
+    expect(() =>
+      GameModel.fromRawData({ ...validGame, tags }),
+    ).toThrow(InvalidRawDataError)
+  })
+
   it("converts to a plain entity equal to the fields", () => {
     const entity = GameModel.fromRawData({
       ...validGame,
@@ -158,7 +179,11 @@ describe("GameDetailModel", () => {
     ...validGame,
     players: validPlayers,
     resources: [
-      { url: "https://example.com", description: null },
+      {
+        title: "T",
+        url: "https://example.com",
+        description: null,
+      },
     ],
   }
 
@@ -192,6 +217,16 @@ describe("GameDetailModel", () => {
         players: [],
       }),
     ).toThrow('"resources" must be an array')
+  })
+
+  it("throws when a resource has no title", () => {
+    expect(() =>
+      GameDetailModel.fromRawData({
+        ...validGame,
+        players: [],
+        resources: [{ url: "/a", description: null }],
+      }),
+    ).toThrow(InvalidRawDataError)
   })
 
   it("throws when a resource has no url", () => {

@@ -4,6 +4,7 @@ import { contentLoaders, playersLoaders } from "@/config/di"
 import { ListControls } from "@/shared/ui/presentation/list-controls"
 import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
+import { TagList } from "@/shared/ui/presentation/tag-list"
 import { Portrait } from "@/shared/ui/presentation/portrait"
 
 import {
@@ -37,7 +38,7 @@ export async function PlayersScreen({
       >
         <ListControls
           search={{
-            placeholder: "Name, country, distinction…",
+            placeholder: "Name, country, distinction, tag…",
             value: query,
           }}
           filters={[
@@ -98,6 +99,7 @@ export async function PlayersScreen({
               <div className="mt-auto pt-2 text-sm font-bold">
                 {player.distinction}
               </div>
+              <TagList tags={player.tags} />
             </div>
           </Link>
         ))}

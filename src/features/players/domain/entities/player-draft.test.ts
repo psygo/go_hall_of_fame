@@ -25,6 +25,7 @@ function buildPlayer(
     photoUrl: null,
     photoPosition: "50% 50%",
     featured: false,
+    tags: [],
   }
 }
 
@@ -48,6 +49,7 @@ function buildForm(
     photoPosition: "40% 20%",
     inductionNumber: "3",
     featured: true,
+    tags: "",
     resources: [],
     ...overrides,
   }
@@ -105,6 +107,7 @@ describe("validatePlayerForm", () => {
         photoPosition: "40% 20%",
         inductionNumber: 3,
         featured: true,
+        tags: [],
         resources: [],
       },
     })
@@ -475,6 +478,43 @@ describe("validatePlayerForm", () => {
   })
 })
 
+describe("validatePlayerForm tags", () => {
+  function tagsOf(tags: string) {
+    const result = validate(buildForm({ tags }))
+    if (!result.valid) throw new Error("expected valid")
+    return result.draft.tags
+  }
+
+  it("accepts blank tags as an empty list", () => {
+    expect(tagsOf("")).toEqual([])
+    expect(tagsOf(" , ")).toEqual([])
+  })
+
+  it("trims and removes repeated tags", () => {
+    expect(tagsOf(" ko , Ko,  seki ")).toEqual([
+      "ko",
+      "seki",
+    ])
+  })
+
+  it("rejects more than 8 tags under the tags key", () => {
+    const tags = Array.from(
+      { length: 9 },
+      (_, i) => `t${i}`,
+    )
+
+    expect(
+      errorsOf(buildForm({ tags: tags.join(",") })).tags,
+    ).toBe("Use at most 8 tags.")
+  })
+
+  it("rejects a tag over 24 characters", () => {
+    expect(
+      errorsOf(buildForm({ tags: "x".repeat(25) })).tags,
+    ).toMatch(/24 characters/)
+  })
+})
+
 describe("validatePlayerForm resources", () => {
   it("returns the cleaned links in the draft", () => {
     expect(
@@ -482,10 +522,11 @@ describe("validatePlayerForm resources", () => {
         buildForm({
           resources: [
             {
+              title: "T",
               url: " https://example.com ",
               description: " Bio ",
             },
-            { url: "", description: "" },
+            { title: "", url: "", description: "" },
           ],
         }),
       ),
@@ -494,6 +535,7 @@ describe("validatePlayerForm resources", () => {
       draft: expect.objectContaining({
         resources: [
           {
+            title: "T",
             url: "https://example.com",
             description: "Bio",
           },
@@ -507,7 +549,11 @@ describe("validatePlayerForm resources", () => {
       errorsOf(
         buildForm({
           resources: [
-            { url: "http://example.com", description: "" },
+            {
+              title: "T",
+              url: "http://example.com",
+              description: "",
+            },
           ],
         }),
       ).resources,

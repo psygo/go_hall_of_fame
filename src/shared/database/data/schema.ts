@@ -48,6 +48,11 @@ export const playersTable = pgTable("players", {
     .notNull()
     .default("50% 50%"),
   featured: boolean().notNull().default(false),
+  /** Optional short labels, at most 8. */
+  tags: text()
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
@@ -80,6 +85,11 @@ export const gamesTable = pgTable("games", {
   /** Orders games with the same year. */
   sequence: integer().notNull().default(0),
   featured: boolean().notNull().default(false),
+  /** Optional short labels, at most 8. */
+  tags: text()
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
@@ -118,6 +128,8 @@ export const resourcesTable = pgTable(
       () => playersTable.id,
       { onDelete: "cascade" },
     ),
+    /** The clickable text of the link. */
+    title: text().notNull().default(""),
     url: text().notNull(),
     description: text(),
     position: integer().notNull().default(0),

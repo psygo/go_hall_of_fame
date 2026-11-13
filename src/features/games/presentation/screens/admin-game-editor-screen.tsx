@@ -1,4 +1,5 @@
 import { gamesAdminState } from "@/config/di"
+import { formatTags } from "@/core/tags"
 import { AdminSection } from "@/shared/ui/presentation/admin-section"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
@@ -42,6 +43,7 @@ export async function AdminGameEditorScreen({
                 ? ""
                 : String(game.highlightMove),
             featured: game?.featured ?? false,
+            tags: formatTags(game?.tags ?? []),
             sgfFileText: "",
             sgfFileTooLarge: false,
             removeSgf: false,
@@ -49,6 +51,7 @@ export async function AdminGameEditorScreen({
             whitePlayerSlug: game?.whitePlayerSlug ?? "",
             resources: (game?.resources ?? []).map(
               (resource) => ({
+                title: resource.title,
                 url: resource.url,
                 description: resource.description ?? "",
               }),

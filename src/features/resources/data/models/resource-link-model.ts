@@ -6,6 +6,7 @@ import {
 import type { ResourceLink } from "@/core/resources"
 
 export class ResourceLinkModel implements ResourceLink {
+  declare readonly title: string
   declare readonly url: string
   declare readonly description: string | null
 
@@ -16,6 +17,7 @@ export class ResourceLinkModel implements ResourceLink {
   static fromRawData(raw: unknown): ResourceLinkModel {
     const record = asRecord(raw, "resource")
     return new ResourceLinkModel({
+      title: readString(record, "title"),
       url: readString(record, "url"),
       description: readNullableString(
         record,

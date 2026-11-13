@@ -6,6 +6,7 @@ import {
   readOneOf,
   readNullableString,
   readString,
+  readStringArray,
 } from "@/core/raw-data"
 
 import type { ResourceLink } from "@/core/resources"
@@ -29,6 +30,7 @@ export class PlayerModel implements Player {
   declare readonly photoUrl: string | null
   declare readonly photoPosition: string
   declare readonly featured: boolean
+  declare readonly tags: readonly string[]
 
   protected constructor(fields: Player) {
     Object.assign(this, fields)
@@ -90,6 +92,7 @@ function parsePlayerFields(raw: unknown): Player {
     photoUrl: readNullableString(record, "photoUrl"),
     photoPosition: readString(record, "photoPosition"),
     featured: readBoolean(record, "featured"),
+    tags: readStringArray(record, "tags"),
   }
 }
 
@@ -107,6 +110,7 @@ function parseGameReference(
 function parseResourceLink(raw: unknown): ResourceLink {
   const record = asRecord(raw, "resource")
   return {
+    title: readString(record, "title"),
     url: readString(record, "url"),
     description: readNullableString(record, "description"),
   }

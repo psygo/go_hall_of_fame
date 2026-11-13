@@ -89,14 +89,20 @@ describe("readFormTexts", () => {
 describe("readResourceRows", () => {
   it("pairs urls with descriptions by position", () => {
     const formData = new FormData()
+    formData.append("resourceTitle", "A site")
     formData.append("resourceUrl", "https://a.example")
     formData.append("resourceDescription", "A")
+    formData.append("resourceTitle", "B page")
     formData.append("resourceUrl", "/b")
     formData.append("resourceDescription", "B")
 
     expect(readResourceRows(formData)).toEqual([
-      { url: "https://a.example", description: "A" },
-      { url: "/b", description: "B" },
+      {
+        title: "A site",
+        url: "https://a.example",
+        description: "A",
+      },
+      { title: "B page", url: "/b", description: "B" },
     ])
   })
 
@@ -107,8 +113,17 @@ describe("readResourceRows", () => {
     formData.append("resourceDescription", "A")
 
     expect(readResourceRows(formData)).toEqual([
-      { url: "/a", description: "A" },
-      { url: "/b", description: "" },
+      { title: "", url: "/a", description: "A" },
+      { title: "", url: "/b", description: "" },
+    ])
+  })
+
+  it("reads a title typed without a link as a row", () => {
+    const formData = new FormData()
+    formData.append("resourceTitle", "Only a name")
+
+    expect(readResourceRows(formData)).toEqual([
+      { title: "Only a name", url: "", description: "" },
     ])
   })
 
@@ -123,8 +138,8 @@ describe("readResourceRows", () => {
     formData.append("resourceDescription", "Orphan")
 
     expect(readResourceRows(formData)).toEqual([
-      { url: "/a", description: "A" },
-      { url: "", description: "Orphan" },
+      { title: "", url: "/a", description: "A" },
+      { title: "", url: "", description: "Orphan" },
     ])
   })
 

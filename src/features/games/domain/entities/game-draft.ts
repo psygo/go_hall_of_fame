@@ -3,6 +3,7 @@ import {
   type ResourceLink,
   type ResourceRow,
 } from "@/core/resources"
+import { validateTags } from "@/core/tags"
 import { isValidSlug, slugify } from "@/core/slugify"
 import {
   collectErrors,
@@ -35,6 +36,8 @@ export type GameForm = {
   /** The move to highlight, or "" for the default (move 50). */
   readonly highlightMove: string
   readonly featured: boolean
+  /** Comma-separated, optional. */
+  readonly tags: string
   /** The slug of the Hall player who played Black / White, or "" for none. */
   readonly blackPlayerSlug: string
   readonly whitePlayerSlug: string
@@ -60,6 +63,7 @@ export type GameDraft = {
   readonly sequence: number
   readonly highlightMove: number | null
   readonly featured: boolean
+  readonly tags: readonly string[]
   readonly blackPlayerSlug: string | null
   readonly whitePlayerSlug: string | null
   /** The Black and White players, without repeats: the players listed on the game. */
@@ -112,11 +116,13 @@ export function validateGameForm(
     ...new Set([blackPlayerSlug, whitePlayerSlug]),
   ].filter((candidate) => candidate !== "")
   const resources = validateResourceRows(form.resources)
+  const tags = validateTags(form.tags)
   const known = new Set(
     context.playerOptions.map((player) => player.slug),
   )
 
   const errors = collectErrors({
+    tags: tags.valid ? undefined : tags.error,
     name: required(name, GAME_LIMITS.name, "a name"),
     slug: slugError(slug, context),
     year: rangeError(
@@ -178,7 +184,8 @@ export function validateGameForm(
     Object.keys(errors).length > 0 ||
     year === null ||
     sequence === null ||
-    !resources.valid
+    !resources.valid ||
+    !tags.valid
   ) {
     return { valid: false, errors }
   }
@@ -197,6 +204,7 @@ export function validateGameForm(
       sequence,
       highlightMove,
       featured: form.featured,
+      tags: tags.tags,
       blackPlayerSlug: blackPlayerSlug || null,
       whitePlayerSlug: whitePlayerSlug || null,
       playerSlugs,

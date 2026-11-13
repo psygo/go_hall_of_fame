@@ -8,11 +8,13 @@ describe("ResourceLinkModel", () => {
   it("parses a link into a plain entity", () => {
     const entity = ResourceLinkModel.fromRawData({
       id: 1,
+      title: "T",
       url: "https://a.example",
       description: "A",
     }).toEntity()
 
     expect(entity).toEqual({
+      title: "T",
       url: "https://a.example",
       description: "A",
     })
@@ -24,13 +26,16 @@ describe("ResourceLinkModel", () => {
   it("reads a null or missing description as null", () => {
     expect(
       ResourceLinkModel.fromRawData({
+        title: "T",
         url: "/a",
         description: null,
       }).description,
     ).toBeNull()
     expect(
-      ResourceLinkModel.fromRawData({ url: "/a" })
-        .description,
+      ResourceLinkModel.fromRawData({
+        title: "T",
+        url: "/a",
+      }).description,
     ).toBeNull()
   })
 

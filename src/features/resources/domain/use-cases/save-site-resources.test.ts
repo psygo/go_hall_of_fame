@@ -22,7 +22,11 @@ function build(
 
 const valid = {
   resources: [
-    { url: " https://a.example ", description: "" },
+    {
+      title: "T",
+      url: " https://a.example ",
+      description: "",
+    },
   ],
 }
 
@@ -34,7 +38,11 @@ describe("SaveSiteResources", () => {
       status: "saved",
     })
     expect(repository.replaceAll).toHaveBeenCalledWith([
-      { url: "https://a.example", description: null },
+      {
+        title: "T",
+        url: "https://a.example",
+        description: null,
+      },
     ])
   })
 
@@ -44,7 +52,9 @@ describe("SaveSiteResources", () => {
     expect(
       await useCase.call({
         form: {
-          resources: [{ url: "", description: "x" }],
+          resources: [
+            { title: "T", url: "", description: "x" },
+          ],
         },
       }),
     ).toEqual({

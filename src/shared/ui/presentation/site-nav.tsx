@@ -6,19 +6,22 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 
 import { EditPageButton } from "./edit-page-button"
+import { LocaleMenu } from "@/shared/i18n/presentation/locale-menu"
+import { useLocale } from "@/shared/i18n/presentation/locale-provider"
 import { ThemeToggle } from "./theme-toggle"
 import { UserMenu, type NavAdmin } from "./user-menu"
 
 const NAV_ITEMS = [
-  { href: "/players", label: "Players" },
-  { href: "/games", label: "Games" },
-  { href: "/timeline", label: "Timeline" },
-  { href: "/induction", label: "Induction" },
-  { href: "/resources", label: "Resources" },
+  { href: "/players", label: "players" },
+  { href: "/games", label: "games" },
+  { href: "/timeline", label: "timeline" },
+  { href: "/induction", label: "induction" },
+  { href: "/resources", label: "resources" },
+  { href: "/about", label: "about" },
 ] as const
 
 const linkClass =
-  "text-sm text-ink no-underline hover:text-accent aria-[current=page]:text-accent"
+  "text-sm min-[1000px]:text-base text-ink no-underline hover:text-accent aria-[current=page]:text-accent"
 
 type SiteNavProps = {
   readonly admin: NavAdmin | null
@@ -26,6 +29,7 @@ type SiteNavProps = {
 }
 
 export function SiteNav({ admin, signOut }: SiteNavProps) {
+  const { messages } = useLocale()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -63,19 +67,20 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
               className={linkClass}
               aria-current={currentOf(href)}
             >
-              {label}
+              {messages[label]}
             </Link>
           ))}
         </div>
         {admin !== null && <EditPageButton />}
         <ThemeToggle />
+        <LocaleMenu />
         <button
           type="button"
           className="btn btn-secondary min-[720px]:hidden"
           aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen((open) => !open)}
         >
-          {isMenuOpen ? "Close" : "Menu"}
+          {isMenuOpen ? messages.close : messages.menu}
         </button>
         {admin !== null && (
           <UserMenu admin={admin} signOut={signOut} />
@@ -91,7 +96,7 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
               onClick={() => setIsMenuOpen(false)}
               className="border-divider text-ink hover:text-accent aria-[current=page]:text-accent border-t px-4 py-3.5 text-lg font-bold no-underline"
             >
-              {label}
+              {messages[label]}
             </Link>
           ))}
         </div>

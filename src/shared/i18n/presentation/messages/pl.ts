@@ -1,0 +1,23 @@
+import type { Messages } from "./en"
+
+export const pl: Messages = {
+  players: "Gracze",
+  games: "Partie",
+  timeline: "Oś czasu",
+  induction: "Wprowadzenie",
+  resources: "Zasoby",
+  about: "O projekcie",
+  menu: "Menu",
+  close: "Zamknij",
+  toLight: "Przełącz na tryb jasny",
+  toDark: "Przełącz na tryb ciemny",
+  language: "Język",
+  aboutEyebrow: "O projekcie",
+  aboutTitle: "O Go | Hall of Fame",
+  aboutIntro:
+    "Go | Hall of Fame czci grę Go: jej legendarnych graczy, legendarne partie i historię, która je łączy. To projekt open source, tworzony publicznie.",
+  contributors: "Współtwórcy",
+  contributorsIntro: "Osoby, które stworzyły tę stronę.",
+  roleCreator: "Twórca i opiekun",
+  roleAssistant: "Programista AI",
+}

@@ -8,6 +8,7 @@ import { NeighborBar } from "@/shared/ui/presentation/neighbor-bar"
 import { displayTitleClass } from "@/shared/ui/presentation/page-header"
 import { Portrait } from "@/shared/ui/presentation/portrait"
 import { ResourceList } from "@/shared/ui/presentation/resource-list"
+import { TagList } from "@/shared/ui/presentation/tag-list"
 import { SectionLabel } from "@/shared/ui/presentation/section-label"
 
 type PlayerScreenProps = {
@@ -67,6 +68,10 @@ export async function PlayerScreen({
           <Markdown className="max-w-[56ch] text-lg">
             {detail.bio}
           </Markdown>
+          <TagList
+            tags={detail.tags}
+            searchPath="/players"
+          />
           <ResourceList resources={detail.resources} />
           {detail.games.length > 0 && (
             <div className="flex flex-col gap-1.5">

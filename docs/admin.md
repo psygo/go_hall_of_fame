@@ -35,6 +35,12 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + **Markdown.** The long-text fields (a player's biography, a game's description,
   a timeline event's description) accept Markdown: `**bold**`, `*italic*`, `[a link](https://…)`,
   lists and `> quotes`. Raw HTML and images are ignored. Lists and link previews show the plain text.
++ **Resource names.** Each resource has a name (the clickable text, shown like an anchor link without the
+  address), an optional description and the link. The Resources page also has an editable description
+  under Pages.
++ **Tags.** Optional on players and games: type them separated by commas (up to 8, 24 characters
+  each; repeats in any case are dropped). They show on the cards and detail pages; on a detail page
+  each tag links to the list searched for it, and the search boxes also match tags.
 + **Resources.** Games and players have a Resources list: a link and an optional description each,
   shown as a bulleted list on the public page. Links must be https or a path on this site.
 + **Timeline** (`/admin/timeline`): events with a year, title and text, and optionally a game: the

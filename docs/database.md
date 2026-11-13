@@ -35,6 +35,7 @@ generated into `drizzle/` and tracked in git.
   + `black_player_id`, `white_player_id` (nullable, `set null` on delete): the Hall player behind the
     Black / White name. The name then links to that player's page, and the two players are the
     ones listed in `game_players`.
+  + `tags` (`text[]`, empty by default; at most 8, also on `players`),
   + `highlight_move` (nullable: the move the preview stops on and draws in orange; null means 50),
     `sgf_url`: URL of the SGF record, and `sgf_text`: the text of an uploaded SGF file (it wins over
     the URL and is served at `/games/<slug>/sgf`). When either is set, the game page renders the
@@ -44,7 +45,7 @@ generated into `drizzle/` and tracked in git.
 + `game_players`: join table (`game_id`, `player_id`, composite primary key, cascade delete) linking
   a game to the inducted players who played it. Not every side is a player in the Hall (AlphaGo,
   Akaboshi Intetsu), which is why `black` and `white` are plain text on `games`.
-+ `resources`: a link with an optional `description`, on one game (`game_id`) or one player
++ `resources`: a titled link (`title` is the clickable text) with an optional `description`, on one game (`game_id`) or one player
   (`player_id`): a check constraint forbids both. With neither set, the row belongs to the public Resources page. `position` keeps the order.
 + `password_resets`: one-time reset links (`admin_id` cascade, `token_hash` unique, `expires_at`,
   `used_at`). Only the token's SHA-256 is stored.

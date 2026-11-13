@@ -25,7 +25,11 @@ export async function ResourcesScreen({
       <PageHeader
         eyebrow={texts["resources.eyebrow"]}
         title={texts["resources.title"]}
-      />
+      >
+        <p className="mt-4 max-w-[56ch] text-lg">
+          {texts["resources.description"]}
+        </p>
+      </PageHeader>
       <section className="border-divider border-b px-4 py-8">
         {resources.total === 0 ? (
           <p>No resources yet.</p>
@@ -34,8 +38,8 @@ export async function ResourcesScreen({
             {resources.items.map((resource, index) => (
               <li key={`${index}-${resource.url}`}>
                 <a
-                  href={resource.url}
-                  className="font-bold break-all"
+                  href={resource.title || resource.url}
+                  className="font-bold"
                   {...(resource.url.startsWith("https://")
                     ? {
                         target: "_blank",

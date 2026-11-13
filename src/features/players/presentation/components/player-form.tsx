@@ -133,6 +133,13 @@ export function PlayerForm({
         hint="Where the 4:5 crop is centred, for example 50% 20%."
         error={errors.photoPosition}
       />
+      <TextField
+        name="tags"
+        label="Tags"
+        defaultValue={values.tags}
+        hint="Optional, separated by commas (for example: ancient, modern). Up to 8."
+        error={errors.tags}
+      />
       <ResourceFields
         initial={values.resources}
         error={errors.resources}

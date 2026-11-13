@@ -100,6 +100,20 @@ export function readArray(
   return value
 }
 
+export function readStringArray(
+  record: RawRecord,
+  key: string,
+): readonly string[] {
+  return readArray(record, key).map((item) => {
+    if (typeof item !== "string") {
+      throw new InvalidRawDataError(
+        `"${key}" must be an array of strings`,
+      )
+    }
+    return item
+  })
+}
+
 export function readDate(
   record: RawRecord,
   key: string,

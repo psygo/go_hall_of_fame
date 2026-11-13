@@ -4,6 +4,8 @@ import type { ReactNode } from "react"
 
 import { AppShellScreen } from "@/features/auth/presentation/screens/app-shell-screen"
 
+import { LocalizedHtml } from "@/shared/i18n/presentation/localized-html"
+
 import "@/styles/globals.css"
 
 export { siteMetadata as metadata } from "@/shared/ui/presentation/site-metadata"
@@ -44,14 +46,12 @@ export default function RootLayout({
   children: ReactNode
 }) {
   return (
-    <html
-      lang="en"
+    <LocalizedHtml
       className={`${geist.variable} ${geistMono.variable} ${shipporiSeal.variable}`}
-      suppressHydrationWarning
     >
       <body>
         <AppShellScreen>{children}</AppShellScreen>
       </body>
-    </html>
+    </LocalizedHtml>
   )
 }

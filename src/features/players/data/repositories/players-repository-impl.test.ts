@@ -20,6 +20,7 @@ const rawPlayer = {
   photoUrl: null,
   photoPosition: "center",
   featured: true,
+  tags: [],
 }
 
 function buildRepository(
@@ -141,6 +142,7 @@ describe("PlayersRepositoryImpl", () => {
       photoPosition: "center",
       inductionNumber: 3,
       featured: true,
+      tags: [],
       resources: [],
     }
 

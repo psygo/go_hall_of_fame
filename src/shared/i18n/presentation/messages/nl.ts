@@ -1,0 +1,23 @@
+import type { Messages } from "./en"
+
+export const nl: Messages = {
+  players: "Spelers",
+  games: "Partijen",
+  timeline: "Tijdlijn",
+  induction: "Opname",
+  resources: "Bronnen",
+  about: "Over",
+  menu: "Menu",
+  close: "Sluiten",
+  toLight: "Naar lichte modus",
+  toDark: "Naar donkere modus",
+  language: "Taal",
+  aboutEyebrow: "Over het project",
+  aboutTitle: "Over Go | Hall of Fame",
+  aboutIntro:
+    "Go | Hall of Fame eert het spel Go: zijn legendarische spelers, zijn legendarische partijen en de geschiedenis die ze verbindt. Het is een open-sourceproject, openlijk gebouwd.",
+  contributors: "Bijdragers",
+  contributorsIntro: "De mensen die deze site maakten.",
+  roleCreator: "Maker en beheerder",
+  roleAssistant: "AI-programmeerpartner",
+}

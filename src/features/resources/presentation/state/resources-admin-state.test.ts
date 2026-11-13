@@ -27,7 +27,11 @@ import type { SaveResult } from "@/core/validation"
 import type { SiteResourcesErrors } from "../../domain/entities/site-resources"
 import { createResourcesAdminState } from "./resources-admin-state"
 
-const link: ResourceLink = { url: "/a", description: "A" }
+const link: ResourceLink = {
+  title: "T",
+  url: "/a",
+  description: "A",
+}
 
 function buildState({
   requireAdmin = vi.fn(async () => undefined),
@@ -64,6 +68,7 @@ function formWith(
 ): FormData {
   const formData = new FormData()
   for (const [url, description] of rows) {
+    formData.append("resourceTitle", url === "" ? "" : "T")
     formData.append("resourceUrl", url)
     formData.append("resourceDescription", description)
   }
@@ -127,8 +132,8 @@ describe("saveFromForm", () => {
     expect(save).toHaveBeenCalledWith({
       form: {
         resources: [
-          { url: "/a", description: "A" },
-          { url: "/b", description: "" },
+          { title: "T", url: "/a", description: "A" },
+          { title: "T", url: "/b", description: "" },
         ],
       },
     })
@@ -160,7 +165,9 @@ describe("saveFromForm", () => {
       status: "invalid",
       errors,
       values: {
-        resources: [{ url: "", description: "x" }],
+        resources: [
+          { title: "", url: "", description: "x" },
+        ],
       },
     })
     expect(revalidatePath).not.toHaveBeenCalled()

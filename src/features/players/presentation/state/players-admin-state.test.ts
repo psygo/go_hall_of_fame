@@ -48,6 +48,7 @@ const player: Player = {
   photoUrl: null,
   photoPosition: "50% 50%",
   featured: false,
+  tags: [],
 }
 const detail: PlayerDetail = {
   ...player,
@@ -66,6 +67,7 @@ const fields = {
   photoUrl: "",
   photoPosition: "50% 50%",
   inductionNumber: "1",
+  tags: "opening, famous",
 }
 
 function buildFormData(
@@ -298,6 +300,7 @@ describe("saveFromForm", () => {
         photoPosition: "",
         inductionNumber: "",
         featured: false,
+        tags: "",
         resources: [],
       },
     })
@@ -306,6 +309,8 @@ describe("saveFromForm", () => {
   it("reads the resource rows in order", async () => {
     const { state, save } = buildState()
     const formData = buildFormData(fields)
+    formData.append("resourceTitle", "T")
+    formData.append("resourceTitle", "T")
     formData.append("resourceUrl", "https://a.example")
     formData.append("resourceUrl", "https://b.example")
     formData.append("resourceDescription", "A")
@@ -318,8 +323,16 @@ describe("saveFromForm", () => {
       originalSlug: null,
       form: expect.objectContaining({
         resources: [
-          { url: "https://a.example", description: "A" },
-          { url: "https://b.example", description: "" },
+          {
+            title: "T",
+            url: "https://a.example",
+            description: "A",
+          },
+          {
+            title: "T",
+            url: "https://b.example",
+            description: "",
+          },
         ],
       }),
     })

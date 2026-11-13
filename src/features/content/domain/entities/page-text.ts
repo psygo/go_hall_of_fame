@@ -139,6 +139,15 @@ export const PAGE_TEXT_DEFINITIONS: readonly PageTextDefinition[] =
       multiline: false,
     },
     {
+      key: "resources.description",
+      page: "resources",
+      label: "Description",
+      defaultValue:
+        "Books, tools and sites for going further into the game.",
+      maxLength: 400,
+      multiline: true,
+    },
+    {
       key: "induction.eyebrow",
       page: "induction",
       label: "Eyebrow",

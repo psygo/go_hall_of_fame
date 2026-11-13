@@ -1,0 +1,23 @@
+import type { Messages } from "./en"
+
+export const ja: Messages = {
+  players: "棋士",
+  games: "対局",
+  timeline: "年表",
+  induction: "殿堂入り",
+  resources: "リソース",
+  about: "概要",
+  menu: "メニュー",
+  close: "閉じる",
+  toLight: "ライトモードに切り替え",
+  toDark: "ダークモードに切り替え",
+  language: "言語",
+  aboutEyebrow: "プロジェクトについて",
+  aboutTitle: "Go | Hall of Fame について",
+  aboutIntro:
+    "Go | Hall of Fame は囲碁を称えるサイトです。伝説の棋士、伝説の対局、そしてそれらをつなぐ歴史。オープンソースで、公開の場で作られています。",
+  contributors: "コントリビューター",
+  contributorsIntro: "このサイトを作った人たち。",
+  roleCreator: "作者・メンテナー",
+  roleAssistant: "AIペアプログラマー",
+}

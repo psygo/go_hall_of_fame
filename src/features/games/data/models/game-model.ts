@@ -6,6 +6,7 @@ import {
   readNullableInteger,
   readNullableString,
   readString,
+  readStringArray,
 } from "@/core/raw-data"
 
 import type { ResourceLink } from "@/core/resources"
@@ -31,6 +32,7 @@ export class GameModel implements Game {
   declare readonly hasUploadedSgf: boolean
   declare readonly highlightMove: number | null
   declare readonly featured: boolean
+  declare readonly tags: readonly string[]
   declare readonly sequence: number
 
   protected constructor(fields: Game) {
@@ -105,6 +107,7 @@ function parseGameFields(raw: unknown): Game {
       "highlightMove",
     ),
     featured: readBoolean(record, "featured"),
+    tags: readStringArray(record, "tags"),
     sequence: readInteger(record, "sequence"),
   }
 }
@@ -122,6 +125,7 @@ function parsePlayerReference(
 function parseResourceLink(raw: unknown): ResourceLink {
   const record = asRecord(raw, "resource")
   return {
+    title: readString(record, "title"),
     url: readString(record, "url"),
     description: readNullableString(record, "description"),
   }

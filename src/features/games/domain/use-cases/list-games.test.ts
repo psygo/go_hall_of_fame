@@ -28,6 +28,7 @@ const game: Game = {
   hasUploadedSgf: false,
   highlightMove: null,
   featured: false,
+  tags: [],
   sequence: 0,
 }
 
