@@ -1,6 +1,8 @@
 import { config } from "dotenv"
 import { defineConfig } from "drizzle-kit"
 
+import { withExplicitSslMode } from "./src/shared/database/data/connection-string"
+
 config({ path: ".env.local" })
 
 export default defineConfig({
@@ -9,10 +11,11 @@ export default defineConfig({
   dialect: "postgresql",
   // Migrations use a direct (unpooled) connection when the host provides one.
   dbCredentials: {
-    url:
+    url: withExplicitSslMode(
       process.env.DATABASE_URL_UNPOOLED ??
-      process.env.DATABASE_URL ??
-      process.env.POSTGRES_URL ??
-      "",
+        process.env.DATABASE_URL ??
+        process.env.POSTGRES_URL ??
+        "",
+    ),
   },
 })

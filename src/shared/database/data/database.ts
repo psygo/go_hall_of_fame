@@ -4,6 +4,7 @@ import {
 } from "drizzle-orm/node-postgres"
 import { Pool } from "pg"
 
+import { withExplicitSslMode } from "./connection-string"
 import * as schema from "./schema"
 
 export type Database = NodePgDatabase<typeof schema>
@@ -19,7 +20,10 @@ export function createDatabase(
   connectionString: string,
 ): Database {
   // A small pool: on serverless every instance has its own, and the database caps connections.
-  const pool = new Pool({ connectionString, max: 5 })
+  const pool = new Pool({
+    connectionString: withExplicitSslMode(connectionString),
+    max: 5,
+  })
   // An idle client that loses its connection emits "error"; unhandled, it would crash the process.
   pool.on("error", (error) => {
     console.error(
