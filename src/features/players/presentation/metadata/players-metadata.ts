@@ -5,7 +5,7 @@ import { stripMarkdown } from "@/core/markdown"
 import { pageMetadata } from "@/shared/ui/presentation/site-metadata"
 
 export const playersMetadata: Metadata = pageMetadata({
-  title: "Legendary players",
+  title: "Legendary Players",
   description:
     "The players who shaped the game of Go, from Honinbo Dosaku to Shin Jinseo.",
 })

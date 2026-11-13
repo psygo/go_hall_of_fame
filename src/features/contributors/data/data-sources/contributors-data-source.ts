@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm"
+import { and, asc, desc, eq } from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
 import { isVisible } from "@/shared/database/data/drafts"
@@ -18,7 +18,7 @@ export class ContributorsDataSource {
       .from(contributorsTable)
       .where(isVisible(contributorsTable, includeDrafts))
       .orderBy(
-        asc(contributorsTable.birthYear),
+        desc(contributorsTable.birthYear),
         asc(contributorsTable.name),
         asc(contributorsTable.id),
       )

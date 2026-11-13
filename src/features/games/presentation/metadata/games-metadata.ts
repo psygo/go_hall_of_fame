@@ -5,7 +5,7 @@ import { excerpt } from "@/core/markdown"
 import { pageMetadata } from "@/shared/ui/presentation/site-metadata"
 
 export const gamesMetadata: Metadata = pageMetadata({
-  title: "Legendary games",
+  title: "Legendary Games",
   description:
     "Games that stopped the room and rewrote theory, from Edo castle to AlphaGo.",
 })

@@ -90,18 +90,6 @@ export function TimelineEventForm({
         hint={MARKDOWN_HINT}
       />
       <LinkedSelectFields
-        name="gameSlug"
-        legend="Linked games"
-        addLabel="Add another linked game"
-        options={gameOptions.map((game) => ({
-          value: game.slug,
-          label: game.name,
-        }))}
-        initial={values.gameSlugs}
-        error={errors.gameSlugs}
-        hint="Optional. A single linked game makes the whole event a link to that game."
-      />
-      <LinkedSelectFields
         name="playerSlug"
         legend="Linked players"
         addLabel="Add another linked player"
@@ -111,6 +99,18 @@ export function TimelineEventForm({
         }))}
         initial={values.playerSlugs}
         error={errors.playerSlugs}
+      />
+      <LinkedSelectFields
+        name="gameSlug"
+        legend="Linked games"
+        addLabel="Add another linked game"
+        options={gameOptions.map((game) => ({
+          value: game.slug,
+          label: game.name,
+        }))}
+        initial={values.gameSlugs}
+        error={errors.gameSlugs}
+        hint="Optional."
       />
       <LinkedSelectFields
         name="contributorSlug"

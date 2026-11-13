@@ -288,8 +288,8 @@ describe("sortPlayers", () => {
 })
 
 describe("default player sort", () => {
-  it("is chronological and listed first", () => {
-    expect(DEFAULT_PLAYER_SORT).toBe("chronological")
-    expect(PLAYER_SORTS[0]).toBe(DEFAULT_PLAYER_SORT)
+  it("is youngest born first and one of the sorts", () => {
+    expect(DEFAULT_PLAYER_SORT).toBe("youngest")
+    expect(PLAYER_SORTS).toContain(DEFAULT_PLAYER_SORT)
   })
 })

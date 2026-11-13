@@ -77,7 +77,7 @@ export async function PlayerScreen({
           <ResourceList resources={detail.resources} />
           {detail.games.length > 0 && (
             <div className="flex flex-col gap-1.5">
-              <SectionLabel>Legendary games</SectionLabel>
+              <SectionLabel>Legendary Games</SectionLabel>
               {detail.games.map((game) => (
                 <Link
                   key={game.slug}

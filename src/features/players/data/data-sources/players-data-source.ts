@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm"
+import { and, asc, desc, eq } from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
 import {
@@ -30,7 +30,7 @@ export class PlayersDataSource {
       .from(playersTable)
       .where(isVisible(playersTable, includeDrafts))
       .orderBy(
-        asc(playersTable.birthYear),
+        desc(playersTable.birthYear),
         asc(playersTable.inductionNumber),
       )
     return rows.map((row) => PlayerModel.fromRawData(row))

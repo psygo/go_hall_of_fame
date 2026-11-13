@@ -85,8 +85,7 @@ export const PLAYER_SORTS = [
 
 export type PlayerSort = (typeof PLAYER_SORTS)[number]
 
-export const DEFAULT_PLAYER_SORT: PlayerSort =
-  "chronological"
+export const DEFAULT_PLAYER_SORT: PlayerSort = "youngest"
 
 export const PLAYER_SORT_LABELS: Readonly<
   Record<PlayerSort, string>

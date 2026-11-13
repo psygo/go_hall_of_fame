@@ -25,19 +25,15 @@ export function TimelineItem({
 }) {
   const { event, side, index } = placement
   const stoneClass = index % 2 === 0 ? "bg-ink" : "bg-stone"
-  // One linked game makes the whole event a link to it; every other link is listed below the text.
-  const mainGame =
-    event.games.length === 1 ? event.games[0] : undefined
+  // Players first, then games, then contributors.
   const links = [
-    ...(mainGame === undefined ? event.games : []).map(
-      (game) => ({
-        href: `/games/${game.slug}`,
-        label: game.name,
-      }),
-    ),
     ...event.players.map((player) => ({
       href: `/players/${player.slug}`,
       label: player.name,
+    })),
+    ...event.games.map((game) => ({
+      href: `/games/${game.slug}`,
+      label: game.name,
     })),
     ...event.contributors.map((contributor) => ({
       href: `/contributors/${contributor.slug}`,
@@ -57,18 +53,7 @@ export function TimelineItem({
         </div>
         <DraftBadge isDraft={event.isDraft} />
         <div className="text-[22px] leading-[1.15] font-bold">
-          {mainGame === undefined ? (
-            event.title
-          ) : (
-            // The title's link stretches over the whole event; the links below stay above it.
-            <Link
-              href={`/games/${mainGame.slug}`}
-              className="text-ink hover:text-accent no-underline after:absolute after:-inset-2 after:content-['']"
-              aria-label={`${event.title}: ${mainGame.name}`}
-            >
-              {event.title}
-            </Link>
-          )}
+          {event.title}
         </div>
         <div className="[&_a]:relative [&_a]:z-10">
           <Markdown>{event.text}</Markdown>

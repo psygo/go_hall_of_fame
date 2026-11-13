@@ -157,7 +157,7 @@ describe("loadPlayersPage", () => {
     expect(searchPlayers).toHaveBeenCalledWith({
       country: null,
       query: "",
-      sort: "chronological",
+      sort: "youngest",
       page: 1,
     })
   })
