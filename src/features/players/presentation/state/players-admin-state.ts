@@ -19,7 +19,6 @@ import type { UseCase } from "@/core/use-case"
 import type { SaveResult } from "@/core/validation"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import {
-  readFormFlag,
   readFormText,
   readResourceRows,
 } from "@/shared/ui/presentation/form-data"
@@ -171,7 +170,6 @@ function readPlayerForm(formData: FormData): PlayerForm {
       formData,
       "inductionNumber",
     ),
-    featured: readFormFlag(formData, "featured"),
     tags: readFormText(formData, "tags"),
     resources: readResourceRows(formData),
   }

@@ -25,7 +25,8 @@ All tokens are CSS variables in `src/styles/globals.css` and are exposed to Tail
 
 + Light/dark follows the system by default and can be switched with the nav button (`next-themes`,
   `class` strategy on `<html>`).
-+ Below 720px the nav collapses into a Menu button with a stacked link list; hero H1 is 52px, page
++ The nav collapses into a three-line menu button with a stacked link list as soon as its links would
+  wrap (always below 720px; measured above that, so longer translations collapse sooner); hero H1 is 52px, page
   H1 40px; the games and timeline rows stack.
 + The country filter on `/players` is a link (`/players?country=Korea`), so it works without
   JavaScript and can be shared.
@@ -82,3 +83,6 @@ The second version of the handoff changed mostly the timeline and the type:
   highlighted move. The games list uses a non-interactive board that replays on hover.
 + The panels around the board (players, komi, the controls) read the `--goban-*` variables that
   `globals.css` sets on `:root`, and `--goban-radius: 0` squares their corners.
+
++ The home page shows a random game card and a random player card (a different pair on every
+  visit), the same cards as the games and players lists.

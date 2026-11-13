@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   countCenturiesSpanned,
+  spotlightSgfSource,
   summarizeHome,
   type HomeFacts,
 } from "./home-summary"
@@ -43,23 +44,29 @@ describe("summarizeHome", () => {
     gameCount: 8,
     firstYear: 1612,
     lastYear: 2019,
-    featuredGame: {
+    spotlightGame: {
       slug: "g",
       name: "Game",
       year: 1846,
       black: "B",
       white: "W",
+      blackPlayerSlug: null,
+      whitePlayerSlug: null,
+      result: "B+R",
       description: "Hook",
+      tags: [],
+      sgf: null,
+      highlightMove: null,
     },
-    featuredPlayer: null,
+    spotlightPlayer: null,
   }
 
-  it("keeps the counts and featured items and adds the centuries", () => {
+  it("keeps the counts and spotlight items and adds the centuries", () => {
     expect(summarizeHome(facts)).toEqual({
       playerCount: 12,
       gameCount: 8,
-      featuredGame: facts.featuredGame,
-      featuredPlayer: null,
+      spotlightGame: facts.spotlightGame,
+      spotlightPlayer: null,
       centuries: 4,
     })
   })
@@ -79,5 +86,37 @@ describe("summarizeHome", () => {
     })
 
     expect(summary.centuries).toBe(0)
+  })
+})
+
+describe("spotlightSgfSource", () => {
+  it("points at the SGF route when the text is uploaded, even with a link", () => {
+    expect(
+      spotlightSgfSource({
+        slug: "g",
+        sgfUrl: "/sgf/g.sgf",
+        hasUploadedSgf: true,
+      }),
+    ).toBe("/games/g/sgf")
+  })
+
+  it("uses the link when nothing is uploaded", () => {
+    expect(
+      spotlightSgfSource({
+        slug: "g",
+        sgfUrl: "/sgf/g.sgf",
+        hasUploadedSgf: false,
+      }),
+    ).toBe("/sgf/g.sgf")
+  })
+
+  it("is null when there is no record", () => {
+    expect(
+      spotlightSgfSource({
+        slug: "g",
+        sgfUrl: null,
+        hasUploadedSgf: false,
+      }),
+    ).toBeNull()
   })
 })

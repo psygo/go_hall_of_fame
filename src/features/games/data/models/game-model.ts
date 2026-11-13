@@ -31,7 +31,6 @@ export class GameModel implements Game {
   declare readonly sgfUrl: string | null
   declare readonly hasUploadedSgf: boolean
   declare readonly highlightMove: number | null
-  declare readonly featured: boolean
   declare readonly tags: readonly string[]
   declare readonly sequence: number
 
@@ -106,7 +105,6 @@ function parseGameFields(raw: unknown): Game {
       record,
       "highlightMove",
     ),
-    featured: readBoolean(record, "featured"),
     tags: readStringArray(record, "tags"),
     sequence: readInteger(record, "sequence"),
   }

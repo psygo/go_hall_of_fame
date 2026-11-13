@@ -119,7 +119,6 @@ const players: readonly Omit<
     distinction: "18 world titles",
     bio: "Known as the Strong Stone. His fourth-game win over AlphaGo in 2016 remains the only human win against the program in a match.",
     photoPosition: "55% 75%",
-    featured: true,
   },
   {
     slug: "iyama-yuta",

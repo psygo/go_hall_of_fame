@@ -1,19 +1,42 @@
-export type FeaturedGame = {
+/** A random game of the Hall, with what its card needs. */
+export type SpotlightGame = {
   readonly slug: string
   readonly name: string
   readonly year: number
   readonly black: string
   readonly white: string
+  readonly blackPlayerSlug: string | null
+  readonly whitePlayerSlug: string | null
+  readonly result: string
   readonly description: string
+  readonly tags: readonly string[]
+  /** Where the board loads the record from, or null when the game has none. */
+  readonly sgf: string | null
+  readonly highlightMove: number | null
 }
 
-export type FeaturedPlayer = {
+/** A random player of the Hall, with what their card needs. */
+export type SpotlightPlayer = {
   readonly slug: string
+  readonly inductionNumber: number
   readonly name: string
   readonly nativeName: string
-  readonly years: string
+  readonly country: string
+  readonly distinction: string
   readonly photoUrl: string | null
   readonly photoPosition: string
+  readonly tags: readonly string[]
+}
+
+/** The uploaded text wins over a link, as on the games pages. */
+export function spotlightSgfSource(game: {
+  readonly slug: string
+  readonly sgfUrl: string | null
+  readonly hasUploadedSgf: boolean
+}): string | null {
+  return game.hasUploadedSgf
+    ? `/games/${game.slug}/sgf`
+    : game.sgfUrl
 }
 
 /** What the data holds, before the business rules are applied. */
@@ -22,8 +45,8 @@ export type HomeFacts = {
   readonly gameCount: number
   readonly firstYear: number | null
   readonly lastYear: number | null
-  readonly featuredGame: FeaturedGame | null
-  readonly featuredPlayer: FeaturedPlayer | null
+  readonly spotlightGame: SpotlightGame | null
+  readonly spotlightPlayer: SpotlightPlayer | null
 }
 
 export type HomeSummary = Omit<

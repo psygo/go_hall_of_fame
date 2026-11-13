@@ -22,7 +22,6 @@ export type Player = {
   readonly bio: string
   readonly photoUrl: string | null
   readonly photoPosition: string
-  readonly featured: boolean
   readonly tags: readonly string[]
 }
 

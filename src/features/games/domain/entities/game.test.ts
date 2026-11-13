@@ -30,7 +30,6 @@ function buildGame(
     sgfUrl: null,
     hasUploadedSgf: false,
     highlightMove: null,
-    featured: false,
     tags: [],
     sequence: 0,
     ...overrides,

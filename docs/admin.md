@@ -19,11 +19,10 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   `{playerCount}` and `{gameCount}`.
 + **Players** (`/admin/players`): create, edit, delete. Fields: name, native name, country (Japan,
   China, Korea or Others), years,
-  distinction, biography, slug, induction number, photo path and crop, and "featured on the home
-  page" (only one player is featured at a time).
+  distinction, biography, slug, induction number, photo path and crop.
 + **Games** (`/admin/games`): create, edit, delete. A game has one Markdown description (it replaced
   the separate hook, moment and why-it-endures fields). Also the Black/White player links, the SGF, resources, the order within the
-  year, and "featured".
+  year.
 + **Black and White links.** The game form has a "Black links to" and a "White links to" choice of
   Hall players. A linked name is a link to that player's page on the games list and the game page.
 + **SGF.** Two ways to give a game its record: a path or https URL, or an uploaded `.sgf` file (up to
@@ -64,7 +63,7 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + Each games-list card with an SGF shows a board that cannot be played on. It rests on the
   highlighted move (move 50 by default, drawn in orange). While the pointer is on the card (or focus
   is inside it) the game replays from move 1, one move every 700 ms, and the board returns to the
-  highlighted move when the pointer leaves. Reduced-motion users get no replay. The whole card opens
+  highlighted move when the pointer leaves. The whole card opens
   the game.
 
 ## Forgot your password

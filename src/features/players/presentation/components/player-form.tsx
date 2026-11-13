@@ -6,7 +6,6 @@ import { ResourceFields } from "@/shared/ui/presentation/resource-fields"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { idleAdminForm } from "@/core/admin-form-state"
 import {
-  CheckboxField,
   FormActions,
   MARKDOWN_HINT,
   FormMessage,
@@ -143,12 +142,6 @@ export function PlayerForm({
       <ResourceFields
         initial={values.resources}
         error={errors.resources}
-      />
-      <CheckboxField
-        name="featured"
-        label="Featured on the home page"
-        defaultChecked={values.featured}
-        hint="Only one player is featured: ticking this clears the others."
       />
       {state.status === "failed" && (
         <FormMessage message={state.message} />

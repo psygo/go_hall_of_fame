@@ -38,7 +38,6 @@ const gameSelection = {
   highlightMove: gamesTable.highlightMove,
   hasUploadedSgf: sql<boolean>`${gamesTable.sgfText} is not null`,
   sequence: gamesTable.sequence,
-  featured: gamesTable.featured,
   tags: gamesTable.tags,
 }
 
@@ -133,9 +132,6 @@ export class GamesDataSource {
     originalSlug: string | null,
   ): Promise<void> {
     await this.database.transaction(async (tx) => {
-      if (draft.featured) {
-        await tx.update(gamesTable).set({ featured: false })
-      }
       const linked =
         draft.playerSlugs.length === 0
           ? []
@@ -167,7 +163,6 @@ export class GamesDataSource {
         sgfUrl: draft.sgfUrl,
         highlightMove: draft.highlightMove,
         sequence: draft.sequence,
-        featured: draft.featured,
         tags: [...draft.tags],
         ...sgfColumn(draft),
       }

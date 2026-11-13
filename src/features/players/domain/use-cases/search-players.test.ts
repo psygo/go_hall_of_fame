@@ -21,7 +21,6 @@ function buildPlayer(
     bio: "Bio",
     photoUrl: null,
     photoPosition: "50% 50%",
-    featured: false,
     tags: [],
   }
 }

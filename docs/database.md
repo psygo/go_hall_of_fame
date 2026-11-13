@@ -28,7 +28,6 @@ generated into `drizzle/` and tracked in git.
   + `photo_url` (null falls back to the placeholder portrait; use a path under `public/`, since
     an absolute URL needs its host added to `images.remotePatterns` in `next.config.ts` first) and `photo_position` (CSS
     `object-position`, so one photo can be cropped per player).
-  + `featured` (the home page shows the featured player, or the first by induction number).
 + `games`: one row per legendary game.
   + `slug` (unique), `year`, `name`, `black`, `white`, `result`, `setting`, `description` (Markdown;
     it replaced `hook`, `moment` and `legacy`, which migration 0005 merged and 0006 dropped).
@@ -41,7 +40,7 @@ generated into `drizzle/` and tracked in git.
     the URL and is served at `/games/<slug>/sgf`). When either is set, the game page renders the
     board with `goban-web`, and the games list shows a preview. Lists never read `sgf_text`; they
     only learn whether it is set.
-  + `sequence` orders games within the same year. `featured` works as for players.
+  + `sequence` orders games within the same year.
 + `game_players`: join table (`game_id`, `player_id`, composite primary key, cascade delete) linking
   a game to the inducted players who played it. Not every side is a player in the Hall (AlphaGo,
   Akaboshi Intetsu), which is why `black` and `white` are plain text on `games`.

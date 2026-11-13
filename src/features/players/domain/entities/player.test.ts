@@ -28,7 +28,6 @@ function buildPlayer(
     bio: "Bio",
     photoUrl: null,
     photoPosition: "center",
-    featured: false,
     tags: [],
     ...overrides,
   }

@@ -21,7 +21,6 @@ export type Game = {
   readonly hasUploadedSgf: boolean
   /** The move (1-based) the preview stops on and draws in the accent color; null means move 50. */
   readonly highlightMove: number | null
-  readonly featured: boolean
   readonly tags: readonly string[]
   /** Orders games played in the same year. */
   readonly sequence: number

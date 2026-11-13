@@ -18,7 +18,6 @@ const validPlayer = {
   bio: "Bio",
   photoUrl: "https://example.com/p.jpg",
   photoPosition: "center top",
-  featured: true,
   tags: ["opening", "famous"],
 }
 
@@ -56,19 +55,6 @@ describe("PlayerModel", () => {
     expect(() =>
       PlayerModel.fromRawData(without(validPlayer, key)),
     ).toThrow(InvalidRawDataError)
-  })
-
-  it.each([
-    ["a string", "true"],
-    ["a number", 1],
-    ["null", null],
-  ])("throws when featured is %s", (_label, value) => {
-    expect(() =>
-      PlayerModel.fromRawData({
-        ...validPlayer,
-        featured: value,
-      }),
-    ).toThrow('"featured" must be a boolean')
   })
 
   it("throws on an unknown country", () => {

@@ -55,6 +55,17 @@ export async function GameScreen({
           <LabelledFact label="Setting">
             {detail.setting}
           </LabelledFact>
+          {sgf !== null && (
+            <div className="flex items-center py-3">
+              <a
+                href={sgf}
+                download={`${detail.slug}.sgf`}
+                className="btn btn-secondary"
+              >
+                Download SGF
+              </a>
+            </div>
+          )}
         </div>
         <Markdown className="max-w-[56ch] text-lg">
           {detail.description}
@@ -67,15 +78,6 @@ export async function GameScreen({
               sgf={sgf}
               highlightMove={highlightMoveOf(detail)}
             />
-            <div>
-              <a
-                href={sgf}
-                download={`${detail.slug}.sgf`}
-                className="btn btn-secondary"
-              >
-                Download SGF
-              </a>
-            </div>
           </div>
         )}
         <ResourceList resources={detail.resources} />

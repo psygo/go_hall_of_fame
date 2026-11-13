@@ -71,6 +71,13 @@
       "when": 1794589726657,
       "tag": "0009_modern_sharon_ventura",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794591169112,
+      "tag": "0010_wild_wolfpack",
+      "breakpoints": true
     }
   ]
 }

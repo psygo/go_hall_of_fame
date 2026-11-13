@@ -19,7 +19,7 @@ const DEFAULT_INTERVAL_MS = 700
 /**
  * A board that cannot be played on. It rests on `targetMove`; while the pointer is on its card (or
  * focus is inside it) the game replays from the first move, one move every `intervalMs`, and the
- * board returns to `targetMove` when the pointer leaves. Reduced-motion users get no replay.
+ * board returns to `targetMove` when the pointer leaves.
  */
 export function GamePreviewBoardClient({
   sgf,
@@ -58,7 +58,6 @@ export function GamePreviewBoardClient({
     const replay = (event: Event) => {
       if (isTouch(event)) return
       stop()
-      if (prefersReducedMotion()) return
       element.goToMove(0)
       timer = setInterval(() => {
         if (element.moveIndex >= lastMove()) stop()
@@ -103,12 +102,6 @@ export function GamePreviewBoardClient({
       />
     </div>
   )
-}
-
-function prefersReducedMotion(): boolean {
-  return window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches
 }
 
 /** A tap fires enter and leave at once, so touch gets no replay. */

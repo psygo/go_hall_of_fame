@@ -21,7 +21,6 @@ const existing: Game = {
   sgfUrl: null,
   hasUploadedSgf: false,
   highlightMove: null,
-  featured: false,
   tags: [],
   sequence: 0,
 }
@@ -38,7 +37,6 @@ const form: GameForm = {
   sgfUrl: "",
   sequence: "",
   highlightMove: "",
-  featured: true,
   tags: "",
   sgfFileText: "",
   sgfFileTooLarge: false,
@@ -86,7 +84,6 @@ describe("SaveGame", () => {
         sgfUrl: null,
         sequence: 0,
         highlightMove: null,
-        featured: true,
         tags: [],
         blackPlayerSlug: "lee-sedol",
         whitePlayerSlug: null,

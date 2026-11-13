@@ -19,7 +19,6 @@ const rawPlayer = {
   bio: "Bio",
   photoUrl: null,
   photoPosition: "center",
-  featured: true,
   tags: [],
 }
 
@@ -141,7 +140,6 @@ describe("PlayersRepositoryImpl", () => {
       photoUrl: null,
       photoPosition: "center",
       inductionNumber: 3,
-      featured: true,
       tags: [],
       resources: [],
     }

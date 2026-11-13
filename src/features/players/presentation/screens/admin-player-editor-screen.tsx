@@ -41,7 +41,6 @@ export async function AdminPlayerEditorScreen({
               player === null
                 ? ""
                 : String(player.inductionNumber),
-            featured: player?.featured ?? false,
             tags: formatTags(player?.tags ?? []),
             resources: (player?.resources ?? []).map(
               (resource) => ({

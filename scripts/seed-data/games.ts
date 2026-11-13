@@ -67,7 +67,6 @@ export const gameSeeds: readonly GameSeed[] = [
     setting: "Seoul, Korea",
     description:
       "Down 0–3 in a five-game match, Lee Sedol played the move that no one including the machine had on the board.\n\nWhite’s move 78, a wedge in the middle, is known as the God’s Touch. AlphaGo misjudged its value and its play deteriorated.\n\nThe only game a human has won against AlphaGo in a match. It is still the most celebrated moment in the human game.",
-    featured: true,
     playerSlugs: ["lee-sedol"],
   },
 ]

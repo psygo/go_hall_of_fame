@@ -12,8 +12,7 @@ export interface PlayersRepository {
     slug: string,
   ): Promise<DataState<PlayerDetail | null>>
   /**
-   * Updates the player with `originalSlug`, or inserts a new one when it is null. When the draft is
-   * featured, no other player stays featured.
+   * Updates the player with `originalSlug`, or inserts a new one when it is null.
    */
   save(
     draft: PlayerDraft,

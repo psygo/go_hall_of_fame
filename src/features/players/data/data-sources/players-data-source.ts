@@ -75,11 +75,6 @@ export class PlayersDataSource {
     const { resources, tags, ...rest } = draft
     const fields = { ...rest, tags: [...tags] }
     await this.database.transaction(async (tx) => {
-      if (draft.featured) {
-        await tx
-          .update(playersTable)
-          .set({ featured: false })
-      }
       const [row] =
         originalSlug === null
           ? await tx

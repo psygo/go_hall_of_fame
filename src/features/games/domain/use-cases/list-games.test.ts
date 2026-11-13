@@ -27,7 +27,6 @@ const game: Game = {
   sgfUrl: null,
   hasUploadedSgf: false,
   highlightMove: null,
-  featured: false,
   tags: [],
   sequence: 0,
 }

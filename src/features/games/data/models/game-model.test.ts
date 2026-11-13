@@ -18,7 +18,6 @@ const validGame = {
   sgfUrl: "https://example.com/g.sgf",
   hasUploadedSgf: false,
   highlightMove: null,
-  featured: false,
   tags: ["ko"],
   sequence: 2,
 }
@@ -62,7 +61,6 @@ describe("GameModel", () => {
   })
 
   it.each([
-    ["featured", "yes", "must be a boolean"],
     ["sequence", "2", "must be an integer"],
     ["sequence", 1.5, "must be an integer"],
   ])("throws when %s is %j", (key, value, message) => {

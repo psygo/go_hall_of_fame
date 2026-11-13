@@ -1,7 +1,6 @@
 import {
   asRecord,
   readArray,
-  readBoolean,
   readInteger,
   readOneOf,
   readNullableString,
@@ -29,7 +28,6 @@ export class PlayerModel implements Player {
   declare readonly bio: string
   declare readonly photoUrl: string | null
   declare readonly photoPosition: string
-  declare readonly featured: boolean
   declare readonly tags: readonly string[]
 
   protected constructor(fields: Player) {
@@ -91,7 +89,6 @@ function parsePlayerFields(raw: unknown): Player {
     bio: readString(record, "bio"),
     photoUrl: readNullableString(record, "photoUrl"),
     photoPosition: readString(record, "photoPosition"),
-    featured: readBoolean(record, "featured"),
     tags: readStringArray(record, "tags"),
   }
 }

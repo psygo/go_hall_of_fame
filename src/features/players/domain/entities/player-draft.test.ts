@@ -24,7 +24,6 @@ function buildPlayer(
     bio: "Bio",
     photoUrl: null,
     photoPosition: "50% 50%",
-    featured: false,
     tags: [],
   }
 }
@@ -48,7 +47,6 @@ function buildForm(
     photoUrl: "/portraits/gu-li.webp",
     photoPosition: "40% 20%",
     inductionNumber: "3",
-    featured: true,
     tags: "",
     resources: [],
     ...overrides,
@@ -106,7 +104,6 @@ describe("validatePlayerForm", () => {
         photoUrl: "/portraits/gu-li.webp",
         photoPosition: "40% 20%",
         inductionNumber: 3,
-        featured: true,
         tags: [],
         resources: [],
       },
@@ -447,15 +444,6 @@ describe("validatePlayerForm", () => {
           "lee-sedol",
         ).inductionNumber,
       ).toBe("Another player already has this number.")
-    })
-  })
-
-  it("keeps the featured flag as given", () => {
-    expect(
-      validate(buildForm({ featured: false })),
-    ).toEqual({
-      valid: true,
-      draft: expect.objectContaining({ featured: false }),
     })
   })
 

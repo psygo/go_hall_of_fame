@@ -38,7 +38,6 @@ const player: Player = {
   distinction: "Invincible",
   bio: "Bio",
   photoUrl: null,
-  featured: false,
   tags: [],
   photoPosition: "center",
 }

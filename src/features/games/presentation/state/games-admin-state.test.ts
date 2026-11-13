@@ -54,7 +54,6 @@ const game: Game = {
   sgfUrl: null,
   hasUploadedSgf: false,
   highlightMove: null,
-  featured: false,
   tags: [],
   sequence: 0,
 }
@@ -82,7 +81,6 @@ const fields = {
 }
 
 const blankExtras = {
-  featured: false,
   sgfFileText: "",
   sgfFileTooLarge: false,
   highlightMove: "",
@@ -430,22 +428,6 @@ describe("saveFromForm", () => {
     })
   })
 
-  it("passes the slug of the URL as the original slug and reads the featured flag", async () => {
-    const { state, save } = buildState()
-
-    await expect(
-      state.saveFromForm(
-        "old-slug",
-        buildFormData({ ...fields, featured: "on" }),
-      ),
-    ).rejects.toThrow()
-
-    expect(save).toHaveBeenCalledWith({
-      originalSlug: "old-slug",
-      form: { ...fields, ...blankExtras, featured: true },
-    })
-  })
-
   it("turns missing fields into empty strings", async () => {
     const { state, save } = buildState({
       saveResult: { status: "invalid", errors: {} },
@@ -459,7 +441,6 @@ describe("saveFromForm", () => {
         slug: "",
         year: "",
         sequence: "",
-        featured: false,
         resources: [],
       }),
     })

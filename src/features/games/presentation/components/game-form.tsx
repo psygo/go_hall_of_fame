@@ -199,12 +199,6 @@ export function GameForm({
           error={errors.sequence}
         />
       </div>
-      <CheckboxField
-        name="featured"
-        label="Featured on the home page"
-        defaultChecked={values.featured}
-        hint="Only one game is featured: ticking this clears the others."
-      />
       {state.status === "failed" && (
         <FormMessage message={state.message} />
       )}

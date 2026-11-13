@@ -21,7 +21,6 @@ function buildGame(slug: string, name: string): Game {
     sgfUrl: null,
     hasUploadedSgf: false,
     highlightMove: null,
-    featured: false,
     tags: [],
     sequence: 0,
   }

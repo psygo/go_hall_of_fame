@@ -11,8 +11,8 @@ const facts: HomeFacts = {
   gameCount: 2,
   firstYear: 1612,
   lastYear: 2019,
-  featuredGame: null,
-  featuredPlayer: null,
+  spotlightGame: null,
+  spotlightPlayer: null,
 }
 
 describe("GetHomeSummary", () => {
@@ -27,8 +27,8 @@ describe("GetHomeSummary", () => {
       succeed({
         playerCount: 3,
         gameCount: 2,
-        featuredGame: null,
-        featuredPlayer: null,
+        spotlightGame: null,
+        spotlightPlayer: null,
         centuries: 4,
       }),
     )

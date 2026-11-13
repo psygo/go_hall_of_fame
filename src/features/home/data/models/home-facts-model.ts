@@ -1,15 +1,19 @@
 import {
   asRecord,
   readInteger,
+  readBoolean,
+  readNullableInteger,
   readNullableString,
+  readStringArray,
   readString,
   type RawRecord,
 } from "@/core/raw-data"
 
-import type {
-  FeaturedGame,
-  FeaturedPlayer,
-  HomeFacts,
+import {
+  spotlightSgfSource,
+  type HomeFacts,
+  type SpotlightGame,
+  type SpotlightPlayer,
 } from "../../domain/entities/home-summary"
 
 export class HomeFactsModel implements HomeFacts {
@@ -17,8 +21,8 @@ export class HomeFactsModel implements HomeFacts {
   declare readonly gameCount: number
   declare readonly firstYear: number | null
   declare readonly lastYear: number | null
-  declare readonly featuredGame: FeaturedGame | null
-  declare readonly featuredPlayer: FeaturedPlayer | null
+  declare readonly spotlightGame: SpotlightGame | null
+  declare readonly spotlightPlayer: SpotlightPlayer | null
 
   private constructor(fields: HomeFacts) {
     Object.assign(this, fields)
@@ -31,14 +35,14 @@ export class HomeFactsModel implements HomeFacts {
       gameCount: readInteger(record, "gameCount"),
       firstYear: readOptionalInteger(record, "firstYear"),
       lastYear: readOptionalInteger(record, "lastYear"),
-      featuredGame: parseOptional(
+      spotlightGame: parseOptional(
         record,
-        "featuredGame",
+        "spotlightGame",
         parseGame,
       ),
-      featuredPlayer: parseOptional(
+      spotlightPlayer: parseOptional(
         record,
-        "featuredPlayer",
+        "spotlightPlayer",
         parsePlayer,
       ),
     })
@@ -69,26 +73,49 @@ function readOptionalInteger(
     : readInteger(record, key)
 }
 
-function parseGame(raw: unknown): FeaturedGame {
-  const record = asRecord(raw, "featured game")
+function parseGame(raw: unknown): SpotlightGame {
+  const record = asRecord(raw, "spotlight game")
+  const slug = readString(record, "slug")
   return {
-    slug: readString(record, "slug"),
+    slug,
     name: readString(record, "name"),
     year: readInteger(record, "year"),
     black: readString(record, "black"),
     white: readString(record, "white"),
+    blackPlayerSlug: readNullableString(
+      record,
+      "blackPlayerSlug",
+    ),
+    whitePlayerSlug: readNullableString(
+      record,
+      "whitePlayerSlug",
+    ),
+    result: readString(record, "result"),
     description: readString(record, "description"),
+    tags: readStringArray(record, "tags"),
+    sgf: spotlightSgfSource({
+      slug,
+      sgfUrl: readNullableString(record, "sgfUrl"),
+      hasUploadedSgf: readBoolean(record, "hasUploadedSgf"),
+    }),
+    highlightMove: readNullableInteger(
+      record,
+      "highlightMove",
+    ),
   }
 }
 
-function parsePlayer(raw: unknown): FeaturedPlayer {
-  const record = asRecord(raw, "featured player")
+function parsePlayer(raw: unknown): SpotlightPlayer {
+  const record = asRecord(raw, "spotlight player")
   return {
     slug: readString(record, "slug"),
+    inductionNumber: readInteger(record, "inductionNumber"),
     name: readString(record, "name"),
     nativeName: readString(record, "nativeName"),
-    years: readString(record, "years"),
+    country: readString(record, "country"),
+    distinction: readString(record, "distinction"),
     photoUrl: readNullableString(record, "photoUrl"),
     photoPosition: readString(record, "photoPosition"),
+    tags: readStringArray(record, "tags"),
   }
 }

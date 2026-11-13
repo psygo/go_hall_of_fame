@@ -4,22 +4,47 @@ import { InvalidRawDataError } from "@/core/raw-data"
 
 import { HomeFactsModel } from "./home-facts-model"
 
-const featuredGame = {
+const rawGame = {
   slug: "ear-reddening",
   name: "Ear-Reddening",
   year: 1846,
   black: "Shusaku",
   white: "Inseki",
+  blackPlayerSlug: "shusaku",
+  whitePlayerSlug: null,
+  result: "B+2",
   description: "Hook",
+  tags: ["ko"],
+  sgfUrl: "/sgf/a.sgf",
+  hasUploadedSgf: false,
+  highlightMove: 127,
 }
 
-const featuredPlayer = {
+const spotlightGame = {
+  slug: "ear-reddening",
+  name: "Ear-Reddening",
+  year: 1846,
+  black: "Shusaku",
+  white: "Inseki",
+  blackPlayerSlug: "shusaku",
+  whitePlayerSlug: null,
+  result: "B+2",
+  description: "Hook",
+  tags: ["ko"],
+  sgf: "/sgf/a.sgf",
+  highlightMove: 127,
+}
+
+const spotlightPlayer = {
   slug: "shusaku",
+  inductionNumber: 1,
   name: "Honinbo Shusaku",
   nativeName: "本因坊秀策",
-  years: "1829-1862",
+  country: "Japan",
+  distinction: "Invincible",
   photoUrl: "https://example.com/p.jpg",
   photoPosition: "center",
+  tags: ["opening"],
 }
 
 const validRaw = {
@@ -27,8 +52,8 @@ const validRaw = {
   gameCount: 8,
   firstYear: 1612,
   lastYear: 2019,
-  featuredGame,
-  featuredPlayer,
+  spotlightGame: rawGame,
+  spotlightPlayer,
 }
 
 describe("HomeFactsModel", () => {
@@ -39,42 +64,38 @@ describe("HomeFactsModel", () => {
     expect(model.gameCount).toBe(8)
     expect(model.firstYear).toBe(1612)
     expect(model.lastYear).toBe(2019)
-    expect(model.featuredGame).toEqual(featuredGame)
-    expect(model.featuredPlayer).toEqual(featuredPlayer)
+    expect(model.spotlightGame).toEqual(spotlightGame)
+    expect(model.spotlightPlayer).toEqual(spotlightPlayer)
   })
 
-  it("drops extra columns of the featured rows", () => {
+  it("drops extra columns of the spotlight rows", () => {
     const model = HomeFactsModel.fromRawData({
       ...validRaw,
-      featuredGame: {
-        ...featuredGame,
-        id: 1,
-        featured: true,
-      },
-      featuredPlayer: {
-        ...featuredPlayer,
+      spotlightGame: { ...rawGame, id: 1 },
+      spotlightPlayer: {
+        ...spotlightPlayer,
         id: 2,
         bio: "Bio",
       },
     })
 
-    expect(model.featuredGame).toEqual(featuredGame)
-    expect(model.featuredPlayer).toEqual(featuredPlayer)
+    expect(model.spotlightGame).toEqual(spotlightGame)
+    expect(model.spotlightPlayer).toEqual(spotlightPlayer)
   })
 
-  it("reads null years and featured items as null", () => {
+  it("reads null years and spotlight items as null", () => {
     const model = HomeFactsModel.fromRawData({
       ...validRaw,
       firstYear: null,
       lastYear: null,
-      featuredGame: null,
-      featuredPlayer: null,
+      spotlightGame: null,
+      spotlightPlayer: null,
     })
 
     expect(model.firstYear).toBeNull()
     expect(model.lastYear).toBeNull()
-    expect(model.featuredGame).toBeNull()
-    expect(model.featuredPlayer).toBeNull()
+    expect(model.spotlightGame).toBeNull()
+    expect(model.spotlightPlayer).toBeNull()
   })
 
   it("reads missing optional fields (undefined) as null", () => {
@@ -85,17 +106,20 @@ describe("HomeFactsModel", () => {
 
     expect(model.firstYear).toBeNull()
     expect(model.lastYear).toBeNull()
-    expect(model.featuredGame).toBeNull()
-    expect(model.featuredPlayer).toBeNull()
+    expect(model.spotlightGame).toBeNull()
+    expect(model.spotlightPlayer).toBeNull()
   })
 
-  it("reads a null photo URL of the featured player as null", () => {
+  it("reads a null photo URL of the spotlight player as null", () => {
     const model = HomeFactsModel.fromRawData({
       ...validRaw,
-      featuredPlayer: { ...featuredPlayer, photoUrl: null },
+      spotlightPlayer: {
+        ...spotlightPlayer,
+        photoUrl: null,
+      },
     })
 
-    expect(model.featuredPlayer?.photoUrl).toBeNull()
+    expect(model.spotlightPlayer?.photoUrl).toBeNull()
   })
 
   it.each(["playerCount", "gameCount"])(
@@ -128,13 +152,73 @@ describe("HomeFactsModel", () => {
     ).toThrow('"firstYear" must be an integer')
   })
 
-  it("throws when the featured game is not an object", () => {
+  it("uses the uploaded SGF route over the link", () => {
+    const model = HomeFactsModel.fromRawData({
+      ...validRaw,
+      spotlightGame: { ...rawGame, hasUploadedSgf: true },
+    })
+
+    expect(model.spotlightGame?.sgf).toBe(
+      "/games/ear-reddening/sgf",
+    )
+  })
+
+  it("reads a null or missing sgfUrl and highlightMove as null", () => {
+    const bare: Record<string, unknown> = { ...rawGame }
+    delete bare.sgfUrl
+    delete bare.highlightMove
+    for (const game of [
+      { ...rawGame, sgfUrl: null, highlightMove: null },
+      bare,
+    ]) {
+      const model = HomeFactsModel.fromRawData({
+        ...validRaw,
+        spotlightGame: game,
+      })
+
+      expect(model.spotlightGame?.sgf).toBeNull()
+      expect(model.spotlightGame?.highlightMove).toBeNull()
+    }
+  })
+
+  it("reads null player links of the spotlight game as null", () => {
+    const model = HomeFactsModel.fromRawData({
+      ...validRaw,
+      spotlightGame: { ...rawGame, blackPlayerSlug: null },
+    })
+
+    expect(model.spotlightGame?.blackPlayerSlug).toBeNull()
+  })
+
+  it.each([
+    ["a string", "ko"],
+    ["a number list", [1]],
+    ["missing", undefined],
+  ])(
+    "throws when the tags of a spotlight are %s",
+    (_l, tags) => {
+      expect(() =>
+        HomeFactsModel.fromRawData({
+          ...validRaw,
+          spotlightGame: { ...rawGame, tags },
+        }),
+      ).toThrow(InvalidRawDataError)
+      expect(() =>
+        HomeFactsModel.fromRawData({
+          ...validRaw,
+          spotlightPlayer: { ...spotlightPlayer, tags },
+        }),
+      ).toThrow(InvalidRawDataError)
+    },
+  )
+
+  it("throws when the spotlight game is not an object", () => {
     expect(() =>
       HomeFactsModel.fromRawData({
         ...validRaw,
-        featuredGame: [],
+        spotlightGame: [],
       }),
-    ).toThrow("featured game must be an object")
+    ).toThrow("spotlight game must be an object")
   })
 
   it.each([
@@ -143,17 +227,17 @@ describe("HomeFactsModel", () => {
     "year",
     "black",
     "white",
+    "result",
     "description",
-  ])("throws when the featured game lacks %s", (key) => {
-    const game: Record<string, unknown> = {
-      ...featuredGame,
-    }
+    "hasUploadedSgf",
+  ])("throws when the spotlight game lacks %s", (key) => {
+    const game: Record<string, unknown> = { ...rawGame }
     delete game[key]
 
     expect(() =>
       HomeFactsModel.fromRawData({
         ...validRaw,
-        featuredGame: game,
+        spotlightGame: game,
       }),
     ).toThrow(InvalidRawDataError)
   })
@@ -162,36 +246,41 @@ describe("HomeFactsModel", () => {
     "slug",
     "name",
     "nativeName",
-    "years",
+    "inductionNumber",
+    "country",
+    "distinction",
     "photoPosition",
-  ])("throws when the featured player lacks %s", (key) => {
+  ])("throws when the spotlight player lacks %s", (key) => {
     const player: Record<string, unknown> = {
-      ...featuredPlayer,
+      ...spotlightPlayer,
     }
     delete player[key]
 
     expect(() =>
       HomeFactsModel.fromRawData({
         ...validRaw,
-        featuredPlayer: player,
+        spotlightPlayer: player,
       }),
     ).toThrow(InvalidRawDataError)
   })
 
-  it("throws when the featured player is a primitive", () => {
+  it("throws when the spotlight player is a primitive", () => {
     expect(() =>
       HomeFactsModel.fromRawData({
         ...validRaw,
-        featuredPlayer: 3,
+        spotlightPlayer: 3,
       }),
-    ).toThrow("featured player must be an object")
+    ).toThrow("spotlight player must be an object")
   })
 
   it("converts to a plain entity equal to the fields", () => {
     const entity =
       HomeFactsModel.fromRawData(validRaw).toEntity()
 
-    expect(entity).toEqual(validRaw)
+    expect(entity).toEqual({
+      ...validRaw,
+      spotlightGame,
+    })
     expect(Object.getPrototypeOf(entity)).toBe(
       Object.prototype,
     )

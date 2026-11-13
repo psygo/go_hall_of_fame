@@ -49,6 +49,7 @@ export function GoBoardPlayerClient({
         ref={board}
         sgf={sgf}
         theme={theme}
+        coordinates="false"
         style={{ maxWidth: "100%" }}
         onSgfLoaded={() => {
           if (highlightMove !== undefined) {

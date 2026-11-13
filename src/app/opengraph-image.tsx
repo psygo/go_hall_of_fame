@@ -7,7 +7,7 @@ export const contentType = "image/png"
 export default function Image() {
   return renderOgCard({
     eyebrow: "The Hall of Fame of Go",
-    title: "Legendary players and legendary games",
+    title: "Legendary Players and Legendary Games",
     description:
       "From the Edo castle matches to AlphaGo in Seoul.",
   })

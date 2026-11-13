@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm"
 import {
-  boolean,
   check,
   integer,
   pgEnum,
@@ -47,7 +46,6 @@ export const playersTable = pgTable("players", {
   photoPosition: text("photo_position")
     .notNull()
     .default("50% 50%"),
-  featured: boolean().notNull().default(false),
   /** Optional short labels, at most 8. */
   tags: text()
     .array()
@@ -84,7 +82,6 @@ export const gamesTable = pgTable("games", {
   highlightMove: integer("highlight_move"),
   /** Orders games with the same year. */
   sequence: integer().notNull().default(0),
-  featured: boolean().notNull().default(false),
   /** Optional short labels, at most 8. */
   tags: text()
     .array()

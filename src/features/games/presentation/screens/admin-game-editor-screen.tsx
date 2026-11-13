@@ -42,7 +42,6 @@ export async function AdminGameEditorScreen({
               game?.highlightMove == null
                 ? ""
                 : String(game.highlightMove),
-            featured: game?.featured ?? false,
             tags: formatTags(game?.tags ?? []),
             sgfFileText: "",
             sgfFileTooLarge: false,

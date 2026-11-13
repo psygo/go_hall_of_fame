@@ -26,7 +26,6 @@ function buildPlayer(slug: string): Player {
     bio: "Bio",
     photoUrl: null,
     photoPosition: "center",
-    featured: false,
     tags: [],
   }
 }

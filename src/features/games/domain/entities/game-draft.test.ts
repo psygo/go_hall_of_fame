@@ -23,7 +23,6 @@ function buildGame(slug: string): Game {
     sgfUrl: null,
     hasUploadedSgf: false,
     highlightMove: null,
-    featured: false,
     tags: [],
     sequence: 0,
   }
@@ -53,7 +52,6 @@ function buildForm(
     sgfUrl: "/sgf/game-4.sgf",
     sequence: "1",
     highlightMove: "",
-    featured: false,
     tags: "",
     sgfFileText: "",
     sgfFileTooLarge: false,
@@ -101,7 +99,6 @@ describe("validateGameForm", () => {
         sgfUrl: "/sgf/game-4.sgf",
         sequence: 1,
         highlightMove: null,
-        featured: false,
         tags: [],
         blackPlayerSlug: "lee-sedol",
         whitePlayerSlug: null,
@@ -627,15 +624,6 @@ describe("validateGameForm", () => {
         ).resources,
       ).toMatch(/not a valid link/)
     })
-  })
-
-  it("keeps the featured flag as given", () => {
-    expect(validate(buildForm({ featured: true }))).toEqual(
-      {
-        valid: true,
-        draft: expect.objectContaining({ featured: true }),
-      },
-    )
   })
 
   it("reports every error at once", () => {

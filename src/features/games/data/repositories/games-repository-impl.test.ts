@@ -22,7 +22,6 @@ const rawGame = {
   sgfUrl: null,
   hasUploadedSgf: false,
   highlightMove: null,
-  featured: false,
   tags: [],
   sequence: 1,
 }
@@ -209,7 +208,6 @@ describe("GamesRepositoryImpl", () => {
       sgfUrl: null,
       sequence: 1,
       highlightMove: null,
-      featured: false,
       tags: [],
       blackPlayerSlug: "shusaku",
       whitePlayerSlug: null,

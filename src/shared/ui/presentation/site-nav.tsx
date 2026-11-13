@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { EditPageButton } from "./edit-page-button"
 import { LocaleMenu } from "@/shared/i18n/presentation/locale-menu"
@@ -32,6 +32,35 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
   const { messages } = useLocale()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  // Wide enough for the links? Measured: they collapse into the menu as soon as the row would wrap.
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const nav = useRef<HTMLElement>(null)
+  // The width the links needed when they last overflowed, for which labels (they change by language).
+  const widthNeeded = useRef({ width: 0, labels: messages })
+
+  useEffect(() => {
+    const element = nav.current
+    if (element === null) return
+    const observer = new ResizeObserver(() => {
+      if (!isCollapsed) {
+        if (element.scrollWidth > element.clientWidth) {
+          widthNeeded.current = {
+            width: element.scrollWidth,
+            labels: messages,
+          }
+          setIsCollapsed(true)
+        }
+      } else if (
+        // Wider now, or the labels changed so the old measure is stale: show the links and measure again.
+        widthNeeded.current.labels !== messages ||
+        element.clientWidth >= widthNeeded.current.width
+      ) {
+        setIsCollapsed(false)
+      }
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [isCollapsed, messages, admin])
 
   const currentOf = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`)
@@ -41,12 +70,13 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
   return (
     <header>
       <nav
+        ref={nav}
         aria-label="Main"
-        className="border-divider flex flex-wrap items-center gap-x-5 gap-y-1 border-b px-4 py-3"
+        className="border-divider flex items-center gap-x-5 border-b px-4 py-3"
       >
         <Link
           href="/"
-          className="text-ink hover:text-ink mr-auto flex items-center gap-3 text-lg font-semibold no-underline"
+          className="text-ink hover:text-ink mr-auto flex shrink-0 items-center gap-3 text-lg font-semibold whitespace-nowrap no-underline"
           onClick={() => setIsMenuOpen(false)}
         >
           <Image
@@ -59,7 +89,9 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
           />
           Go | Hall of Fame
         </Link>
-        <div className="hidden items-center gap-5 min-[720px]:flex">
+        <div
+          className={`items-center gap-5 whitespace-nowrap max-[719px]:hidden ${isCollapsed ? "hidden" : "flex"}`}
+        >
           {NAV_ITEMS.map(({ href, label }) => (
             <Link
               key={href}
@@ -76,18 +108,46 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
         <LocaleMenu />
         <button
           type="button"
-          className="btn btn-secondary min-[720px]:hidden"
+          className={`btn btn-secondary px-2.5 ${isCollapsed ? "" : "min-[720px]:hidden"}`}
+          aria-label={
+            isMenuOpen ? messages.close : messages.menu
+          }
+          title={
+            isMenuOpen ? messages.close : messages.menu
+          }
           aria-expanded={isMenuOpen}
+          aria-controls="site-menu"
           onClick={() => setIsMenuOpen((open) => !open)}
         >
-          {isMenuOpen ? messages.close : messages.menu}
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            aria-hidden
+          >
+            {isMenuOpen ? (
+              <path d="M6 6l12 12M18 6L6 18" />
+            ) : (
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
         </button>
         {admin !== null && (
           <UserMenu admin={admin} signOut={signOut} />
         )}
       </nav>
       {isMenuOpen && (
-        <div className="border-divider flex flex-col border-b min-[720px]:hidden">
+        <div
+          id="site-menu"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") setIsMenuOpen(false)
+          }}
+          className={`border-divider flex-col border-b ${isCollapsed ? "flex" : "flex min-[720px]:hidden"}`}
+        >
           {NAV_ITEMS.map(({ href, label }) => (
             <Link
               key={href}

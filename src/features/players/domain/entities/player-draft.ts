@@ -33,7 +33,6 @@ export type PlayerForm = {
   readonly photoUrl: string
   readonly photoPosition: string
   readonly inductionNumber: string
-  readonly featured: boolean
   /** Comma-separated, optional. */
   readonly tags: string
   readonly resources: readonly ResourceRow[]
@@ -50,7 +49,6 @@ export type PlayerDraft = {
   readonly photoUrl: string | null
   readonly photoPosition: string
   readonly inductionNumber: number
-  readonly featured: boolean
   readonly tags: readonly string[]
   readonly resources: readonly ResourceLink[]
 }
@@ -163,7 +161,6 @@ export function validatePlayerForm(
       photoUrl: photoUrl === "" ? null : photoUrl,
       photoPosition,
       inductionNumber,
-      featured: form.featured,
       tags: tags.tags,
       resources: resources.links,
     },

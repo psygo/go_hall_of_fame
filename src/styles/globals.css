@@ -299,6 +299,7 @@
    * and cut a long label with an ellipsis before it reaches the arrow.
    */
   select.input {
+    cursor: pointer;
     min-width: 0;
     max-width: 100%;
     padding-right: 30px;

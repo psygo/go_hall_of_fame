@@ -47,7 +47,6 @@ const player: Player = {
   bio: "Bio",
   photoUrl: null,
   photoPosition: "50% 50%",
-  featured: false,
   tags: [],
 }
 const detail: PlayerDetail = {
@@ -259,23 +258,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       originalSlug: null,
-      form: { ...fields, featured: false, resources: [] },
-    })
-  })
-
-  it("passes the slug of the URL as the original slug when editing", async () => {
-    const { state, save } = buildState()
-
-    await expect(
-      state.saveFromForm(
-        "old-slug",
-        buildFormData({ ...fields, featured: "on" }),
-      ),
-    ).rejects.toThrow()
-
-    expect(save).toHaveBeenCalledWith({
-      originalSlug: "old-slug",
-      form: { ...fields, featured: true, resources: [] },
+      form: { ...fields, resources: [] },
     })
   })
 
@@ -299,7 +282,6 @@ describe("saveFromForm", () => {
         photoUrl: "",
         photoPosition: "",
         inductionNumber: "",
-        featured: false,
         tags: "",
         resources: [],
       },
@@ -368,7 +350,6 @@ describe("saveFromForm", () => {
       values: {
         ...fields,
         name: "",
-        featured: false,
         resources: [],
       },
     })
@@ -396,7 +377,7 @@ describe("saveFromForm", () => {
       status: "failed",
       message:
         "The player could not be saved. Try again in a moment.",
-      values: { ...fields, featured: false, resources: [] },
+      values: { ...fields, resources: [] },
     })
     expect(logged).toHaveBeenCalledWith(
       "Could not save the player:",

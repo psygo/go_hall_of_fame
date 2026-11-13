@@ -2,10 +2,9 @@ import Link from "next/link"
 import Image from "next/image"
 
 import { contentLoaders, homeLoaders } from "@/config/di"
-import { excerpt } from "@/core/markdown"
 import { fillPlaceholders } from "@/core/placeholders"
-import { HeroBoard } from "@/shared/go-board/presentation/hero-board"
-import { Portrait } from "@/shared/ui/presentation/portrait"
+import { GameCard } from "@/shared/ui/presentation/game-card"
+import { PlayerCard } from "@/shared/ui/presentation/player-card"
 
 const cellClass =
   "flex flex-col gap-3 border-r border-b border-divider px-5 py-8 text-ink no-underline hover:bg-accent-100 hover:text-ink"
@@ -15,19 +14,19 @@ export async function HomeScreen() {
     homeLoaders.loadHome(),
     contentLoaders.loadPageTexts("home"),
   ])
-  const { featuredGame, featuredPlayer } = summary
+  const { spotlightGame, spotlightPlayer } = summary
 
   const cells = [
     {
       href: "/players",
       figure: String(summary.playerCount),
-      title: "Legendary players",
+      title: "Legendary Players",
       text: texts["home.playersCardText"],
     },
     {
       href: "/games",
       figure: String(summary.gameCount),
-      title: "Legendary games",
+      title: "Legendary Games",
       text: texts["home.gamesCardText"],
     },
     {
@@ -54,7 +53,7 @@ export async function HomeScreen() {
           囲碁殿堂
         </div>
         <div className="relative flex flex-col items-center gap-6 px-4 pt-10 pb-8 text-center min-[720px]:px-6 min-[720px]:pt-[72px] min-[720px]:pb-10">
-          <div className="flex items-center gap-4 font-mono text-base tracking-[0.12em] uppercase min-[720px]:text-2xl">
+          <div className="flex items-center gap-4 font-mono text-[28px] tracking-[0.12em] uppercase">
             <Image
               src="/logo.svg"
               alt=""
@@ -85,12 +84,9 @@ export async function HomeScreen() {
               href="/games"
               className="btn btn-secondary"
             >
-              Legendary games
+              Legendary Games
             </Link>
           </div>
-        </div>
-        <div className="border-divider flex justify-center border-t px-4 py-6">
-          <HeroBoard />
         </div>
       </section>
 
@@ -115,54 +111,31 @@ export async function HomeScreen() {
         ))}
       </section>
 
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-8 px-4 py-12">
-        {featuredGame && (
-          <div className="flex flex-col gap-3">
-            <span className="tag tag-accent self-start">
-              Featured game
-            </span>
-            <h2 className="text-4xl leading-none">
-              {featuredGame.name}
-            </h2>
-            <div className="text-sm">
-              {featuredGame.year} · {featuredGame.black} vs{" "}
-              {featuredGame.white}
-            </div>
-            <p className="max-w-[50ch]">
-              {excerpt(featuredGame.description)}
-            </p>
-            <Link href={`/games/${featuredGame.slug}`}>
-              Read the game →
-            </Link>
+      {spotlightGame && (
+        <section aria-labelledby="home-game-heading">
+          <h2
+            id="home-game-heading"
+            className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
+          >
+            A legendary game
+          </h2>
+          <GameCard game={spotlightGame} />
+        </section>
+      )}
+
+      {spotlightPlayer && (
+        <section aria-labelledby="home-player-heading">
+          <h2
+            id="home-player-heading"
+            className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
+          >
+            A legendary player
+          </h2>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(230px,100%),1fr))]">
+            <PlayerCard player={spotlightPlayer} />
           </div>
-        )}
-        {featuredPlayer && (
-          <div className="grid grid-cols-[120px_1fr] items-start gap-4">
-            <Portrait
-              photoUrl={featuredPlayer.photoUrl}
-              position={featuredPlayer.photoPosition}
-              sizes="120px"
-            />
-            <div className="flex flex-col gap-3">
-              <span className="tag tag-outline self-start">
-                Featured player
-              </span>
-              <h2 className="text-[32px] leading-none">
-                {featuredPlayer.name}
-              </h2>
-              <div className="text-sm">
-                {featuredPlayer.nativeName} ·{" "}
-                {featuredPlayer.years}
-              </div>
-              <Link
-                href={`/players/${featuredPlayer.slug}`}
-              >
-                Open the profile →
-              </Link>
-            </div>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
     </>
   )
 }

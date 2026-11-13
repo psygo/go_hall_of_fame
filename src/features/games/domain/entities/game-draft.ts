@@ -35,7 +35,6 @@ export type GameForm = {
   readonly sequence: string
   /** The move to highlight, or "" for the default (move 50). */
   readonly highlightMove: string
-  readonly featured: boolean
   /** Comma-separated, optional. */
   readonly tags: string
   /** The slug of the Hall player who played Black / White, or "" for none. */
@@ -62,7 +61,6 @@ export type GameDraft = {
   readonly sgfUrl: string | null
   readonly sequence: number
   readonly highlightMove: number | null
-  readonly featured: boolean
   readonly tags: readonly string[]
   readonly blackPlayerSlug: string | null
   readonly whitePlayerSlug: string | null
@@ -203,7 +201,6 @@ export function validateGameForm(
       sgfUrl: sgfUrl === "" ? null : sgfUrl,
       sequence,
       highlightMove,
-      featured: form.featured,
       tags: tags.tags,
       blackPlayerSlug: blackPlayerSlug || null,
       whitePlayerSlug: whitePlayerSlug || null,

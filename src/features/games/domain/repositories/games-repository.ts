@@ -22,7 +22,7 @@ export interface GamesRepository {
   >
   /**
    * Updates the game with `originalSlug`, or inserts a new one when it is null, and replaces the
-   * players linked to it. When the draft is featured, no other game stays featured.
+   * players linked to it.
    */
   save(
     draft: GameDraft,
