@@ -1,0 +1,75 @@
+import {
+  collectErrors,
+  parseInteger,
+  type FieldErrors,
+  type Validation,
+} from "@/core/validation"
+
+export type TimelineEventForm = {
+  readonly year: string
+  readonly title: string
+  readonly text: string
+}
+
+export type TimelineEventDraft = {
+  readonly year: number
+  readonly title: string
+  readonly text: string
+}
+
+export type TimelineEventErrors = FieldErrors
+
+export const TIMELINE_LIMITS = {
+  minYear: 1,
+  maxYear: 2999,
+  title: 120,
+  text: 600,
+} as const
+
+export function validateTimelineEventForm(
+  form: TimelineEventForm,
+): Validation<TimelineEventDraft, TimelineEventErrors> {
+  const year = parseInteger(form.year)
+  const title = form.title.trim()
+  const text = form.text.trim()
+  const errors = collectErrors({
+    year: yearError(year),
+    title: requiredError(
+      title,
+      TIMELINE_LIMITS.title,
+      "a title",
+    ),
+    text: requiredError(
+      text,
+      TIMELINE_LIMITS.text,
+      "a description",
+    ),
+  })
+  if (Object.keys(errors).length > 0 || year === null) {
+    return { valid: false, errors }
+  }
+  return { valid: true, draft: { year, title, text } }
+}
+
+function yearError(
+  year: number | null,
+): string | undefined {
+  const inRange =
+    year !== null &&
+    year >= TIMELINE_LIMITS.minYear &&
+    year <= TIMELINE_LIMITS.maxYear
+  return inRange
+    ? undefined
+    : `Enter a year between ${TIMELINE_LIMITS.minYear} and ${TIMELINE_LIMITS.maxYear}.`
+}
+
+function requiredError(
+  value: string,
+  maxLength: number,
+  what: string,
+): string | undefined {
+  if (value === "") return `Enter ${what}.`
+  return value.length > maxLength
+    ? `Use at most ${maxLength} characters.`
+    : undefined
+}

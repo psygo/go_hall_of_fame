@@ -5,6 +5,7 @@ import { InvalidRawDataError } from "@/core/raw-data"
 import { CriterionModel } from "./criterion-model"
 
 const validRaw = {
+  id: 3,
   position: 1,
   title: "Mastery",
   text: "Text",
@@ -14,12 +15,19 @@ describe("CriterionModel", () => {
   it("parses valid raw data", () => {
     const model = CriterionModel.fromRawData(validRaw)
 
+    expect(model.id).toBe(3)
     expect(model.position).toBe(1)
     expect(model.title).toBe("Mastery")
     expect(model.text).toBe("Text")
   })
 
-  it.each(["position", "title", "text"])(
+  it("throws when the id is not an integer", () => {
+    expect(() =>
+      CriterionModel.fromRawData({ ...validRaw, id: null }),
+    ).toThrow('"id" must be an integer')
+  })
+
+  it.each(["id", "position", "title", "text"])(
     "throws when %s is missing",
     (key) => {
       const raw: Record<string, unknown> = { ...validRaw }
@@ -49,7 +57,7 @@ describe("CriterionModel", () => {
   it("converts to a plain entity equal to the fields", () => {
     const entity = CriterionModel.fromRawData({
       ...validRaw,
-      id: 3,
+      extra: "x",
     }).toEntity()
 
     expect(entity).toEqual(validRaw)

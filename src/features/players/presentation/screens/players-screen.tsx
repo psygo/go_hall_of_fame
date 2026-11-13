@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { playersLoaders } from "@/config/di"
+import { contentLoaders, playersLoaders } from "@/config/di"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 import { Portrait } from "@/shared/ui/presentation/portrait"
 
@@ -14,8 +14,11 @@ export async function PlayersScreen({
   searchParams,
 }: PlayersScreenProps) {
   const { country: countryParam } = await searchParams
-  const { players, country, countries } =
-    await playersLoaders.loadPlayersPage(countryParam)
+  const [{ players, country, countries }, texts] =
+    await Promise.all([
+      playersLoaders.loadPlayersPage(countryParam),
+      contentLoaders.loadPageTexts("players"),
+    ])
 
   const filters = [
     {
@@ -33,8 +36,8 @@ export async function PlayersScreen({
   return (
     <>
       <PageHeader
-        eyebrow="Inductees"
-        title="Legendary players"
+        eyebrow={texts["players.eyebrow"]}
+        title={texts["players.title"]}
       >
         <div className="mt-7 flex flex-wrap gap-2">
           {filters.map(({ label, href, isActive }) => (

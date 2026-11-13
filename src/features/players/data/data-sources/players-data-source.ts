@@ -7,6 +7,7 @@ import {
   playersTable,
 } from "@/shared/database/data/schema"
 
+import type { PlayerDraft } from "../../domain/entities/player-draft"
 import {
   PlayerDetailModel,
   PlayerModel,
@@ -53,5 +54,32 @@ export class PlayersDataSource {
         asc(gamesTable.sequence),
         asc(gamesTable.id),
       )
+  }
+
+  async upsert(
+    draft: PlayerDraft,
+    originalSlug: string | null,
+  ): Promise<void> {
+    await this.database.transaction(async (tx) => {
+      if (draft.featured) {
+        await tx
+          .update(playersTable)
+          .set({ featured: false })
+      }
+      if (originalSlug === null) {
+        await tx.insert(playersTable).values(draft)
+        return
+      }
+      await tx
+        .update(playersTable)
+        .set(draft)
+        .where(eq(playersTable.slug, originalSlug))
+    })
+  }
+
+  async deleteBySlug(slug: string): Promise<void> {
+    await this.database
+      .delete(playersTable)
+      .where(eq(playersTable.slug, slug))
   }
 }

@@ -21,7 +21,12 @@ function buildDraft(
 function buildRepository(
   submit: NominationsRepository["submit"],
 ): NominationsRepository {
-  return { submit }
+  return {
+    submit,
+    listAll: vi.fn(),
+    updateStatus: vi.fn(),
+    delete: vi.fn(),
+  }
 }
 
 describe("SubmitNomination", () => {

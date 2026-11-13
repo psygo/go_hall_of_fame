@@ -39,9 +39,14 @@ generated into `drizzle/` and tracked in git.
   Akaboshi Intetsu), which is why `black` and `white` are plain text on `games`.
 + `timeline_events`: `year`, `title`, `text`.
 + `criteria`: the four induction criteria (`position` unique, `title`, `text`).
++ `admins`: `email` (unique), `name`, `password_hash` (scrypt), `failed_attempts`, `locked_until`.
++ `admin_sessions`: `admin_id` (cascade), `token_hash` (unique, SHA-256 of the cookie token),
+  `expires_at`.
++ `site_texts`: editable page copy (`key` primary key, `value`). A key that is absent shows its
+  default from `page-text.ts`.
 + `nominations`: what the form on `/induction` writes: `name`, `category` (`player | game`),
   `email`, `case_for_induction`, `status` (`pending | accepted | declined`, default `pending`),
-  `created_at`. There is no admin screen yet; review them with SQL. The domain caps the lengths
+  `created_at`. Review them at `/admin/nominations`. The domain caps the lengths
   (name 200, email 254, case 5000 characters). There is no rate limit or captcha yet.
 
 ## Seed data

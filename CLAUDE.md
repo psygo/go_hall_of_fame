@@ -82,6 +82,21 @@ presentation  -->  domain  <--  data
 - Database schema: `src/shared/database/data/schema.ts` (Drizzle). Change it, then `pnpm
   db:generate` and `pnpm db:migrate`. Migrations are in `drizzle/` and are tracked.
 
+## Admin and security rules
+
+- Admin screens and actions: the first line of every admin loader and mutation is `requireAdmin()`
+  (injected by the composition root, `RequireAdmin` in `src/core/admin-guard.ts`). Server Actions are
+  public endpoints, so a layout guard is not protection. See `docs/admin.md`.
+- Never log secrets or whole errors from the data layer (drivers echo query parameters): log
+  `error.name`. Never put a password, token or hash in a doc, a commit, or a test fixture that looks
+  real.
+- A client component never imports a value from `presentation/state` (types only, with `import
+  type`). Shared constants go in a plain module.
+- Local work must not touch a hosted database: `.env.local` may contain a remote `DATABASE_URL`
+  (pulled from Vercel). Override it inline (`DATABASE_URL=... pnpm dev`) or use a separate env file,
+  and never run `db:seed`, `db:migrate` or `admin:create` against a hosted database without being
+  asked. See `docs/deployment.md`.
+
 ## Testing requirement (always, not just when asked)
 
 - Any new or changed **domain logic** (entities with behavior, use cases), **core helpers**, or
@@ -169,3 +184,4 @@ user in short form, with what was found and what was changed.
 @docs/APP_ARCHITECTURE.md
 @docs/ARCHITECTURE_VIOLATIONS.md
 @docs/CODING_GUIDELINES.md
+@docs/admin.md

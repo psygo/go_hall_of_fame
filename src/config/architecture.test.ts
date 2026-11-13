@@ -25,6 +25,18 @@ const productionFiles = () =>
     (file) => !/\.test\.tsx?$/.test(file),
   )
 
+/** Safe for the browser: a "use server" module (the bundler makes endpoint references) or a plain module with no server imports. */
+function isBrowserSafeStateModule(path: string): boolean {
+  const source = read(`${path}.ts`)
+  if (/^\s*["']use server["']/.test(source)) return true
+  return !extractSpecifiers(source).some(
+    (specifier) =>
+      specifier === "server-only" ||
+      specifier.startsWith("next/") ||
+      specifier.startsWith("@/config/"),
+  )
+}
+
 describe("import rules across the whole tree", () => {
   it("scans a realistic number of files (so the scan cannot pass vacuously)", () => {
     expect(productionFiles().length).toBeGreaterThan(60)
@@ -97,6 +109,31 @@ describe("structure rules", () => {
     })
     expect(models.length).toBeGreaterThan(0)
     expect(incomplete).toEqual([])
+  })
+
+  it("keeps value imports from presentation/state out of client components (5.3)", () => {
+    const clients = productionFiles().filter((file) =>
+      /^\s*["']use client["']/.test(read(file)),
+    )
+    const valueImport =
+      /import\s+(?!type\b)[^'"]*?from\s+["']([^"']+)["']/g
+    const offenders = clients.flatMap((file) =>
+      [...read(file).matchAll(valueImport)]
+        .map((match) => match[1])
+        .filter((specifier) => {
+          const target = resolveTarget(file, specifier)
+          return (
+            target.kind === "internal" &&
+            target.path.includes("/presentation/state/") &&
+            !isBrowserSafeStateModule(target.path)
+          )
+        })
+        .map(
+          (specifier) => `${file} imports "${specifier}"`,
+        ),
+    )
+    expect(clients.length).toBeGreaterThan(0)
+    expect(offenders).toEqual([])
   })
 
   it("names every repository implementation {Interface}Impl (1.4.1)", () => {

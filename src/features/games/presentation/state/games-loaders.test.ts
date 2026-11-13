@@ -40,6 +40,8 @@ const game: Game = {
   moment: "M",
   legacy: "L",
   sgfUrl: null,
+  featured: false,
+  sequence: 0,
 }
 
 const profile: GameProfile = {

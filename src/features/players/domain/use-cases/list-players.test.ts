@@ -21,13 +21,19 @@ function buildPlayer(
     bio: "Bio",
     photoUrl: null,
     photoPosition: "center",
+    featured: false,
   }
 }
 
 function buildRepository(
   listAll: PlayersRepository["listAll"],
 ): PlayersRepository {
-  return { listAll, findDetailBySlug: vi.fn() }
+  return {
+    listAll,
+    findDetailBySlug: vi.fn(),
+    save: vi.fn(),
+    deleteBySlug: vi.fn(),
+  }
 }
 
 describe("ListPlayers", () => {

@@ -15,7 +15,7 @@ All tokens are CSS variables in `src/styles/globals.css` and are exposed to Tail
 + Divider is the ink at 35% alpha. `accent-100/200/300` mix the accent into the paper at 12/22/38%;
   `accent-600/700/800` mix it with black (light) or white (dark).
 + Page texture: two soft radial gradients (`--texture`).
-+ Type: Geist (variable, all weights) through `next/font/google`, latin and latin-ext subsets, so
++ Type: Geist (variable, all weights), Geist Mono for eyebrows and small labels through `next/font/google`, latin and latin-ext subsets, so
   the Han and Hangul characters fall back to the system sans (Hiragino Sans, Yu Gothic, PingFang
   SC, Apple SD Gothic Neo). Body 15px / 1.55; headings weight 800, no letter-spacing. The handoff
   used Shippori Mincho; Geist replaced it on request.
@@ -49,3 +49,18 @@ Every player uses the one placeholder portrait (`public/images/placeholder-portr
 per player and shown in grayscale, as in the handoff. Real portraits need a licence. Set
 `players.photo_url` once you have one (a path under `public/`, or a host added to
 `images.remotePatterns`).
+
+## Theme update (2026-11-13)
+
+The second version of the handoff changed mostly the timeline and the type:
+
++ Timeline: a 2px centre line, events alternating left and right (right-aligned on the left),
+  18px stones alternating ink and white, year 40px in the accent. Events within five years of the
+  previous one stay on its side with a tighter gap (2016 and 2019). On mobile the line moves to the
+  left and every event sits to its right. The placement rule is `layoutTimeline`.
++ Headings are weight 600 (h1 tracking -0.04em, others -0.02em). Eyebrows and labels use Geist Mono.
++ Shippori Mincho is used only for the 碁 seal, the giant 碁 and the vertical 囲碁殿堂 (desktop
+  hero, left). The font files in `src/app/fonts/` are subsets of exactly those four glyphs.
++ Portraits get the ink-on-paper treatment: grayscale with contrast 1.1, blended with `multiply`
+  over the paper colour (light) or `screen` over the surface colour (dark).
+

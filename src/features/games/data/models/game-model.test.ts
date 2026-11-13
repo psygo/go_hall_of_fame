@@ -16,6 +16,8 @@ const validGame = {
   moment: "Moment",
   legacy: "Legacy",
   sgfUrl: "https://example.com/g.sgf",
+  featured: false,
+  sequence: 2,
 }
 
 const validPlayers = [
@@ -48,6 +50,16 @@ describe("GameModel", () => {
     expect(() =>
       GameModel.fromRawData(without(validGame, key)),
     ).toThrow(InvalidRawDataError)
+  })
+
+  it.each([
+    ["featured", "yes", "must be a boolean"],
+    ["sequence", "2", "must be an integer"],
+    ["sequence", 1.5, "must be an integer"],
+  ])("throws when %s is %j", (key, value, message) => {
+    expect(() =>
+      GameModel.fromRawData({ ...validGame, [key]: value }),
+    ).toThrow(message)
   })
 
   it("throws when the year is not an integer", () => {
@@ -86,8 +98,6 @@ describe("GameModel", () => {
     const entity = GameModel.fromRawData({
       ...validGame,
       id: 1,
-      sequence: 2,
-      featured: false,
     }).toEntity()
 
     expect(entity).toEqual(validGame)

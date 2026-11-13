@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
+import type { GameDraft } from "../../domain/entities/game-draft"
 import type { GamesDataSource } from "../data-sources/games-data-source"
 import {
   GameDetailModel,
@@ -19,6 +20,8 @@ const rawGame = {
   moment: "Moment",
   legacy: "Legacy",
   sgfUrl: null,
+  featured: false,
+  sequence: 1,
 }
 
 function buildRepository(
@@ -117,6 +120,123 @@ describe("GamesRepositoryImpl", () => {
       expect(state).toEqual({
         status: "failure",
         error: new Error("db down"),
+      })
+    })
+  })
+  describe("listPlayerOptions", () => {
+    it("returns the options of the data source", async () => {
+      const options = [{ slug: "shusaku", name: "Shusaku" }]
+      const repository = buildRepository({
+        listPlayerOptions: vi.fn(async () => options),
+      })
+
+      expect(await repository.listPlayerOptions()).toEqual({
+        status: "success",
+        data: options,
+      })
+    })
+
+    it("returns a failure when the data source rejects", async () => {
+      const cause = new Error("db down")
+      const repository = buildRepository({
+        listPlayerOptions: vi.fn(async () => {
+          throw cause
+        }),
+      })
+
+      expect(await repository.listPlayerOptions()).toEqual({
+        status: "failure",
+        error: cause,
+      })
+    })
+
+    it("returns a failure when the data source throws synchronously", async () => {
+      const cause = new Error("sync")
+      const repository = buildRepository({
+        listPlayerOptions: vi.fn(() => {
+          throw cause
+        }),
+      })
+
+      expect(await repository.listPlayerOptions()).toEqual({
+        status: "failure",
+        error: cause,
+      })
+    })
+  })
+
+  describe("save", () => {
+    const { slug, year, name, black, white, result } =
+      rawGame
+    const draft: GameDraft = {
+      slug,
+      year,
+      name,
+      black,
+      white,
+      result,
+      setting: "Setting",
+      hook: "Hook",
+      moment: "Moment",
+      legacy: "Legacy",
+      sgfUrl: null,
+      sequence: 1,
+      featured: false,
+      playerSlugs: ["shusaku"],
+    }
+
+    it("passes the draft and the original slug to the data source", async () => {
+      const upsert = vi.fn(async () => undefined)
+
+      const state = await buildRepository({ upsert }).save(
+        draft,
+        "old",
+      )
+
+      expect(upsert).toHaveBeenCalledWith(draft, "old")
+      expect(state.status).toBe("success")
+    })
+
+    it("returns a failure when the data source throws", async () => {
+      const cause = new Error("db down")
+      const repository = buildRepository({
+        upsert: vi.fn(async () => {
+          throw cause
+        }),
+      })
+
+      expect(await repository.save(draft, null)).toEqual({
+        status: "failure",
+        error: cause,
+      })
+    })
+  })
+
+  describe("deleteBySlug", () => {
+    it("deletes by slug and returns a success", async () => {
+      const deleteBySlug = vi.fn(async () => undefined)
+
+      const state = await buildRepository({
+        deleteBySlug,
+      }).deleteBySlug("ear-reddening")
+
+      expect(deleteBySlug).toHaveBeenCalledWith(
+        "ear-reddening",
+      )
+      expect(state.status).toBe("success")
+    })
+
+    it("returns a failure when the data source throws", async () => {
+      const cause = new Error("db down")
+      const repository = buildRepository({
+        deleteBySlug: vi.fn(async () => {
+          throw cause
+        }),
+      })
+
+      expect(await repository.deleteBySlug("x")).toEqual({
+        status: "failure",
+        error: cause,
       })
     })
   })

@@ -1,16 +1,22 @@
-import { timelineLoaders } from "@/config/di"
+import {
+  contentLoaders,
+  timelineLoaders,
+} from "@/config/di"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
 import type { TimelinePlacement } from "../../domain/entities/timeline-layout"
 
 export async function TimelineScreen() {
-  const placements = await timelineLoaders.loadTimeline()
+  const [placements, texts] = await Promise.all([
+    timelineLoaders.loadTimeline(),
+    contentLoaders.loadPageTexts("timeline"),
+  ])
 
   return (
     <>
       <PageHeader
-        eyebrow="Four centuries"
-        title="Timeline"
+        eyebrow={texts["timeline.eyebrow"]}
+        title={texts["timeline.title"]}
       />
       <section className="relative px-4 pt-12 pb-4">
         <div

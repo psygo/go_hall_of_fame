@@ -1,6 +1,7 @@
 import Link from "next/link"
 
-import { homeLoaders } from "@/config/di"
+import { contentLoaders, homeLoaders } from "@/config/di"
+import { fillPlaceholders } from "@/core/placeholders"
 import { HeroBoard } from "@/shared/go-board/presentation/hero-board"
 import { Portrait } from "@/shared/ui/presentation/portrait"
 
@@ -8,7 +9,10 @@ const cellClass =
   "flex flex-col gap-3 border-r border-b border-divider px-5 py-8 text-ink no-underline hover:bg-accent-100 hover:text-ink"
 
 export async function HomeScreen() {
-  const summary = await homeLoaders.loadHome()
+  const [summary, texts] = await Promise.all([
+    homeLoaders.loadHome(),
+    contentLoaders.loadPageTexts("home"),
+  ])
   const { featuredGame, featuredPlayer } = summary
 
   const cells = [
@@ -16,19 +20,19 @@ export async function HomeScreen() {
       href: "/players",
       figure: String(summary.playerCount),
       title: "Legendary players",
-      text: "From Dosaku to Shin Jinseo, across Japan, China and Korea.",
+      text: texts["home.playersCardText"],
     },
     {
       href: "/games",
       figure: String(summary.gameCount),
       title: "Legendary games",
-      text: "The moves that stopped the room and rewrote theory.",
+      text: texts["home.gamesCardText"],
     },
     {
       href: "/timeline",
       figure: String(summary.centuries),
       title: "Centuries of Go",
-      text: "A timeline from the Edo academy to the age of AI.",
+      text: texts["home.timelineCardText"],
     },
   ]
 
@@ -58,13 +62,13 @@ export async function HomeScreen() {
             圍棋 · 囲碁 · 바둑
           </div>
           <h1 className="max-w-[13ch] text-[52px] leading-[0.92] text-balance min-[720px]:text-[clamp(48px,7vw,96px)]">
-            The finest hands in the history of Go.
+            {texts["home.title"]}
           </h1>
           <p className="max-w-[44ch]">
-            {summary.playerCount} players and{" "}
-            {summary.gameCount} games that changed how the
-            board is read, from the Edo castle matches to a
-            wedge on move 78 in Seoul.
+            {fillPlaceholders(texts["home.intro"], {
+              playerCount: summary.playerCount,
+              gameCount: summary.gameCount,
+            })}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link

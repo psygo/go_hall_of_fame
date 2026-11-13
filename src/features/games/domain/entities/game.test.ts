@@ -15,6 +15,8 @@ function buildGame(slug: string): Game {
     moment: "Moment",
     legacy: "Legacy",
     sgfUrl: null,
+    featured: false,
+    sequence: 0,
   }
 }
 

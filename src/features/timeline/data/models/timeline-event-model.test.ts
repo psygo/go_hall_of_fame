@@ -5,6 +5,7 @@ import { InvalidRawDataError } from "@/core/raw-data"
 import { TimelineEventModel } from "./timeline-event-model"
 
 const validRaw = {
+  id: 4,
   year: 1612,
   title: "Founded",
   text: "Text",
@@ -14,21 +15,31 @@ describe("TimelineEventModel", () => {
   it("parses valid raw data", () => {
     const model = TimelineEventModel.fromRawData(validRaw)
 
+    expect(model.id).toBe(4)
     expect(model.year).toBe(1612)
     expect(model.title).toBe("Founded")
     expect(model.text).toBe("Text")
   })
 
-  it("ignores extra columns such as the database id", () => {
+  it("ignores extra columns", () => {
     const entity = TimelineEventModel.fromRawData({
       ...validRaw,
-      id: 9,
+      extra: "x",
     }).toEntity()
 
     expect(entity).toEqual(validRaw)
   })
 
-  it.each(["year", "title", "text"])(
+  it("throws when the id is not an integer", () => {
+    expect(() =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        id: "4",
+      }),
+    ).toThrow('"id" must be an integer')
+  })
+
+  it.each(["id", "year", "title", "text"])(
     "throws when %s is missing",
     (key) => {
       const raw: Record<string, unknown> = { ...validRaw }

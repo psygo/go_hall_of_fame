@@ -21,11 +21,16 @@ const emptyValues: NominationFormValues = {
 
 const headingClass = "text-4xl leading-none"
 
-export function NominationForm() {
+export function NominationForm({
+  title,
+}: {
+  readonly title: string
+}) {
   const [round, setRound] = useState(0)
   return (
     <NominationFormRound
       key={round}
+      title={title}
       onNominateAnother={() =>
         setRound((current) => current + 1)
       }
@@ -34,8 +39,10 @@ export function NominationForm() {
 }
 
 function NominationFormRound({
+  title,
   onNominateAnother,
 }: {
+  readonly title: string
   readonly onNominateAnother: () => void
 }) {
   const [state, formAction, isPending] = useActionState(
@@ -75,9 +82,7 @@ function NominationFormRound({
       className="flex flex-col gap-4"
       noValidate
     >
-      <h2 className={headingClass}>
-        Nominate a player or a game
-      </h2>
+      <h2 className={headingClass}>{title}</h2>
       <div className="field">
         <label htmlFor="nomination-name">
           Name of the player or game

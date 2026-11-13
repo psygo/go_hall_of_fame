@@ -69,7 +69,12 @@ describe("createInductionState", () => {
   describe("loadCriteria", () => {
     it("returns the criteria of the use case", async () => {
       const criteria: Criterion[] = [
-        { position: 1, title: "Mastery", text: "Text" },
+        {
+          id: 1,
+          position: 1,
+          title: "Mastery",
+          text: "Text",
+        },
       ]
       const { state } = buildState(
         { status: "failed", error: new Error("db down") },

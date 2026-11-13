@@ -1,5 +1,6 @@
 import { captureDataState } from "@/core/data-state"
 
+import type { PlayerDraft } from "../../domain/entities/player-draft"
 import type { PlayersRepository } from "../../domain/repositories/players-repository"
 import type { PlayersDataSource } from "../data-sources/players-data-source"
 
@@ -21,5 +22,17 @@ export class PlayersRepositoryImpl implements PlayersRepository {
         await this.dataSource.fetchDetailBySlug(slug)
       return model === null ? null : model.toEntity()
     })
+  }
+
+  save(draft: PlayerDraft, originalSlug: string | null) {
+    return captureDataState(() =>
+      this.dataSource.upsert(draft, originalSlug),
+    )
+  }
+
+  deleteBySlug(slug: string) {
+    return captureDataState(() =>
+      this.dataSource.deleteBySlug(slug),
+    )
   }
 }

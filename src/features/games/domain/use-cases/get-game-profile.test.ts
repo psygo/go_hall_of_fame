@@ -6,6 +6,12 @@ import type { Game, GameDetail } from "../entities/game"
 import type { GamesRepository } from "../repositories/games-repository"
 import { GetGameProfile } from "./get-game-profile"
 
+const unusedMethods = {
+  listPlayerOptions: vi.fn(),
+  save: vi.fn(),
+  deleteBySlug: vi.fn(),
+}
+
 function buildGame(slug: string): Game {
   return {
     slug,
@@ -19,6 +25,8 @@ function buildGame(slug: string): Game {
     moment: "M",
     legacy: "L",
     sgfUrl: null,
+    featured: false,
+    sequence: 0,
   }
 }
 
@@ -36,6 +44,7 @@ describe("GetGameProfile", () => {
   it("returns the detail with its neighbors", async () => {
     const detail = buildDetail("b")
     const repository: GamesRepository = {
+      ...unusedMethods,
       listAll: vi.fn(async () => succeed(all)),
       findDetailBySlug: vi.fn(async () => succeed(detail)),
     }
@@ -56,6 +65,7 @@ describe("GetGameProfile", () => {
 
   it("wraps neighbors around the ends of the list", async () => {
     const repository: GamesRepository = {
+      ...unusedMethods,
       listAll: vi.fn(async () => succeed(all)),
       findDetailBySlug: vi.fn(async () =>
         succeed(buildDetail("c")),
@@ -76,6 +86,7 @@ describe("GetGameProfile", () => {
 
   it("returns a null profile when the game does not exist, without listing", async () => {
     const repository: GamesRepository = {
+      ...unusedMethods,
       listAll: vi.fn(async () => succeed(all)),
       findDetailBySlug: vi.fn(async () => succeed(null)),
     }
@@ -93,6 +104,7 @@ describe("GetGameProfile", () => {
   it("propagates a failure of the detail lookup", async () => {
     const failure = fail(new Error("detail failed"))
     const repository: GamesRepository = {
+      ...unusedMethods,
       listAll: vi.fn(async () => succeed(all)),
       findDetailBySlug: vi.fn(async () => failure),
     }
@@ -107,6 +119,7 @@ describe("GetGameProfile", () => {
   it("propagates a failure of the list lookup", async () => {
     const failure = fail(new Error("list failed"))
     const repository: GamesRepository = {
+      ...unusedMethods,
       listAll: vi.fn(async () => failure),
       findDetailBySlug: vi.fn(async () =>
         succeed(buildDetail("b")),
@@ -122,6 +135,7 @@ describe("GetGameProfile", () => {
 
   it("fails when the game is missing from the list", async () => {
     const repository: GamesRepository = {
+      ...unusedMethods,
       listAll: vi.fn(async () => succeed(all)),
       findDetailBySlug: vi.fn(async () =>
         succeed(buildDetail("ghost")),

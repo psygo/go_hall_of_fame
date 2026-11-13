@@ -9,9 +9,17 @@ import { ListCriteria } from "./list-criteria"
 describe("ListCriteria", () => {
   it("returns the criteria of the repository", async () => {
     const criteria: Criterion[] = [
-      { position: 1, title: "Mastery", text: "Text" },
+      {
+        id: 1,
+        position: 1,
+        title: "Mastery",
+        text: "Text",
+      },
     ]
     const repository: CriteriaRepository = {
+      findById: vi.fn(),
+      save: vi.fn(),
+      delete: vi.fn(),
       listAll: vi.fn(async () => succeed(criteria)),
     }
 
@@ -23,6 +31,9 @@ describe("ListCriteria", () => {
   it("propagates a repository failure", async () => {
     const failure = fail(new Error("db down"))
     const repository: CriteriaRepository = {
+      findById: vi.fn(),
+      save: vi.fn(),
+      delete: vi.fn(),
       listAll: vi.fn(async () => failure),
     }
 

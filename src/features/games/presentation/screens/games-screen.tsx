@@ -1,16 +1,19 @@
 import Link from "next/link"
 
-import { gamesLoaders } from "@/config/di"
+import { contentLoaders, gamesLoaders } from "@/config/di"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
 export async function GamesScreen() {
-  const games = await gamesLoaders.loadGames()
+  const [games, texts] = await Promise.all([
+    gamesLoaders.loadGames(),
+    contentLoaders.loadPageTexts("games"),
+  ])
 
   return (
     <>
       <PageHeader
-        eyebrow="The record"
-        title="Legendary games"
+        eyebrow={texts["games.eyebrow"]}
+        title={texts["games.title"]}
       />
       <div className="flex flex-col">
         {games.map((game) => (

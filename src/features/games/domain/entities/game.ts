@@ -12,6 +12,9 @@ export type Game = {
   readonly moment: string
   readonly legacy: string
   readonly sgfUrl: string | null
+  readonly featured: boolean
+  /** Orders games played in the same year. */
+  readonly sequence: number
 }
 
 export type GamePlayerReference = {

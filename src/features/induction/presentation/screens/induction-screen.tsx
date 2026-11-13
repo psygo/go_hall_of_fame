@@ -1,16 +1,19 @@
-import { inductionState } from "@/config/di"
+import { contentLoaders, inductionState } from "@/config/di"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
 import { NominationForm } from "../components/nomination-form"
 
 export async function InductionScreen() {
-  const criteria = await inductionState.loadCriteria()
+  const [criteria, texts] = await Promise.all([
+    inductionState.loadCriteria(),
+    contentLoaders.loadPageTexts("induction"),
+  ])
 
   return (
     <>
       <PageHeader
-        eyebrow="Induction"
-        title="How a name enters the Hall"
+        eyebrow={texts["induction.eyebrow"]}
+        title={texts["induction.title"]}
       />
       <section className="grid grid-cols-[repeat(auto-fit,minmax(min(320px,100%),1fr))]">
         <div className="min-[720px]:border-divider min-[720px]:border-r">
@@ -37,7 +40,9 @@ export async function InductionScreen() {
           ))}
         </div>
         <div className="px-4 pt-8 pb-12">
-          <NominationForm />
+          <NominationForm
+            title={texts["induction.formTitle"]}
+          />
         </div>
       </section>
     </>

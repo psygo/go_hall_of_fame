@@ -2,6 +2,7 @@ import "server-only"
 
 import {
   createDatabase,
+  readConnectionString,
   type Database,
 } from "@/shared/database/data/database"
 
@@ -11,10 +12,10 @@ declare global {
 }
 
 function connect(): Database {
-  const connectionString = process.env.DATABASE_URL
+  const connectionString = readConnectionString(process.env)
   if (!connectionString) {
     throw new Error(
-      "DATABASE_URL is not set. Copy .env.example to .env.local.",
+      "DATABASE_URL (or POSTGRES_URL) is not set. See docs/deployment.md.",
     )
   }
   return createDatabase(connectionString)

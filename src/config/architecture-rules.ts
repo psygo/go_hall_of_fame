@@ -37,7 +37,11 @@ function asLayer(value: string | undefined): Layer | null {
   return LAYERS.find((layer) => layer === value) ?? null
 }
 const NEXT_AND_REACT = /^(next|react|react-dom)(\/|$)/
-const DATA_PROVIDERS = new Set(["drizzle-orm", "pg"])
+const DATA_PROVIDERS = new Set([
+  "drizzle-orm",
+  "pg",
+  "node:crypto",
+])
 
 export function locate(file: string): Location {
   const parts = file.split("/")

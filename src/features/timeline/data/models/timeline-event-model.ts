@@ -7,6 +7,7 @@ import {
 import type { TimelineEvent } from "../../domain/entities/timeline-event"
 
 export class TimelineEventModel implements TimelineEvent {
+  declare readonly id: number
   declare readonly year: number
   declare readonly title: string
   declare readonly text: string
@@ -18,6 +19,7 @@ export class TimelineEventModel implements TimelineEvent {
   static fromRawData(raw: unknown): TimelineEventModel {
     const record = asRecord(raw, "timeline event")
     return new TimelineEventModel({
+      id: readInteger(record, "id"),
       year: readInteger(record, "year"),
       title: readString(record, "title"),
       text: readString(record, "text"),

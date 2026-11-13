@@ -20,6 +20,14 @@ specific responsibility and a restrictive set of allowed imports, as explained
   nomination form, board) are small client components.
 + Tests: Vitest for domain, data and architecture (`src/**/*.test.ts`).
 
+## Admin and authorization
+
+See [admin.md](./admin.md) for what the admin does. Architecturally: `features/auth` owns sessions.
+Other features never import it. Instead the composition root gives each feature's admin state a
+`RequireAdmin` function (`src/core/admin-guard.ts`, built in `config/wiring/auth.ts`), which every
+admin loader and every mutation calls first. The root layout is built by the auth feature's
+`AppShellScreen` (it needs the current admin for the nav).
+
 ## Folder Structure of the Repo
 
 + `src/app/`: App Router routes ONLY. Each file is a thin wrapper that renders a screen from
@@ -39,8 +47,10 @@ specific responsibility and a restrictive set of allowed imports, as explained
 + `src/shared/{name}/`: same shape as a feature, for code used by several features (a folder may
   have only the layers it needs). Today: `shared/database` (data only: Drizzle schema and client),
   `shared/ui` and `shared/go-board` (presentation only).
-+ `src/features/{feature}/`: `players`, `games`, `timeline`, `induction` (criteria + nominations),
-  `home`
++ `src/features/{feature}/`: `players`, `games`, `timeline`, `induction` (criteria and nominations),
+  `home`, `content` (editable page texts), `auth` (admin sign-in and sessions), `dashboard` (the
+  admin counts). Each feature owns the admin editing of its own data (its `*-admin-state.ts`,
+  forms and admin screens); the routes under `src/app/admin/` just render them.
   + `data/`
     + `data-sources/`
     + `models/`

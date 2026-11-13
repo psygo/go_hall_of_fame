@@ -6,6 +6,7 @@ import {
 } from "./timeline-layout"
 
 const eventIn = (year: number) => ({
+  id: year,
   year,
   title: `T${year}`,
   text: "x",

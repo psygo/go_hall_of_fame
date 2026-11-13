@@ -77,3 +77,19 @@ Any change that contains them must be reworked before it is considered done.
    + 4.3 Only the composition root (`config/di.ts` and `config/wiring/*`) imports the wiring
      modules. A wiring module never imports `config/di`. The composition root is `server-only`.
    + 4.4 Side-effect imports (`import './x'`) count as imports for every rule above.
+
+5. **Admin and Security Violations**
+   + 5.1 Every admin loader and every mutation (Server Action) calls `requireAdmin()` FIRST, before
+     reading or writing anything. A layout guard alone is not enough.
+   + 5.2 A feature never imports `features/auth`; it receives `RequireAdmin` from the composition
+     root (4.1).
+   + 5.3 A client component (`"use client"`) never imports a value from `presentation/state` (that
+     pulls `next/cache`, `server-only` modules and the actions' dependencies into the browser
+     bundle). Share constants through a plain module such as `shared/ui/presentation/admin-paths.ts`,
+     and import state types with `import type`. A `"use server"` action module, or a plain module with no
+     server imports, is fine to import: the architecture test allows exactly those.
+   + 5.4 Secrets (passwords, tokens, hashes, emails) are never logged or put in error messages:
+     log `error.name`, not the error.
+   + 5.5 User input is validated in the domain (lengths first, then patterns), never trusted from the
+     form, and URLs are limited to a site path or https.
+
