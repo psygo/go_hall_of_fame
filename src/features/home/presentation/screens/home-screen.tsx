@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 
 import { contentLoaders, homeLoaders } from "@/config/di"
 import { fillPlaceholders } from "@/core/placeholders"
@@ -53,12 +54,14 @@ export async function HomeScreen() {
         </div>
         <div className="relative flex flex-col items-center gap-6 px-4 pt-10 pb-8 text-center min-[720px]:px-6 min-[720px]:pt-[72px] min-[720px]:pb-10">
           <div className="flex items-center gap-3 font-mono text-xs tracking-[0.12em] uppercase">
-            <span
-              aria-hidden
-              className="bg-accent text-paper font-seal inline-flex size-10 items-center justify-center text-2xl font-extrabold tracking-normal"
-            >
-              碁
-            </span>
+            <Image
+              src="/logo.svg"
+              alt=""
+              width={40}
+              height={40}
+              unoptimized
+              className="size-10"
+            />
             圍棋 · 囲碁 · 바둑
           </div>
           <h1 className="max-w-[13ch] text-[52px] leading-[0.92] text-balance min-[720px]:text-[clamp(48px,7vw,96px)]">

@@ -1,0 +1,75 @@
+import {
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs"
+import { join } from "node:path"
+
+import { create } from "fontkit"
+import sharp from "sharp"
+
+// Generates the site logo: the 碁 seal, cream on vermilion, from the Shippori Mincho subset that
+// the site already ships. The glyph is centred on its real outline (both ways), not on its line
+// box, which sits high. Run: pnpm logo:generate
+const ROOT = join(__dirname, "..")
+const FONT = join(
+  ROOT,
+  "src/app/fonts/shippori-mincho-seal-800.woff2",
+)
+const OUT_DIR = join(ROOT, "public")
+
+const GLYPH = "碁"
+const SEAL = "#c1321e"
+const PAPER = "#f1e9d6"
+const SIZE = 512
+/** The share of the square the glyph's tallest side fills. */
+const GLYPH_FILL = 0.64
+
+function readGlyph() {
+  const found = create(readFileSync(FONT))
+  if (!("layout" in found))
+    throw new Error(
+      "Expected a single font, not a collection",
+    )
+  const { glyphs } = found.layout(GLYPH)
+  if (glyphs.length !== 1 || glyphs[0].id === 0)
+    throw new Error(`The font has no glyph for ${GLYPH}`)
+  return glyphs[0]
+}
+
+function buildSvg(): string {
+  const glyph = readGlyph()
+  const { minX, minY, maxX, maxY } = glyph.bbox
+  const width = maxX - minX
+  const height = maxY - minY
+  const scale =
+    (SIZE * GLYPH_FILL) / Math.max(width, height)
+  // Font units point up, SVG points down, hence the negative y scale.
+  const x = (SIZE - width * scale) / 2 - minX * scale
+  const y = (SIZE - height * scale) / 2 + maxY * scale
+  const transform = `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${scale.toFixed(5)} ${(-scale).toFixed(5)})`
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}" role="img" aria-label="Go Hall of Fame">`,
+    `<rect width="${SIZE}" height="${SIZE}" fill="${SEAL}"/>`,
+    `<path fill="${PAPER}" transform="${transform}" d="${glyph.path.toSVG()}"/>`,
+    `</svg>`,
+    ``,
+  ].join("\n")
+}
+
+async function main() {
+  const svg = buildSvg()
+  mkdirSync(OUT_DIR, { recursive: true })
+  writeFileSync(join(OUT_DIR, "logo.svg"), svg)
+  await sharp(Buffer.from(svg))
+    .png()
+    .toFile(join(OUT_DIR, "logo.png"))
+  console.log("Wrote public/logo.svg and public/logo.png")
+}
+
+main().catch((error) => {
+  console.error(
+    error instanceof Error ? error.message : error,
+  )
+  process.exitCode = 1
+})
