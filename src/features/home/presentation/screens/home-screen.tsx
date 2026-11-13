@@ -120,31 +120,33 @@ export async function HomeScreen() {
         ))}
       </section>
 
-      {spotlightGame && (
-        <section aria-labelledby="home-game-heading">
-          <h2
-            id="home-game-heading"
-            className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
-          >
-            A legendary game
-          </h2>
-          <GameCard game={spotlightGame} />
-        </section>
-      )}
+      <div className="grid grid-cols-1 min-[1000px]:grid-cols-[minmax(0,5fr)_minmax(0,2fr)]">
+        {spotlightGame && (
+          <section aria-labelledby="home-game-heading">
+            <h2
+              id="home-game-heading"
+              className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
+            >
+              A legendary game
+            </h2>
+            <GameCard game={spotlightGame} />
+          </section>
+        )}
 
-      {spotlightPlayer && (
-        <section aria-labelledby="home-player-heading">
-          <h2
-            id="home-player-heading"
-            className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
-          >
-            A legendary player
-          </h2>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(230px,100%),1fr))]">
-            <PlayerCard player={spotlightPlayer} />
-          </div>
-        </section>
-      )}
+        {spotlightPlayer && (
+          <section aria-labelledby="home-player-heading">
+            <h2
+              id="home-player-heading"
+              className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
+            >
+              A legendary player
+            </h2>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(230px,100%),1fr))]">
+              <PlayerCard player={spotlightPlayer} />
+            </div>
+          </section>
+        )}
+      </div>
     </>
   )
 }
