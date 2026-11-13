@@ -6,7 +6,7 @@ export function SectionLabel({
   children: ReactNode
 }) {
   return (
-    <div className="text-accent-700 text-[11px] font-bold tracking-[0.1em] uppercase">
+    <div className="text-accent-700 font-mono text-[11px] font-bold tracking-[0.1em] uppercase">
       {children}
     </div>
   )

@@ -11,7 +11,7 @@ export function LabelledFact({
 }: LabelledFactProps) {
   return (
     <div className="py-3">
-      <div className="text-[11px] tracking-[0.1em] uppercase opacity-70">
+      <div className="font-mono text-[11px] tracking-[0.1em] uppercase opacity-70">
         {label}
       </div>
       <div className="font-bold">{children}</div>

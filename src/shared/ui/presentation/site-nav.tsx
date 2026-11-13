@@ -33,7 +33,7 @@ export function SiteNav() {
       >
         <Link
           href="/"
-          className="text-ink hover:text-ink mr-auto text-lg font-extrabold no-underline"
+          className="text-ink hover:text-ink mr-auto text-lg font-semibold no-underline"
           onClick={() => setIsMenuOpen(false)}
         >
           Go / Hall of Fame

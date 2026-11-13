@@ -62,7 +62,7 @@ export async function GameScreen({
         )}
         {detail.players.length > 0 && (
           <div className="flex flex-wrap items-center gap-4">
-            <span className="text-[11px] font-bold tracking-[0.1em] uppercase">
+            <span className="font-mono text-[11px] font-bold tracking-[0.1em] uppercase">
               In the Hall
             </span>
             {detail.players.map((player) => (

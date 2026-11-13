@@ -7,6 +7,10 @@ import {
 import type { NoParams, UseCase } from "@/core/use-case"
 
 import type { TimelineEvent } from "../../domain/entities/timeline-event"
+import {
+  layoutTimeline,
+  type TimelinePlacement,
+} from "../../domain/entities/timeline-layout"
 
 export type TimelineLoaderDependencies = {
   readonly listTimelineEvents: UseCase<
@@ -19,12 +23,13 @@ export function createTimelineLoaders(
   dependencies: TimelineLoaderDependencies,
 ) {
   async function loadTimeline(): Promise<
-    readonly TimelineEvent[]
+    readonly TimelinePlacement[]
   > {
     await connection()
-    return unwrapDataState(
+    const events = unwrapDataState(
       await dependencies.listTimelineEvents.call({}),
     )
+    return layoutTimeline(events)
   }
 
   return { loadTimeline }

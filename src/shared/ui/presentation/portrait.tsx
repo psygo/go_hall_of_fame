@@ -18,14 +18,14 @@ export function Portrait({
 }: PortraitProps) {
   return (
     <div
-      className={`photo-grayscale relative aspect-[4/5] overflow-hidden ${className}`}
+      className={`photo-frame relative aspect-[4/5] overflow-hidden ${className}`}
     >
       <Image
         src={photoUrl ?? PLACEHOLDER_PORTRAIT_URL}
         alt=""
         fill
         sizes={sizes}
-        className="object-cover"
+        className="photo-ink object-cover"
         style={{ objectPosition: position }}
       />
     </div>

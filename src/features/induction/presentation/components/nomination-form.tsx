@@ -19,7 +19,7 @@ const emptyValues: NominationFormValues = {
   caseForInduction: "",
 }
 
-const headingClass = "text-4xl leading-none font-extrabold"
+const headingClass = "text-4xl leading-none"
 
 export function NominationForm() {
   const [round, setRound] = useState(0)

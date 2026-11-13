@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 
 export const displayTitleClass =
-  "text-[40px] leading-[0.95] font-extrabold tracking-normal min-[720px]:text-[clamp(44px,6vw,80px)]"
+  "text-[40px] leading-[0.95] min-[720px]:text-[clamp(44px,6vw,80px)]"
 
 type PageHeaderProps = {
   readonly eyebrow: string
@@ -16,7 +16,7 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <section className="border-divider border-b px-4 pt-12 pb-8">
-      <div className="mb-3 text-xs tracking-[0.12em] uppercase">
+      <div className="mb-3 font-mono text-xs tracking-[0.12em] uppercase">
         {eyebrow}
       </div>
       <h1 className={displayTitleClass}>{title}</h1>

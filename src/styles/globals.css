@@ -9,6 +9,8 @@
   --accent: #c1321e;
   --stone: #f6f0e0;
   --stone-black: var(--ink);
+  --photo-tint: var(--paper);
+  --photo-blend: multiply;
   --accent-600: color-mix(in srgb, var(--accent) 82%, #000);
   --accent-700: color-mix(in srgb, var(--accent) 65%, #000);
   --accent-800: color-mix(in srgb, var(--accent) 45%, #000);
@@ -46,6 +48,8 @@
       transparent 45%
     );
   --stone-black: var(--paper);
+  --photo-tint: var(--surface);
+  --photo-blend: screen;
   color-scheme: dark;
 }
 
@@ -86,6 +90,10 @@
   --color-accent-800: var(--accent-800);
   --color-divider: var(--divider);
   --color-stone: var(--stone);
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular,
+    Menlo, monospace;
+  --font-seal: var(--font-shippori-seal), serif;
   --font-sans:
     var(--font-geist), system-ui, "Hiragino Sans",
     "Yu Gothic", "PingFang SC", "Apple SD Gothic Neo",
@@ -111,9 +119,14 @@
   h2,
   h3,
   h4 {
-    font-weight: 800;
+    font-weight: 600;
     line-height: 1.12;
     margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    letter-spacing: -0.04em;
   }
 
   p {
@@ -147,8 +160,13 @@
   }
 }
 
-.photo-grayscale {
-  filter: grayscale(1) contrast(1.08);
+.photo-frame {
+  background-color: var(--photo-tint);
+}
+
+.photo-ink {
+  filter: grayscale(1) contrast(1.1);
+  mix-blend-mode: var(--photo-blend);
 }
 
 @layer components {
