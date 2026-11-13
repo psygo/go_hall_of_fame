@@ -62,6 +62,18 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
     return () => observer.disconnect()
   }, [isCollapsed, messages, admin])
 
+  // Everything that is not a link: shown in the row when it fits, inside the menu when it does not.
+  const tools = (
+    <>
+      {admin !== null && <EditPageButton />}
+      <ThemeToggle />
+      <LocaleMenu />
+      {admin !== null && (
+        <UserMenu admin={admin} signOut={signOut} />
+      )}
+    </>
+  )
+
   const currentOf = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`)
       ? "page"
@@ -102,10 +114,8 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
               {messages[label]}
             </Link>
           ))}
+          {tools}
         </div>
-        {admin !== null && <EditPageButton />}
-        <ThemeToggle />
-        <LocaleMenu />
         <button
           type="button"
           className={`btn btn-secondary px-2.5 ${isCollapsed ? "" : "min-[720px]:hidden"}`}
@@ -136,9 +146,6 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
             )}
           </svg>
         </button>
-        {admin !== null && (
-          <UserMenu admin={admin} signOut={signOut} />
-        )}
       </nav>
       {isMenuOpen && (
         <div
@@ -159,6 +166,9 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
               {messages[label]}
             </Link>
           ))}
+          <div className="border-divider flex flex-wrap items-center gap-3 border-t px-4 py-3">
+            {tools}
+          </div>
         </div>
       )}
     </header>

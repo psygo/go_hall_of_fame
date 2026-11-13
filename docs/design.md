@@ -25,7 +25,7 @@ All tokens are CSS variables in `src/styles/globals.css` and are exposed to Tail
 
 + Light/dark follows the system by default and can be switched with the nav button (`next-themes`,
   `class` strategy on `<html>`).
-+ The nav collapses into a three-line menu button with a stacked link list as soon as its links would
++ The nav collapses into a three-line menu button at the top right, holding the links and the edit, theme, language and account buttons, as soon as the row would
   wrap (always below 720px; measured above that, so longer translations collapse sooner); hero H1 is 52px, page
   H1 40px; the games and timeline rows stack.
 + The country filter on `/players` is a link (`/players?country=Korea`), so it works without
