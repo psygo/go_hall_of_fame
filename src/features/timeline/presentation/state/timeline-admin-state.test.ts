@@ -115,7 +115,12 @@ describe("loadAdminTimeline", () => {
   it("returns the events after checking the admin", async () => {
     const { state, requireAdmin, list } = buildState()
 
-    expect(await state.loadAdminTimeline()).toEqual([event])
+    expect(await state.loadAdminTimeline()).toEqual({
+      items: [event],
+      page: 1,
+      pageCount: 1,
+      total: 1,
+    })
     expect(
       requireAdmin.mock.invocationCallOrder[0],
     ).toBeLessThan(list.mock.invocationCallOrder[0])
@@ -356,5 +361,28 @@ describe("deleteById", () => {
       "NEXT_REDIRECT:/admin/sign-in",
     )
     expect(remove).not.toHaveBeenCalled()
+  })
+})
+
+describe("loadAdminTimeline pagination", () => {
+  const many = Array.from({ length: 16 }, (_, index) => ({
+    ...event,
+    id: index + 1,
+  }))
+
+  it("returns the requested page, clamped and tolerant", async () => {
+    const { state } = buildState({
+      listResult: succeed(many),
+    })
+
+    expect(
+      (await state.loadAdminTimeline("2")).items,
+    ).toHaveLength(1)
+    expect((await state.loadAdminTimeline("99")).page).toBe(
+      2,
+    )
+    expect((await state.loadAdminTimeline("x")).page).toBe(
+      1,
+    )
   })
 })

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import type { Game, GamePlayerReference } from "./game"
 import {
   GAME_LIMITS,
+  isPlausibleSgf,
   validateGameForm,
   type GameForm,
 } from "./game-draft"
@@ -19,7 +20,10 @@ function buildGame(slug: string): Game {
     hook: "H",
     moment: "M",
     legacy: "L",
+    blackPlayerSlug: null,
+    whitePlayerSlug: null,
     sgfUrl: null,
+    hasUploadedSgf: false,
     featured: false,
     sequence: 0,
   }
@@ -51,7 +55,12 @@ function buildForm(
     sgfUrl: "/sgf/game-4.sgf",
     sequence: "1",
     featured: false,
-    playerSlugs: ["lee-sedol"],
+    sgfFileText: "",
+    sgfFileTooLarge: false,
+    removeSgf: false,
+    blackPlayerSlug: "lee-sedol",
+    whitePlayerSlug: "",
+    resources: [],
     ...overrides,
   }
 }
@@ -94,7 +103,11 @@ describe("validateGameForm", () => {
         sgfUrl: "/sgf/game-4.sgf",
         sequence: 1,
         featured: false,
+        blackPlayerSlug: "lee-sedol",
+        whitePlayerSlug: null,
         playerSlugs: ["lee-sedol"],
+        sgf: { kind: "keep" },
+        resources: [],
       },
     })
   })
@@ -316,21 +329,31 @@ describe("validateGameForm", () => {
     )
   })
 
-  describe("playerSlugs", () => {
-    it("accepts no players", () => {
-      expect(
-        validate(buildForm({ playerSlugs: [] })),
-      ).toEqual({
-        valid: true,
-        draft: expect.objectContaining({ playerSlugs: [] }),
-      })
-    })
-
-    it("accepts several known players, keeping the order", () => {
+  describe("black and white player links", () => {
+    it("accepts no links", () => {
       expect(
         validate(
           buildForm({
-            playerSlugs: ["shusaku", "lee-sedol"],
+            blackPlayerSlug: "",
+            whitePlayerSlug: "",
+          }),
+        ),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          blackPlayerSlug: null,
+          whitePlayerSlug: null,
+          playerSlugs: [],
+        }),
+      })
+    })
+
+    it("lists both players, Black first", () => {
+      expect(
+        validate(
+          buildForm({
+            blackPlayerSlug: "shusaku",
+            whitePlayerSlug: "lee-sedol",
           }),
         ),
       ).toEqual({
@@ -341,34 +364,178 @@ describe("validateGameForm", () => {
       })
     })
 
-    it("removes duplicates", () => {
+    it("lists a player once when both sides are the same", () => {
       expect(
         validate(
           buildForm({
-            playerSlugs: [
-              "shusaku",
-              "shusaku",
-              "lee-sedol",
+            blackPlayerSlug: "shusaku",
+            whitePlayerSlug: "shusaku",
+          }),
+        ),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          playerSlugs: ["shusaku"],
+        }),
+      })
+    })
+
+    it("rejects a player who is not in the Hall, per side", () => {
+      expect(
+        errorsOf(
+          buildForm({
+            blackPlayerSlug: "ghost",
+            whitePlayerSlug: "shusaku",
+          }),
+        ),
+      ).toEqual({
+        blackPlayerSlug:
+          "Choose a player who is in the Hall.",
+      })
+      expect(
+        errorsOf(buildForm({ whitePlayerSlug: "ghost" })),
+      ).toEqual({
+        whitePlayerSlug:
+          "Choose a player who is in the Hall.",
+      })
+    })
+  })
+
+  describe("sgf file", () => {
+    const sgf = "(;GM[1]SZ[19];B[pd])"
+
+    it("keeps the stored SGF by default", () => {
+      expect(validate(buildForm())).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          sgf: { kind: "keep" },
+        }),
+      })
+    })
+
+    it("replaces it with an uploaded text", () => {
+      expect(
+        validate(buildForm({ sgfFileText: sgf })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          sgf: { kind: "replace", text: sgf },
+        }),
+      })
+    })
+
+    it("removes it when asked and no file is chosen", () => {
+      expect(
+        validate(buildForm({ removeSgf: true })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          sgf: { kind: "remove" },
+        }),
+      })
+    })
+
+    it("lets a new file win over the remove flag", () => {
+      expect(
+        validate(
+          buildForm({ sgfFileText: sgf, removeSgf: true }),
+        ),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          sgf: { kind: "replace", text: sgf },
+        }),
+      })
+    })
+
+    it("treats a whitespace-only file as no file", () => {
+      expect(
+        validate(buildForm({ sgfFileText: "  \n" })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          sgf: { kind: "keep" },
+        }),
+      })
+    })
+
+    it.each(["hello", "(GM[1])", "(;B[aa]"])(
+      "rejects %j as not an SGF",
+      (sgfFileText) => {
+        expect(
+          errorsOf(buildForm({ sgfFileText })).sgfFile,
+        ).toMatch(/does not look like an SGF/)
+      },
+    )
+
+    it("accepts leading whitespace before the tree", () => {
+      expect(
+        validate(buildForm({ sgfFileText: " \n( ;B[aa])" }))
+          .valid,
+      ).toBe(true)
+    })
+
+    it("reports a file the admin state flagged as too large", () => {
+      expect(
+        errorsOf(
+          buildForm({
+            sgfFileTooLarge: true,
+            sgfFileText: "",
+          }),
+        ).sgfFile,
+      ).toMatch(/too large/)
+    })
+
+    it("rejects unbalanced parentheses", () => {
+      expect(
+        errorsOf(buildForm({ sgfFileText: "(;B[aa]" }))
+          .sgfFile,
+      ).toMatch(/balanced parentheses/)
+    })
+  })
+
+  describe("resources", () => {
+    it("returns the cleaned links in the draft", () => {
+      expect(
+        validate(
+          buildForm({
+            resources: [
+              {
+                url: " https://example.com/a ",
+                description: " A ",
+              },
+              { url: "", description: "" },
+              { url: "/notes", description: "" },
             ],
           }),
         ),
       ).toEqual({
         valid: true,
         draft: expect.objectContaining({
-          playerSlugs: ["shusaku", "lee-sedol"],
+          resources: [
+            {
+              url: "https://example.com/a",
+              description: "A",
+            },
+            { url: "/notes", description: null },
+          ],
         }),
       })
     })
 
-    it("rejects a player who is not in the Hall", () => {
+    it("reports an unsafe link as a resources error", () => {
       expect(
         errorsOf(
-          buildForm({ playerSlugs: ["shusaku", "ghost"] }),
-        ),
-      ).toEqual({
-        playerSlugs:
-          "Choose only players who are in the Hall.",
-      })
+          buildForm({
+            resources: [
+              {
+                url: "javascript:alert(1)",
+                description: "",
+              },
+            ],
+          }),
+        ).resources,
+      ).toMatch(/not a valid link/)
     })
   })
 
@@ -389,10 +556,34 @@ describe("validateGameForm", () => {
             name: "",
             year: "x",
             hook: "",
-            playerSlugs: ["ghost"],
+            blackPlayerSlug: "ghost",
           }),
         ),
       ).sort(),
-    ).toEqual(["hook", "name", "playerSlugs", "year"])
+    ).toEqual(["blackPlayerSlug", "hook", "name", "year"])
+  })
+})
+
+describe("isPlausibleSgf", () => {
+  it.each([
+    "(;GM[1];B[aa])",
+    " \n( ;B[aa])",
+    "(;B[aa](;W[bb])(;W[cc]))",
+    "(;C[a smiley :) or (]B[aa])",
+    "(;C[escaped \\] bracket )]B[aa])",
+  ])("accepts %j", (text) => {
+    expect(isPlausibleSgf(text)).toBe(true)
+  })
+
+  it.each([
+    "",
+    "hello",
+    "(GM[1])",
+    "(;B[aa]",
+    "(;B[aa]))",
+    "(;C[unclosed value)",
+    "(;C[a \\])",
+  ])("rejects %j", (text) => {
+    expect(isPlausibleSgf(text)).toBe(false)
   })
 })

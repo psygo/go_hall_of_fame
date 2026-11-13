@@ -4,6 +4,7 @@ import { TimelineDataSource } from "@/features/timeline/data/data-sources/timeli
 import { TimelineRepositoryImpl } from "@/features/timeline/data/repositories/timeline-repository-impl"
 import { DeleteTimelineEvent } from "@/features/timeline/domain/use-cases/delete-timeline-event"
 import { GetTimelineEvent } from "@/features/timeline/domain/use-cases/get-timeline-event"
+import { ListTimelineChunk } from "@/features/timeline/domain/use-cases/list-timeline-chunk"
 import { ListTimelineEvents } from "@/features/timeline/domain/use-cases/list-timeline-events"
 import { SaveTimelineEvent } from "@/features/timeline/domain/use-cases/save-timeline-event"
 import { createTimelineAdminState } from "@/features/timeline/presentation/state/timeline-admin-state"
@@ -20,7 +21,7 @@ const listTimelineEvents = new ListTimelineEvents(
 )
 
 export const timelineLoaders = createTimelineLoaders({
-  listTimelineEvents,
+  listTimelineChunk: new ListTimelineChunk(repository),
 })
 
 export const timelineAdminState = createTimelineAdminState({

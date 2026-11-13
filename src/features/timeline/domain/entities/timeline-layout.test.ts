@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest"
 import {
   CLUSTER_WITHIN_YEARS,
   layoutTimeline,
+  placeTimeline,
+  TIMELINE_CHUNK_SIZE,
 } from "./timeline-layout"
 
 const eventIn = (year: number) => ({
@@ -26,6 +28,7 @@ describe("layoutTimeline", () => {
         event: eventIn(1612),
         side: "left",
         isClustered: false,
+        index: 0,
       },
     ])
   })
@@ -74,5 +77,75 @@ describe("layoutTimeline", () => {
       (p) => p.side,
     )
     expect(sides).toEqual(["left", "left", "right"])
+  })
+})
+
+describe("layoutTimeline indexes", () => {
+  it("numbers the placements from 0 in order", () => {
+    expect(
+      layoutOf([1612, 1846, 1924]).map((p) => p.index),
+    ).toEqual([0, 1, 2])
+  })
+
+  it("clusters by distance whichever way the years run", () => {
+    const placements = layoutOf([2019, 2016, 1984])
+    expect(placements.map((p) => p.isClustered)).toEqual([
+      false,
+      true,
+      false,
+    ])
+    expect(placements.map((p) => p.side)).toEqual([
+      "left",
+      "left",
+      "right",
+    ])
+  })
+})
+
+describe("placeTimeline", () => {
+  const years = [1612, 1846, 1849, 1924, 1933, 2016]
+  const events = years.map(eventIn)
+
+  it("keeps the chronological order for oldest", () => {
+    expect(
+      placeTimeline(events, "oldest").map(
+        (p) => p.event.year,
+      ),
+    ).toEqual(years)
+  })
+
+  it("lays the reversed list out for newest, starting on the left", () => {
+    const placements = placeTimeline(events, "newest")
+
+    expect(placements.map((p) => p.event.year)).toEqual(
+      [...years].reverse(),
+    )
+    expect(placements[0].side).toBe("left")
+    expect(placements.map((p) => p.index)).toEqual([
+      0, 1, 2, 3, 4, 5,
+    ])
+  })
+
+  it("does not mutate the input", () => {
+    placeTimeline(events, "newest")
+    expect(events.map((e) => e.year)).toEqual(years)
+  })
+
+  it("gives the same sides whatever chunk is read from it", () => {
+    const many = Array.from(
+      { length: TIMELINE_CHUNK_SIZE * 2 + 1 },
+      (_, i) => eventIn(1000 + i * 20),
+    )
+    const whole = placeTimeline(many, "oldest")
+
+    expect(whole.map((p) => p.side).slice(0, 4)).toEqual([
+      "left",
+      "right",
+      "left",
+      "right",
+    ])
+    expect(whole[TIMELINE_CHUNK_SIZE].index).toBe(
+      TIMELINE_CHUNK_SIZE,
+    )
   })
 })

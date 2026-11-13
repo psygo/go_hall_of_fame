@@ -1,3 +1,8 @@
+import {
+  validateResourceRows,
+  type ResourceLink,
+  type ResourceRow,
+} from "@/core/resources"
 import { isValidSlug, slugify } from "@/core/slugify"
 import {
   collectErrors,
@@ -22,11 +27,25 @@ export type GameForm = {
   readonly moment: string
   readonly legacy: string
   readonly sgfUrl: string
+  /** The text of an uploaded SGF file, or "" when no file was chosen. */
+  readonly sgfFileText: string
+  /** The chosen file was over the size limit, so it was not read. */
+  readonly sgfFileTooLarge: boolean
+  /** Delete the SGF uploaded earlier. */
+  readonly removeSgf: boolean
   readonly sequence: string
   readonly featured: boolean
-  /** Slugs of the inducted players who played the game. */
-  readonly playerSlugs: readonly string[]
+  /** The slug of the Hall player who played Black / White, or "" for none. */
+  readonly blackPlayerSlug: string
+  readonly whitePlayerSlug: string
+  readonly resources: readonly ResourceRow[]
 }
+
+/** What saving does with the stored SGF text. */
+export type SgfChange =
+  | { readonly kind: "keep" }
+  | { readonly kind: "remove" }
+  | { readonly kind: "replace"; readonly text: string }
 
 export type GameDraft = {
   readonly slug: string
@@ -42,7 +61,12 @@ export type GameDraft = {
   readonly sgfUrl: string | null
   readonly sequence: number
   readonly featured: boolean
+  readonly blackPlayerSlug: string | null
+  readonly whitePlayerSlug: string | null
+  /** The Black and White players, without repeats: the players listed on the game. */
   readonly playerSlugs: readonly string[]
+  readonly sgf: SgfChange
+  readonly resources: readonly ResourceLink[]
 }
 
 export type GameErrors = FieldErrors
@@ -58,6 +82,7 @@ export const GAME_LIMITS = {
   minYear: 1,
   maxYear: 2999,
   maxSequence: 99,
+  maxSgfBytes: 400_000,
 } as const
 
 export type GameValidationContext = {
@@ -79,7 +104,12 @@ export function validateGameForm(
       ? 0
       : parseInteger(form.sequence)
   const sgfUrl = form.sgfUrl.trim()
-  const playerSlugs = [...new Set(form.playerSlugs)]
+  const blackPlayerSlug = form.blackPlayerSlug.trim()
+  const whitePlayerSlug = form.whitePlayerSlug.trim()
+  const playerSlugs = [
+    ...new Set([blackPlayerSlug, whitePlayerSlug]),
+  ].filter((candidate) => candidate !== "")
+  const resources = validateResourceRows(form.resources)
   const known = new Set(
     context.playerOptions.map((player) => player.slug),
   )
@@ -138,16 +168,24 @@ export function validateGameForm(
       GAME_LIMITS.maxSequence,
       "an order from 0",
     ),
-    playerSlugs: playerSlugs.every((candidate) =>
-      known.has(candidate),
-    )
+    sgfFile: sgfFileError(form),
+    blackPlayerSlug: knownPlayerError(
+      blackPlayerSlug,
+      known,
+    ),
+    whitePlayerSlug: knownPlayerError(
+      whitePlayerSlug,
+      known,
+    ),
+    resources: resources.valid
       ? undefined
-      : "Choose only players who are in the Hall.",
+      : resources.error,
   })
   if (
     Object.keys(errors).length > 0 ||
     year === null ||
-    sequence === null
+    sequence === null ||
+    !resources.valid
   ) {
     return { valid: false, errors }
   }
@@ -167,7 +205,11 @@ export function validateGameForm(
       sgfUrl: sgfUrl === "" ? null : sgfUrl,
       sequence,
       featured: form.featured,
+      blackPlayerSlug: blackPlayerSlug || null,
+      whitePlayerSlug: whitePlayerSlug || null,
       playerSlugs,
+      sgf: sgfChangeOf(form),
+      resources: resources.links,
     },
   }
 }
@@ -212,4 +254,56 @@ function slugError(
   return taken
     ? "Another game already uses this slug."
     : undefined
+}
+
+function knownPlayerError(
+  slug: string,
+  known: ReadonlySet<string>,
+): string | undefined {
+  return slug === "" || known.has(slug)
+    ? undefined
+    : "Choose a player who is in the Hall."
+}
+
+/** An SGF is a parenthesised tree that opens with a node: "(;". */
+function sgfFileError(form: GameForm): string | undefined {
+  if (form.sgfFileTooLarge) {
+    return "The SGF file is too large (400 KB at most)."
+  }
+  if (form.sgfFileText.trim() === "") return undefined
+  return isPlausibleSgf(form.sgfFileText)
+    ? undefined
+    : "This does not look like an SGF file: it should be a (;…) tree with balanced parentheses."
+}
+
+/**
+ * Starts with "(;" and every "(" is closed outside the [bracketed] property values (where a
+ * backslash escapes the next character). A light check: it does not parse properties.
+ */
+export function isPlausibleSgf(text: string): boolean {
+  if (!/^\s*\(\s*;/.test(text)) return false
+  let depth = 0
+  let inValue = false
+  for (let index = 0; index < text.length; index++) {
+    const char = text[index]
+    if (inValue) {
+      if (char === "\\") index++
+      else if (char === "]") inValue = false
+    } else if (char === "[") inValue = true
+    else if (char === "(") depth++
+    else if (char === ")") {
+      depth--
+      if (depth < 0) return false
+    }
+  }
+  return depth === 0 && !inValue
+}
+
+function sgfChangeOf(form: GameForm): SgfChange {
+  if (form.sgfFileText.trim() !== "") {
+    return { kind: "replace", text: form.sgfFileText }
+  }
+  return form.removeSgf
+    ? { kind: "remove" }
+    : { kind: "keep" }
 }

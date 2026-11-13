@@ -18,7 +18,10 @@ const existing: Game = {
   hook: "H",
   moment: "M",
   legacy: "L",
+  blackPlayerSlug: null,
+  whitePlayerSlug: null,
   sgfUrl: null,
+  hasUploadedSgf: false,
   featured: false,
   sequence: 0,
 }
@@ -37,7 +40,12 @@ const form: GameForm = {
   sgfUrl: "",
   sequence: "",
   featured: true,
-  playerSlugs: ["lee-sedol"],
+  sgfFileText: "",
+  sgfFileTooLarge: false,
+  removeSgf: false,
+  blackPlayerSlug: "lee-sedol",
+  whitePlayerSlug: "",
+  resources: [],
 }
 
 function buildRepository(
@@ -51,6 +59,7 @@ function buildRepository(
     ),
     save: vi.fn(async () => succeed(undefined)),
     deleteBySlug: vi.fn(),
+    findSgfTextBySlug: vi.fn(),
     ...overrides,
   }
 }
@@ -79,7 +88,11 @@ describe("SaveGame", () => {
         sgfUrl: null,
         sequence: 0,
         featured: true,
+        blackPlayerSlug: "lee-sedol",
+        whitePlayerSlug: null,
         playerSlugs: ["lee-sedol"],
+        sgf: { kind: "keep" },
+        resources: [],
       },
       null,
     )
@@ -106,14 +119,14 @@ describe("SaveGame", () => {
 
     const result = await new SaveGame(repository).call({
       originalSlug: null,
-      form: { ...form, playerSlugs: ["ghost"] },
+      form: { ...form, blackPlayerSlug: "ghost" },
     })
 
     expect(result).toEqual({
       status: "invalid",
       errors: {
-        playerSlugs:
-          "Choose only players who are in the Hall.",
+        blackPlayerSlug:
+          "Choose a player who is in the Hall.",
       },
     })
     expect(repository.save).not.toHaveBeenCalled()

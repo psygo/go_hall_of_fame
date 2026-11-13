@@ -33,6 +33,7 @@ const form: PlayerForm = {
   photoPosition: "",
   inductionNumber: "",
   featured: false,
+  resources: [],
 }
 
 function buildRepository(
@@ -69,6 +70,7 @@ describe("SavePlayer", () => {
         photoPosition: "50% 50%",
         inductionNumber: 2,
         featured: false,
+        resources: [],
       },
       null,
     )

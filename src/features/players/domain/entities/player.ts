@@ -1,4 +1,6 @@
 import { findCircularNeighbors } from "@/core/circular-neighbors"
+import { matchesQuery } from "@/core/list-query"
+import type { ResourceLink } from "@/core/resources"
 
 export const COUNTRIES = [
   "Japan",
@@ -30,6 +32,7 @@ export type PlayerGameReference = {
 
 export type PlayerDetail = Player & {
   readonly games: readonly PlayerGameReference[]
+  readonly resources: readonly ResourceLink[]
 }
 
 export type PlayerProfile = {
@@ -62,4 +65,61 @@ export function findNeighborsOfPlayer(
     (player) => player.slug === slug,
   )
   return findCircularNeighbors(players, index)
+}
+
+export const PLAYERS_PAGE_SIZE = 12
+
+export const PLAYER_SORTS = [
+  "number",
+  "newest",
+  "name",
+  "country",
+] as const
+
+export type PlayerSort = (typeof PLAYER_SORTS)[number]
+
+export const PLAYER_SORT_LABELS: Readonly<
+  Record<PlayerSort, string>
+> = {
+  number: "Induction number",
+  newest: "Latest inducted",
+  name: "Name A–Z",
+  country: "Country",
+}
+
+export function searchPlayers(
+  players: readonly Player[],
+  query: string,
+): readonly Player[] {
+  return players.filter((player) =>
+    matchesQuery(
+      [
+        player.name,
+        player.nativeName,
+        player.country,
+        player.distinction,
+        player.years,
+      ],
+      query,
+    ),
+  )
+}
+
+/** The list arrives ordered by induction number. */
+export function sortPlayers(
+  players: readonly Player[],
+  sort: PlayerSort,
+): readonly Player[] {
+  if (sort === "number") return players
+  if (sort === "newest") return [...players].reverse()
+  if (sort === "name") {
+    return [...players].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    )
+  }
+  return [...players].sort(
+    (a, b) =>
+      a.country.localeCompare(b.country) ||
+      a.inductionNumber - b.inductionNumber,
+  )
 }

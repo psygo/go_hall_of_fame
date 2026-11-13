@@ -6,7 +6,11 @@ import { BackLink } from "@/shared/ui/presentation/back-link"
 import { LabelledFact } from "@/shared/ui/presentation/labelled-fact"
 import { NeighborBar } from "@/shared/ui/presentation/neighbor-bar"
 import { displayTitleClass } from "@/shared/ui/presentation/page-header"
+import { PlayerName } from "@/shared/ui/presentation/player-name"
+import { ResourceList } from "@/shared/ui/presentation/resource-list"
 import { SectionLabel } from "@/shared/ui/presentation/section-label"
+
+import { sgfSourceOf } from "../../domain/entities/game"
 
 type GameScreenProps = {
   readonly params: Promise<{ readonly slug: string }>
@@ -19,6 +23,8 @@ export async function GameScreen({
   const { detail, previous, next } =
     await gamesLoaders.loadGameProfile(slug)
 
+  const sgf = sgfSourceOf(detail)
+
   return (
     <>
       <BackLink href="/games">All games</BackLink>
@@ -29,10 +35,16 @@ export async function GameScreen({
         <h1 className={displayTitleClass}>{detail.name}</h1>
         <div className="border-divider grid grid-cols-[repeat(auto-fit,minmax(min(150px,100%),1fr))] border-y">
           <LabelledFact label="Black">
-            {detail.black}
+            <PlayerName
+              name={detail.black}
+              slug={detail.blackPlayerSlug}
+            />
           </LabelledFact>
           <LabelledFact label="White">
-            {detail.white}
+            <PlayerName
+              name={detail.white}
+              slug={detail.whitePlayerSlug}
+            />
           </LabelledFact>
           <LabelledFact label="Result">
             {detail.result}
@@ -54,12 +66,13 @@ export async function GameScreen({
             <p className="max-w-[56ch]">{detail.legacy}</p>
           </div>
         </div>
-        {detail.sgfUrl !== null && (
+        {sgf !== null && (
           <div className="flex flex-col gap-1.5">
             <SectionLabel>The record</SectionLabel>
-            <GoBoardPlayer sgf={detail.sgfUrl} />
+            <GoBoardPlayer sgf={sgf} />
           </div>
         )}
+        <ResourceList resources={detail.resources} />
         {detail.players.length > 0 && (
           <div className="flex flex-wrap items-center gap-4">
             <span className="font-mono text-[11px] font-bold tracking-[0.1em] uppercase">

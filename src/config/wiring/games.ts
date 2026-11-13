@@ -6,7 +6,9 @@ import { DeleteGame } from "@/features/games/domain/use-cases/delete-game"
 import { GetGameDetail } from "@/features/games/domain/use-cases/get-game-detail"
 import { GetGameProfile } from "@/features/games/domain/use-cases/get-game-profile"
 import { ListGamePlayerOptions } from "@/features/games/domain/use-cases/list-game-player-options"
+import { GetGameSgf } from "@/features/games/domain/use-cases/get-game-sgf"
 import { ListGames } from "@/features/games/domain/use-cases/list-games"
+import { SearchGames } from "@/features/games/domain/use-cases/search-games"
 import { SaveGame } from "@/features/games/domain/use-cases/save-game"
 import { createGamesAdminState } from "@/features/games/presentation/state/games-admin-state"
 import { createGamesLoaders } from "@/features/games/presentation/state/games-loaders"
@@ -20,7 +22,8 @@ const repository = new GamesRepositoryImpl(
 const listGames = new ListGames(repository)
 
 export const gamesLoaders = createGamesLoaders({
-  listGames,
+  searchGames: new SearchGames(repository),
+  getGameSgf: new GetGameSgf(repository),
   getGameProfile: new GetGameProfile(repository),
 })
 

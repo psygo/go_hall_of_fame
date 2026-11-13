@@ -31,7 +31,10 @@ import type {
   GameDetail,
   GamePlayerReference,
 } from "../../domain/entities/game"
-import type { GameErrors } from "../../domain/entities/game-draft"
+import {
+  GAME_LIMITS,
+  type GameErrors,
+} from "../../domain/entities/game-draft"
 import {
   createGamesAdminState,
   type GamesAdminDependencies,
@@ -48,11 +51,18 @@ const game: Game = {
   hook: "H",
   moment: "M",
   legacy: "L",
+  blackPlayerSlug: null,
+  whitePlayerSlug: null,
   sgfUrl: null,
+  hasUploadedSgf: false,
   featured: false,
   sequence: 0,
 }
-const detail: GameDetail = { ...game, players: [] }
+const detail: GameDetail = {
+  ...game,
+  players: [],
+  resources: [],
+}
 const options: readonly GamePlayerReference[] = [
   { slug: "shusaku", name: "Shusaku" },
 ]
@@ -72,16 +82,22 @@ const fields = {
   sequence: "0",
 }
 
+const blankExtras = {
+  featured: false,
+  sgfFileText: "",
+  sgfFileTooLarge: false,
+  removeSgf: false,
+  blackPlayerSlug: "",
+  whitePlayerSlug: "",
+  resources: [],
+}
+
 function buildFormData(
   values: Record<string, string>,
-  playerSlugs: readonly string[] = [],
 ): FormData {
   const formData = new FormData()
   for (const [key, value] of Object.entries(values)) {
     formData.set(key, value)
-  }
-  for (const slug of playerSlugs) {
-    formData.append("playerSlugs", slug)
   }
   return formData
 }
@@ -153,7 +169,12 @@ describe("loadAdminGames", () => {
   it("returns the games after checking the admin", async () => {
     const { state, requireAdmin, list } = buildState()
 
-    expect(await state.loadAdminGames()).toEqual([game])
+    expect(await state.loadAdminGames()).toEqual({
+      items: [game],
+      page: 1,
+      pageCount: 1,
+      total: 1,
+    })
     expect(
       requireAdmin.mock.invocationCallOrder[0],
     ).toBeLessThan(list.mock.invocationCallOrder[0])
@@ -177,6 +198,34 @@ describe("loadAdminGames", () => {
     })
 
     await expect(state.loadAdminGames()).rejects.toBe(cause)
+  })
+})
+
+describe("loadAdminGames pagination", () => {
+  const many = Array.from({ length: 31 }, (_, index) => ({
+    ...game,
+    slug: `g${index}`,
+  }))
+
+  it("returns the requested page of the admin list", async () => {
+    const { state } = buildState({
+      listResult: succeed(many),
+    })
+
+    const page = await state.loadAdminGames("3")
+
+    expect(page.page).toBe(3)
+    expect(page.pageCount).toBe(3)
+    expect(page.items).toHaveLength(1)
+  })
+
+  it("clamps a page beyond the end and ignores garbage", async () => {
+    const { state } = buildState({
+      listResult: succeed(many),
+    })
+
+    expect((await state.loadAdminGames("99")).page).toBe(3)
+    expect((await state.loadAdminGames("abc")).page).toBe(1)
   })
 })
 
@@ -264,13 +313,17 @@ describe("loadEditor", () => {
 })
 
 describe("saveFromForm", () => {
-  it("passes a null original slug, the fields and the chosen players when creating", async () => {
+  it("passes a null original slug, the fields and the player links when creating", async () => {
     const { state, save } = buildState()
 
     await expect(
       state.saveFromForm(
         "new",
-        buildFormData(fields, ["shusaku", "lee-sedol"]),
+        buildFormData({
+          ...fields,
+          blackPlayerSlug: "shusaku",
+          whitePlayerSlug: "lee-sedol",
+        }),
       ),
     ).rejects.toThrow()
 
@@ -278,9 +331,81 @@ describe("saveFromForm", () => {
       originalSlug: null,
       form: {
         ...fields,
-        featured: false,
-        playerSlugs: ["shusaku", "lee-sedol"],
+        ...blankExtras,
+        blackPlayerSlug: "shusaku",
+        whitePlayerSlug: "lee-sedol",
       },
+    })
+  })
+
+  it("reads an uploaded SGF file and the resource rows", async () => {
+    const { state, save } = buildState()
+    const formData = buildFormData(fields)
+    formData.set(
+      "sgfFile",
+      new File(["(;GM[1])"], "game.sgf"),
+    )
+    formData.set("removeSgf", "on")
+    formData.append("resourceUrl", "https://example.com")
+    formData.append("resourceDescription", "Notes")
+    formData.append("resourceUrl", "/local")
+
+    await expect(
+      state.saveFromForm("new", formData),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({
+        sgfFileText: "(;GM[1])",
+        removeSgf: true,
+        resources: [
+          {
+            url: "https://example.com",
+            description: "Notes",
+          },
+          { url: "/local", description: "" },
+        ],
+      }),
+    })
+  })
+
+  it("treats an empty file input as no file", async () => {
+    const { state, save } = buildState()
+    const formData = buildFormData(fields)
+    formData.set("sgfFile", new File([], ""))
+
+    await expect(
+      state.saveFromForm("new", formData),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({ sgfFileText: "" }),
+    })
+  })
+
+  it("does not read an oversized file and flags it", async () => {
+    const { state, save } = buildState()
+    const formData = buildFormData(fields)
+    formData.set(
+      "sgfFile",
+      new File(
+        ["x".repeat(GAME_LIMITS.maxSgfBytes + 1)],
+        "big.sgf",
+      ),
+    )
+
+    await expect(
+      state.saveFromForm("new", formData),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({
+        sgfFileText: "",
+        sgfFileTooLarge: true,
+      }),
     })
   })
 
@@ -296,7 +421,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       originalSlug: "old-slug",
-      form: { ...fields, featured: true, playerSlugs: [] },
+      form: { ...fields, ...blankExtras, featured: true },
     })
   })
 
@@ -314,7 +439,7 @@ describe("saveFromForm", () => {
         year: "",
         sequence: "",
         featured: false,
-        playerSlugs: [],
+        resources: [],
       }),
     })
   })
@@ -341,16 +466,15 @@ describe("saveFromForm", () => {
     expect(
       await state.saveFromForm(
         "new",
-        buildFormData({ ...fields, name: "" }, ["shusaku"]),
+        buildFormData({ ...fields, name: "" }),
       ),
     ).toEqual({
       status: "invalid",
       errors,
       values: {
         ...fields,
+        ...blankExtras,
         name: "",
-        featured: false,
-        playerSlugs: ["shusaku"],
       },
     })
     expect(revalidatePath).not.toHaveBeenCalled()
@@ -377,11 +501,7 @@ describe("saveFromForm", () => {
       status: "failed",
       message:
         "The game could not be saved. Try again in a moment.",
-      values: {
-        ...fields,
-        featured: false,
-        playerSlugs: [],
-      },
+      values: { ...fields, ...blankExtras },
     })
     expect(logged).toHaveBeenCalledWith(
       "Could not save the game:",

@@ -1,3 +1,4 @@
+import type { QueryParam } from "@/core/list-query"
 import Link from "next/link"
 
 import { inductionAdminState } from "@/config/di"
@@ -6,13 +7,21 @@ import {
   AdminListRow,
 } from "@/shared/ui/presentation/admin-section"
 import { ConfirmDeleteButton } from "@/shared/ui/presentation/confirm-delete-button"
+import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
 import { deleteCriterionAction } from "../state/induction-admin-actions"
 
-export async function AdminCriteriaScreen() {
+export async function AdminCriteriaScreen({
+  searchParams,
+}: {
+  readonly searchParams: Promise<{
+    readonly page?: QueryParam
+  }>
+}) {
+  const { page: pageParam } = await searchParams
   const criteria =
-    await inductionAdminState.loadAdminCriteria()
+    await inductionAdminState.loadAdminCriteria(pageParam)
 
   return (
     <>
@@ -25,7 +34,7 @@ export async function AdminCriteriaScreen() {
         </Link>
       </PageHeader>
       <AdminList>
-        {criteria.map((criterion) => (
+        {criteria.items.map((criterion) => (
           <AdminListRow key={criterion.id}>
             <div>
               <span className="text-accent mr-3 font-bold">
@@ -57,6 +66,11 @@ export async function AdminCriteriaScreen() {
           </AdminListRow>
         ))}
       </AdminList>
+      <Pagination
+        page={criteria.page}
+        pageCount={criteria.pageCount}
+        basePath="/admin/criteria"
+      />
     </>
   )
 }

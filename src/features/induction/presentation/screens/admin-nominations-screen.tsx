@@ -1,5 +1,7 @@
+import type { QueryParam } from "@/core/list-query"
 import { inductionAdminState } from "@/config/di"
 import { ConfirmDeleteButton } from "@/shared/ui/presentation/confirm-delete-button"
+import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
 import {
@@ -19,18 +21,25 @@ const STATUS_LABEL: Readonly<
   declined: "Declined",
 }
 
-export async function AdminNominationsScreen() {
+export async function AdminNominationsScreen({
+  searchParams,
+}: {
+  readonly searchParams: Promise<{
+    readonly page?: QueryParam
+  }>
+}) {
+  const { page: pageParam } = await searchParams
   const nominations =
-    await inductionAdminState.loadNominations()
+    await inductionAdminState.loadNominations(pageParam)
 
   return (
     <>
       <PageHeader eyebrow="Admin" title="Nominations" />
-      {nominations.length === 0 && (
+      {nominations.total === 0 && (
         <p className="px-4 py-10">No nominations yet.</p>
       )}
       <ul className="m-0 list-none p-0">
-        {nominations.map((nomination) => (
+        {nominations.items.map((nomination) => (
           <li
             key={nomination.id}
             className="border-divider flex flex-col gap-3 border-b px-4 py-5"
@@ -98,6 +107,11 @@ export async function AdminNominationsScreen() {
           </li>
         ))}
       </ul>
+      <Pagination
+        page={nominations.page}
+        pageCount={nominations.pageCount}
+        basePath="/admin/nominations"
+      />
     </>
   )
 }

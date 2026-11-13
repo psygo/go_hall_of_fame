@@ -10,6 +10,7 @@ const unusedMethods = {
   listPlayerOptions: vi.fn(),
   save: vi.fn(),
   deleteBySlug: vi.fn(),
+  findSgfTextBySlug: vi.fn(),
 }
 
 const game: Game = {
@@ -23,7 +24,10 @@ const game: Game = {
   hook: "H",
   moment: "M",
   legacy: "L",
+  blackPlayerSlug: null,
+  whitePlayerSlug: null,
   sgfUrl: null,
+  hasUploadedSgf: false,
   featured: false,
   sequence: 0,
 }

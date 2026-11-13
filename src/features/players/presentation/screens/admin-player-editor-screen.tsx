@@ -41,6 +41,12 @@ export async function AdminPlayerEditorScreen({
                 ? ""
                 : String(player.inductionNumber),
             featured: player?.featured ?? false,
+            resources: (player?.resources ?? []).map(
+              (resource) => ({
+                url: resource.url,
+                description: resource.description ?? "",
+              }),
+            ),
           }}
         />
       </AdminSection>

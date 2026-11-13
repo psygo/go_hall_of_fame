@@ -19,7 +19,10 @@ const rawGame = {
   hook: "Hook",
   moment: "Moment",
   legacy: "Legacy",
+  blackPlayerSlug: "shusaku",
+  whitePlayerSlug: null,
   sgfUrl: null,
+  hasUploadedSgf: false,
   featured: false,
   sequence: 1,
 }
@@ -77,6 +80,7 @@ describe("GamesRepositoryImpl", () => {
         GameDetailModel.fromRawData({
           ...rawGame,
           players: [],
+          resources: [],
         }),
       )
       const repository = buildRepository({
@@ -91,7 +95,7 @@ describe("GamesRepositoryImpl", () => {
       )
       expect(state).toEqual({
         status: "success",
-        data: { ...rawGame, players: [] },
+        data: { ...rawGame, players: [], resources: [] },
       })
     })
 
@@ -123,6 +127,31 @@ describe("GamesRepositoryImpl", () => {
       })
     })
   })
+  describe("findSgfTextBySlug", () => {
+    it("returns the text of the data source", async () => {
+      const repository = buildRepository({
+        fetchSgfTextBySlug: vi.fn(async () => "(;GM[1])"),
+      })
+
+      expect(
+        await repository.findSgfTextBySlug("a"),
+      ).toEqual({ status: "success", data: "(;GM[1])" })
+    })
+
+    it("returns a failure when the data source throws", async () => {
+      const cause = new Error("db down")
+      const repository = buildRepository({
+        fetchSgfTextBySlug: vi.fn(async () => {
+          throw cause
+        }),
+      })
+
+      expect(
+        await repository.findSgfTextBySlug("a"),
+      ).toEqual({ status: "failure", error: cause })
+    })
+  })
+
   describe("listPlayerOptions", () => {
     it("returns the options of the data source", async () => {
       const options = [{ slug: "shusaku", name: "Shusaku" }]
@@ -182,7 +211,11 @@ describe("GamesRepositoryImpl", () => {
       sgfUrl: null,
       sequence: 1,
       featured: false,
+      blackPlayerSlug: "shusaku",
+      whitePlayerSlug: null,
       playerSlugs: ["shusaku"],
+      sgf: { kind: "keep" },
+      resources: [],
     }
 
     it("passes the draft and the original slug to the data source", async () => {

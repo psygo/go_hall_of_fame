@@ -4,6 +4,8 @@ import {
   filterPlayersByCountry,
   findNeighborsOfPlayer,
   isCountry,
+  searchPlayers,
+  sortPlayers,
   type Country,
   type Player,
 } from "./player"
@@ -11,6 +13,7 @@ import {
 function buildPlayer(
   slug: string,
   country: Country = "Japan",
+  overrides: Partial<Player> = {},
 ): Player {
   return {
     slug,
@@ -24,6 +27,7 @@ function buildPlayer(
     photoUrl: null,
     photoPosition: "center",
     featured: false,
+    ...overrides,
   }
 }
 
@@ -101,5 +105,95 @@ describe("findNeighborsOfPlayer", () => {
 
   it("returns null when the slug is not in the list", () => {
     expect(findNeighborsOfPlayer(players, "zzz")).toBeNull()
+  })
+})
+
+describe("searchPlayers", () => {
+  const players = [
+    buildPlayer("a", "Japan", {
+      name: "Honinbo Shusaku",
+      nativeName: "秀策",
+    }),
+    buildPlayer("b", "Korea", {
+      name: "Lee Sedol",
+      distinction: "Beat AlphaGo once",
+    }),
+  ]
+
+  it("returns everyone for a blank query", () => {
+    expect(searchPlayers(players, "")).toEqual(players)
+  })
+
+  it("matches name, native name, country and distinction", () => {
+    expect(searchPlayers(players, "shusaku")).toEqual([
+      players[0],
+    ])
+    expect(searchPlayers(players, "秀策")).toEqual([
+      players[0],
+    ])
+    expect(searchPlayers(players, "korea")).toEqual([
+      players[1],
+    ])
+    expect(searchPlayers(players, "alphago")).toEqual([
+      players[1],
+    ])
+  })
+
+  it("needs every word to match", () => {
+    expect(searchPlayers(players, "lee shusaku")).toEqual(
+      [],
+    )
+  })
+})
+
+describe("sortPlayers", () => {
+  const players = [
+    buildPlayer("a", "Korea", {
+      name: "Zed",
+      inductionNumber: 1,
+    }),
+    buildPlayer("b", "China", {
+      name: "alice",
+      inductionNumber: 2,
+    }),
+    buildPlayer("c", "China", {
+      name: "Bob",
+      inductionNumber: 3,
+    }),
+  ]
+  const slugs = (list: readonly Player[]) =>
+    list.map((player) => player.slug)
+
+  it("keeps the induction order for number", () => {
+    expect(slugs(sortPlayers(players, "number"))).toEqual([
+      "a",
+      "b",
+      "c",
+    ])
+  })
+
+  it("reverses for newest without mutating the input", () => {
+    expect(slugs(sortPlayers(players, "newest"))).toEqual([
+      "c",
+      "b",
+      "a",
+    ])
+    expect(slugs(players)).toEqual(["a", "b", "c"])
+  })
+
+  it("sorts by name ignoring case", () => {
+    expect(slugs(sortPlayers(players, "name"))).toEqual([
+      "b",
+      "c",
+      "a",
+    ])
+  })
+
+  it("sorts by country, then induction number", () => {
+    expect(slugs(sortPlayers(players, "country"))).toEqual([
+      "b",
+      "c",
+      "a",
+    ])
   })
 })

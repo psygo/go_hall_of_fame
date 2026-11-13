@@ -31,7 +31,7 @@ function buildPlayer(slug: string): Player {
 }
 
 function buildDetail(slug: string): PlayerDetail {
-  return { ...buildPlayer(slug), games: [] }
+  return { ...buildPlayer(slug), games: [], resources: [] }
 }
 
 describe("GetPlayerProfile", () => {

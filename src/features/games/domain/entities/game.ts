@@ -1,4 +1,6 @@
 import { findCircularNeighbors } from "@/core/circular-neighbors"
+import { matchesQuery } from "@/core/list-query"
+import type { ResourceLink } from "@/core/resources"
 
 export type Game = {
   readonly slug: string
@@ -6,12 +8,18 @@ export type Game = {
   readonly name: string
   readonly black: string
   readonly white: string
+  /** The Hall player behind the Black / White name, when there is one. */
+  readonly blackPlayerSlug: string | null
+  readonly whitePlayerSlug: string | null
   readonly result: string
   readonly setting: string
   readonly hook: string
   readonly moment: string
   readonly legacy: string
+  /** An SGF kept elsewhere (a site path or an https URL). */
   readonly sgfUrl: string | null
+  /** An SGF file was uploaded; its text is served at /games/{slug}/sgf. */
+  readonly hasUploadedSgf: boolean
   readonly featured: boolean
   /** Orders games played in the same year. */
   readonly sequence: number
@@ -24,6 +32,7 @@ export type GamePlayerReference = {
 
 export type GameDetail = Game & {
   readonly players: readonly GamePlayerReference[]
+  readonly resources: readonly ResourceLink[]
 }
 
 export type GameProfile = {
@@ -40,4 +49,62 @@ export function findNeighborsOfGame(
     (game) => game.slug === slug,
   )
   return findCircularNeighbors(games, index)
+}
+
+export const GAMES_PAGE_SIZE = 6
+
+export const GAME_SORTS = [
+  "oldest",
+  "newest",
+  "name",
+] as const
+
+export type GameSort = (typeof GAME_SORTS)[number]
+
+export const GAME_SORT_LABELS: Readonly<
+  Record<GameSort, string>
+> = {
+  oldest: "Oldest first",
+  newest: "Newest first",
+  name: "Name A–Z",
+}
+
+/** Where the board loads the record from: the uploaded text wins over a link. */
+export function sgfSourceOf(
+  game: Pick<Game, "slug" | "sgfUrl" | "hasUploadedSgf">,
+): string | null {
+  return game.hasUploadedSgf
+    ? `/games/${game.slug}/sgf`
+    : game.sgfUrl
+}
+
+export function searchGames(
+  games: readonly Game[],
+  query: string,
+): readonly Game[] {
+  return games.filter((game) =>
+    matchesQuery(
+      [
+        game.name,
+        game.black,
+        game.white,
+        String(game.year),
+        game.setting,
+        game.hook,
+      ],
+      query,
+    ),
+  )
+}
+
+/** The list arrives in chronological order, so "oldest" keeps it. */
+export function sortGames(
+  games: readonly Game[],
+  sort: GameSort,
+): readonly Game[] {
+  if (sort === "oldest") return games
+  if (sort === "newest") return [...games].reverse()
+  return [...games].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  )
 }

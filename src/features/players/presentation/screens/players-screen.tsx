@@ -1,37 +1,32 @@
 import Link from "next/link"
 
 import { contentLoaders, playersLoaders } from "@/config/di"
+import { ListControls } from "@/shared/ui/presentation/list-controls"
+import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 import { Portrait } from "@/shared/ui/presentation/portrait"
 
+import {
+  PLAYER_SORT_LABELS,
+  PLAYER_SORTS,
+} from "../../domain/entities/player"
+import type { PlayersSearchParams } from "../state/players-loaders"
+
 type PlayersScreenProps = {
-  readonly searchParams: Promise<{
-    readonly country?: string | readonly string[]
-  }>
+  readonly searchParams: Promise<PlayersSearchParams>
 }
 
 export async function PlayersScreen({
   searchParams,
 }: PlayersScreenProps) {
-  const { country: countryParam } = await searchParams
-  const [{ players, country, countries }, texts] =
-    await Promise.all([
-      playersLoaders.loadPlayersPage(countryParam),
-      contentLoaders.loadPageTexts("players"),
-    ])
-
-  const filters = [
-    {
-      label: "All",
-      href: "/players",
-      isActive: country === null,
-    },
-    ...countries.map((name) => ({
-      label: name,
-      href: `/players?country=${name}`,
-      isActive: country === name,
-    })),
-  ]
+  const params = await searchParams
+  const [
+    { players, country, countries, query, sort },
+    texts,
+  ] = await Promise.all([
+    playersLoaders.loadPlayersPage(params),
+    contentLoaders.loadPageTexts("players"),
+  ])
 
   return (
     <>
@@ -39,21 +34,36 @@ export async function PlayersScreen({
         eyebrow={texts["players.eyebrow"]}
         title={texts["players.title"]}
       >
-        <div className="mt-7 flex flex-wrap gap-2">
-          {filters.map(({ label, href, isActive }) => (
-            <Link
-              key={label}
-              href={href}
-              aria-current={isActive ? "true" : undefined}
-              className={`btn ${isActive ? "btn-primary" : "btn-secondary"}`}
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
+        <ListControls
+          search={{
+            placeholder: "Name, country, distinction…",
+            value: query,
+          }}
+          filters={[
+            {
+              name: "country",
+              label: "Country",
+              value: country ?? "",
+              options: [
+                { value: "", label: "All" },
+                ...countries.map((name) => ({
+                  value: name,
+                  label: name,
+                })),
+              ],
+            },
+          ]}
+          sort={{
+            value: sort,
+            options: PLAYER_SORTS.map((value) => ({
+              value,
+              label: PLAYER_SORT_LABELS[value],
+            })),
+          }}
+        />
       </PageHeader>
       <section className="grid grid-cols-[repeat(auto-fill,minmax(min(230px,100%),1fr))]">
-        {players.map((player) => (
+        {players.items.map((player) => (
           <Link
             key={player.slug}
             href={`/players/${player.slug}`}
@@ -91,6 +101,21 @@ export async function PlayersScreen({
           </Link>
         ))}
       </section>
+      {players.total === 0 && (
+        <p className="border-divider border-b px-4 py-10">
+          No player matches this search.
+        </p>
+      )}
+      <Pagination
+        page={players.page}
+        pageCount={players.pageCount}
+        basePath="/players"
+        params={{
+          q: query,
+          country: country ?? "",
+          sort: sort === "number" ? "" : sort,
+        }}
+      />
     </>
   )
 }

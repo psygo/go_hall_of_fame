@@ -1,3 +1,4 @@
+import type { QueryParam } from "@/core/list-query"
 import Link from "next/link"
 
 import { gamesAdminState } from "@/config/di"
@@ -6,12 +7,21 @@ import {
   AdminListRow,
 } from "@/shared/ui/presentation/admin-section"
 import { ConfirmDeleteButton } from "@/shared/ui/presentation/confirm-delete-button"
+import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
 import { deleteGameAction } from "../state/games-admin-actions"
 
-export async function AdminGamesScreen() {
-  const games = await gamesAdminState.loadAdminGames()
+export async function AdminGamesScreen({
+  searchParams,
+}: {
+  readonly searchParams: Promise<{
+    readonly page?: QueryParam
+  }>
+}) {
+  const { page: pageParam } = await searchParams
+  const games =
+    await gamesAdminState.loadAdminGames(pageParam)
 
   return (
     <>
@@ -24,7 +34,7 @@ export async function AdminGamesScreen() {
         </Link>
       </PageHeader>
       <AdminList>
-        {games.map((game) => (
+        {games.items.map((game) => (
           <AdminListRow key={game.slug}>
             <div>
               <span className="text-accent mr-3 font-bold">
@@ -57,6 +67,11 @@ export async function AdminGamesScreen() {
           </AdminListRow>
         ))}
       </AdminList>
+      <Pagination
+        page={games.page}
+        pageCount={games.pageCount}
+        basePath="/admin/games"
+      />
     </>
   )
 }

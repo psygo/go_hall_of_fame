@@ -1,11 +1,25 @@
 import { contentLoaders, inductionState } from "@/config/di"
+import { ListControls } from "@/shared/ui/presentation/list-controls"
+import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
+import {
+  CRITERIA_ORDER_LABELS,
+  CRITERIA_ORDERS,
+} from "../../domain/entities/criterion"
+import type { CriteriaSearchParams } from "../state/induction-state"
 import { NominationForm } from "../components/nomination-form"
 
-export async function InductionScreen() {
-  const [criteria, texts] = await Promise.all([
-    inductionState.loadCriteria(),
+type InductionScreenProps = {
+  readonly searchParams: Promise<CriteriaSearchParams>
+}
+
+export async function InductionScreen({
+  searchParams,
+}: InductionScreenProps) {
+  const params = await searchParams
+  const [{ criteria, order }, texts] = await Promise.all([
+    inductionState.loadCriteriaPage(params),
     contentLoaders.loadPageTexts("induction"),
   ])
 
@@ -14,10 +28,20 @@ export async function InductionScreen() {
       <PageHeader
         eyebrow={texts["induction.eyebrow"]}
         title={texts["induction.title"]}
-      />
+      >
+        <ListControls
+          sort={{
+            value: order,
+            options: CRITERIA_ORDERS.map((value) => ({
+              value,
+              label: CRITERIA_ORDER_LABELS[value],
+            })),
+          }}
+        />
+      </PageHeader>
       <section className="grid grid-cols-[repeat(auto-fit,minmax(min(320px,100%),1fr))]">
         <div className="min-[720px]:border-divider min-[720px]:border-r">
-          {criteria.map((criterion) => (
+          {criteria.items.map((criterion) => (
             <div
               key={criterion.position}
               className="border-divider grid grid-cols-[48px_1fr] gap-4 border-b px-4 py-5"
@@ -38,6 +62,14 @@ export async function InductionScreen() {
               </div>
             </div>
           ))}
+          <Pagination
+            page={criteria.page}
+            pageCount={criteria.pageCount}
+            basePath="/induction"
+            params={{
+              sort: order === "first" ? "" : order,
+            }}
+          />
         </div>
         <div className="px-4 pt-8 pb-12">
           <NominationForm

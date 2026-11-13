@@ -1,5 +1,10 @@
 import { slugify, isValidSlug } from "@/core/slugify"
 import {
+  validateResourceRows,
+  type ResourceLink,
+  type ResourceRow,
+} from "@/core/resources"
+import {
   collectErrors,
   isReservedSlug,
   isSafeAssetUrl,
@@ -28,6 +33,7 @@ export type PlayerForm = {
   readonly photoPosition: string
   readonly inductionNumber: string
   readonly featured: boolean
+  readonly resources: readonly ResourceRow[]
 }
 
 export type PlayerDraft = {
@@ -42,6 +48,7 @@ export type PlayerDraft = {
   readonly photoPosition: string
   readonly inductionNumber: number
   readonly featured: boolean
+  readonly resources: readonly ResourceLink[]
 }
 
 export type PlayerErrors = FieldErrors
@@ -83,7 +90,12 @@ export function validatePlayerForm(
   const photoPosition =
     form.photoPosition.trim() || DEFAULT_PHOTO_POSITION
 
+  const resources = validateResourceRows(form.resources)
+
   const errors = collectErrors({
+    resources: resources.valid
+      ? undefined
+      : resources.error,
     name: requiredText(name, PLAYER_LIMITS.name, "a name"),
     nativeName: requiredText(
       form.nativeName.trim(),
@@ -126,7 +138,8 @@ export function validatePlayerForm(
   if (
     Object.keys(errors).length > 0 ||
     inductionNumber === null ||
-    !isCountry(form.country)
+    !isCountry(form.country) ||
+    !resources.valid
   ) {
     return { valid: false, errors }
   }
@@ -144,6 +157,7 @@ export function validatePlayerForm(
       photoPosition,
       inductionNumber,
       featured: form.featured,
+      resources: resources.links,
     },
   }
 }

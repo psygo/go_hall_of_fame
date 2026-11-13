@@ -5,6 +5,13 @@ import { connection } from "next/server"
 import type { AdminFormState } from "@/core/admin-form-state"
 import type { RequireAdmin } from "@/core/admin-guard"
 import {
+  ADMIN_PAGE_SIZE,
+  paginate,
+  readPageParam,
+  type Page,
+  type QueryParam,
+} from "@/core/list-query"
+import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
@@ -14,6 +21,7 @@ import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import {
   readFormFlag,
   readFormText,
+  readResourceRows,
 } from "@/shared/ui/presentation/form-data"
 
 import type {
@@ -58,15 +66,20 @@ export type PlayersAdminDependencies = {
 export function createPlayersAdminState(
   dependencies: PlayersAdminDependencies,
 ) {
-  async function loadAdminPlayers(): Promise<
-    readonly Player[]
-  > {
+  async function loadAdminPlayers(
+    pageParam?: QueryParam,
+  ): Promise<Page<Player>> {
     await connection()
     await dependencies.requireAdmin()
-    return unwrapDataState(
+    const all = unwrapDataState(
       await dependencies.listPlayers.call({
         country: null,
       }),
+    )
+    return paginate(
+      all,
+      readPageParam(pageParam),
+      ADMIN_PAGE_SIZE,
     )
   }
 
@@ -159,5 +172,6 @@ function readPlayerForm(formData: FormData): PlayerForm {
       "inductionNumber",
     ),
     featured: readFormFlag(formData, "featured"),
+    resources: readResourceRows(formData),
   }
 }

@@ -40,15 +40,22 @@ const validFields = {
   caseForInduction: "Reasons",
 }
 
+const emptyPage = {
+  items: [],
+  page: 1,
+  pageCount: 1,
+  total: 0,
+}
+
 function buildState(
   submission: NominationSubmission,
-  criteria: ReturnType<typeof vi.fn> = vi.fn(async () =>
-    succeed([]),
+  pageCriteria: ReturnType<typeof vi.fn> = vi.fn(async () =>
+    succeed(emptyPage),
   ),
 ) {
   const submitNomination = vi.fn(async () => submission)
   const dependencies: InductionDependencies = {
-    listCriteria: { call: criteria },
+    pageCriteria: { call: pageCriteria },
     submitNomination: { call: submitNomination },
   }
   return {
@@ -66,8 +73,8 @@ afterEach(() => {
 })
 
 describe("createInductionState", () => {
-  describe("loadCriteria", () => {
-    it("returns the criteria of the use case", async () => {
+  describe("loadCriteriaPage", () => {
+    it("passes the parsed order and page and returns the page", async () => {
       const criteria: Criterion[] = [
         {
           id: 1,
@@ -76,12 +83,47 @@ describe("createInductionState", () => {
           text: "Text",
         },
       ]
+      const page = {
+        ...emptyPage,
+        items: criteria,
+        total: 1,
+      }
+      const pageCriteria = vi.fn(async () => succeed(page))
       const { state } = buildState(
         { status: "failed", error: new Error("db down") },
-        vi.fn(async () => succeed(criteria)),
+        pageCriteria,
       )
 
-      expect(await state.loadCriteria()).toEqual(criteria)
+      expect(
+        await state.loadCriteriaPage({
+          sort: "last",
+          page: "2",
+        }),
+      ).toEqual({ criteria: page, order: "last" })
+      expect(pageCriteria).toHaveBeenCalledWith({
+        order: "last",
+        page: 2,
+      })
+    })
+
+    it("falls back to the first order and page for garbage", async () => {
+      const pageCriteria = vi.fn(async () =>
+        succeed(emptyPage),
+      )
+      const { state } = buildState(
+        { status: "failed", error: new Error("db down") },
+        pageCriteria,
+      )
+
+      await state.loadCriteriaPage({
+        sort: "sideways",
+        page: "1e3",
+      })
+
+      expect(pageCriteria).toHaveBeenCalledWith({
+        order: "first",
+        page: 1,
+      })
     })
 
     it("throws the original error when the use case fails", async () => {
@@ -91,7 +133,9 @@ describe("createInductionState", () => {
         vi.fn(async () => fail(cause)),
       )
 
-      await expect(state.loadCriteria()).rejects.toBe(cause)
+      await expect(state.loadCriteriaPage({})).rejects.toBe(
+        cause,
+      )
     })
   })
 

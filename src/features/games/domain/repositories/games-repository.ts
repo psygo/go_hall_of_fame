@@ -12,6 +12,10 @@ export interface GamesRepository {
   findDetailBySlug(
     slug: string,
   ): Promise<DataState<GameDetail | null>>
+  /** The text of the uploaded SGF, or null when the game has none (or does not exist). */
+  findSgfTextBySlug(
+    slug: string,
+  ): Promise<DataState<string | null>>
   /** Every player in the Hall, to choose from when saying who played a game. */
   listPlayerOptions(): Promise<
     DataState<readonly GamePlayerReference[]>

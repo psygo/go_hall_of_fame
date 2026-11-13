@@ -43,24 +43,31 @@ const player: Player = {
 }
 
 const profile: PlayerProfile = {
-  detail: { ...player, games: [] },
+  detail: { ...player, games: [], resources: [] },
   previous: player,
   next: player,
 }
 
+const emptyPage = {
+  items: [player],
+  page: 1,
+  pageCount: 1,
+  total: 1,
+}
+
 function buildLoaders({
-  listPlayers = vi.fn(async () => succeed([player])),
+  searchPlayers = vi.fn(async () => succeed(emptyPage)),
   getPlayerProfile = vi.fn(async () => succeed(profile)),
 }: {
-  listPlayers?: ReturnType<typeof vi.fn>
+  searchPlayers?: ReturnType<typeof vi.fn>
   getPlayerProfile?: ReturnType<typeof vi.fn>
 } = {}) {
   return {
     loaders: createPlayersLoaders({
-      listPlayers: { call: listPlayers },
+      searchPlayers: { call: searchPlayers },
       getPlayerProfile: { call: getPlayerProfile },
     }),
-    listPlayers,
+    searchPlayers,
     getPlayerProfile,
   }
 }
@@ -73,12 +80,16 @@ describe("loadPlayersPage", () => {
   it.each(["Japan", "China", "Korea"])(
     "filters by the valid country %s",
     async (country) => {
-      const { loaders, listPlayers } = buildLoaders()
+      const { loaders, searchPlayers } = buildLoaders()
 
-      const page = await loaders.loadPlayersPage(country)
+      const state = await loaders.loadPlayersPage({
+        country,
+      })
 
-      expect(listPlayers).toHaveBeenCalledWith({ country })
-      expect(page.country).toBe(country)
+      expect(searchPlayers).toHaveBeenCalledWith(
+        expect.objectContaining({ country }),
+      )
+      expect(state.country).toBe(country)
     },
   )
 
@@ -86,40 +97,78 @@ describe("loadPlayersPage", () => {
     ["an unknown country", "France"],
     ["an empty string", ""],
     ["undefined", undefined],
-    ["an array of countries", ["Japan", "China"]],
-    ["an array with one country", ["Japan"]],
   ])("lists every country for %s", async (_name, param) => {
-    const { loaders, listPlayers } = buildLoaders()
+    const { loaders, searchPlayers } = buildLoaders()
 
-    const page = await loaders.loadPlayersPage(param)
-
-    expect(listPlayers).toHaveBeenCalledWith({
-      country: null,
+    const state = await loaders.loadPlayersPage({
+      country: param,
     })
-    expect(page.country).toBeNull()
+
+    expect(searchPlayers).toHaveBeenCalledWith(
+      expect.objectContaining({ country: null }),
+    )
+    expect(state.country).toBeNull()
   })
 
-  it("returns the players and the list of countries", async () => {
+  it("uses the first value of a repeated country parameter", async () => {
     const { loaders } = buildLoaders()
 
-    expect(
-      await loaders.loadPlayersPage(undefined),
-    ).toEqual({
-      players: [player],
+    const state = await loaders.loadPlayersPage({
+      country: ["China", "Japan"],
+    })
+
+    expect(state.country).toBe("China")
+  })
+
+  it("passes the parsed query, sort and page", async () => {
+    const { loaders, searchPlayers } = buildLoaders()
+
+    const state = await loaders.loadPlayersPage({
+      q: "  gu ",
+      sort: "name",
+      page: "2",
+    })
+
+    expect(searchPlayers).toHaveBeenCalledWith({
+      country: null,
+      query: "gu",
+      sort: "name",
+      page: 2,
+    })
+    expect(state).toEqual({
+      players: emptyPage,
       country: null,
       countries: ["Japan", "China", "Korea"],
+      query: "gu",
+      sort: "name",
+    })
+  })
+
+  it("falls back to defaults for garbage parameters", async () => {
+    const { loaders, searchPlayers } = buildLoaders()
+
+    await loaders.loadPlayersPage({
+      sort: "nope",
+      page: "0x10",
+    })
+
+    expect(searchPlayers).toHaveBeenCalledWith({
+      country: null,
+      query: "",
+      sort: "number",
+      page: 1,
     })
   })
 
   it("throws the original error when the use case fails", async () => {
     const cause = new Error("db down")
     const { loaders } = buildLoaders({
-      listPlayers: vi.fn(async () => fail(cause)),
+      searchPlayers: vi.fn(async () => fail(cause)),
     })
 
-    await expect(
-      loaders.loadPlayersPage("Japan"),
-    ).rejects.toBe(cause)
+    await expect(loaders.loadPlayersPage({})).rejects.toBe(
+      cause,
+    )
   })
 })
 

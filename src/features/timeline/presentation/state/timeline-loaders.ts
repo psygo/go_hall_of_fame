@@ -4,33 +4,76 @@ import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
-import type { NoParams, UseCase } from "@/core/use-case"
-
-import type { TimelineEvent } from "../../domain/entities/timeline-event"
 import {
-  layoutTimeline,
+  readChoice,
+  type QueryParam,
+  type Slice,
+} from "@/core/list-query"
+import type { UseCase } from "@/core/use-case"
+
+import {
+  TIMELINE_ORDERS,
+  type TimelineOrder,
   type TimelinePlacement,
 } from "../../domain/entities/timeline-layout"
+import type { ListTimelineChunkParams } from "../../domain/params/list-timeline-chunk-params"
 
 export type TimelineLoaderDependencies = {
-  readonly listTimelineEvents: UseCase<
-    NoParams,
-    DataState<readonly TimelineEvent[]>
+  readonly listTimelineChunk: UseCase<
+    ListTimelineChunkParams,
+    DataState<Slice<TimelinePlacement>>
   >
+}
+
+export type TimelineSearchParams = {
+  readonly sort?: QueryParam
+}
+
+export type TimelinePageState = {
+  readonly order: TimelineOrder
+  readonly first: Slice<TimelinePlacement>
 }
 
 export function createTimelineLoaders(
   dependencies: TimelineLoaderDependencies,
 ) {
-  async function loadTimeline(): Promise<
-    readonly TimelinePlacement[]
-  > {
+  async function loadTimelinePage(
+    params: TimelineSearchParams,
+  ): Promise<TimelinePageState> {
     await connection()
-    const events = unwrapDataState(
-      await dependencies.listTimelineEvents.call({}),
+    const order = readChoice(
+      params.sort,
+      TIMELINE_ORDERS,
+      "oldest",
     )
-    return layoutTimeline(events)
+    const first = unwrapDataState(
+      await dependencies.listTimelineChunk.call({
+        order,
+        offset: 0,
+      }),
+    )
+    return { order, first }
   }
 
-  return { loadTimeline }
+  /** The chunk after `offset`, for the infinite scroll. The inputs come from the browser. */
+  async function loadTimelineChunk(
+    orderParam: string,
+    offset: number,
+  ): Promise<Slice<TimelinePlacement>> {
+    await connection()
+    return unwrapDataState(
+      await dependencies.listTimelineChunk.call({
+        order: readChoice(
+          orderParam,
+          TIMELINE_ORDERS,
+          "oldest",
+        ),
+        offset: Number.isSafeInteger(offset)
+          ? Math.max(0, offset)
+          : 0,
+      }),
+    )
+  }
+
+  return { loadTimelinePage, loadTimelineChunk }
 }

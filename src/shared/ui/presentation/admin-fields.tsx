@@ -134,6 +134,9 @@ export function SelectField(props: SelectFieldProps) {
     <div className="field">
       <label htmlFor={`field-${name}`}>{label}</label>
       <select
+        // A new key remounts the select when its default changes: React resets a form to the
+        // initial option, so after a validation error the submitted choice would be lost.
+        key={defaultValue}
         id={`field-${name}`}
         name={name}
         className="input"
@@ -147,6 +150,29 @@ export function SelectField(props: SelectFieldProps) {
           </option>
         ))}
       </select>
+      <FieldNotes {...props} />
+    </div>
+  )
+}
+
+export function FileField(
+  props: FieldBase & {
+    readonly accept?: string
+  },
+) {
+  const { name, label, accept, error } = props
+  return (
+    <div className="field">
+      <label htmlFor={`field-${name}`}>{label}</label>
+      <input
+        id={`field-${name}`}
+        name={name}
+        type="file"
+        accept={accept}
+        className="input"
+        aria-invalid={error !== undefined}
+        aria-describedby={describedBy(props)}
+      />
       <FieldNotes {...props} />
     </div>
   )
@@ -176,53 +202,6 @@ export function CheckboxField({
         </div>
       )}
     </div>
-  )
-}
-
-type CheckboxGroupProps = Omit<FieldBase, "error"> & {
-  readonly options: readonly {
-    readonly value: string
-    readonly label: string
-  }[]
-  readonly defaultValues: readonly string[]
-}
-
-export function CheckboxGroup({
-  name,
-  label,
-  options,
-  defaultValues,
-  hint,
-}: CheckboxGroupProps) {
-  return (
-    <fieldset className="field m-0 border-0 p-0">
-      <legend className="mb-1.5 p-0 text-xs opacity-70">
-        {label}
-      </legend>
-      <div className="flex flex-wrap gap-x-5 gap-y-1.5">
-        {options.map((option) => (
-          <label
-            key={option.value}
-            className="flex items-center gap-2 text-sm"
-          >
-            <input
-              type="checkbox"
-              name={name}
-              value={option.value}
-              defaultChecked={defaultValues.includes(
-                option.value,
-              )}
-            />
-            {option.label}
-          </label>
-        ))}
-      </div>
-      {hint && (
-        <div className="mt-1 text-xs opacity-70">
-          {hint}
-        </div>
-      )}
-    </fieldset>
   )
 }
 

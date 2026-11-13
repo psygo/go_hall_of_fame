@@ -2,13 +2,15 @@
 
 import { useActionState } from "react"
 
+import { ResourceFields } from "@/shared/ui/presentation/resource-fields"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { idleAdminForm } from "@/core/admin-form-state"
 import {
   CheckboxField,
-  CheckboxGroup,
+  FileField,
   FormActions,
   FormMessage,
+  SelectField,
   TextAreaField,
   TextField,
 } from "@/shared/ui/presentation/admin-fields"
@@ -26,12 +28,15 @@ type GameFormProps = {
   readonly slugParam: string
   readonly initial: GameFormValues
   readonly playerOptions: readonly GamePlayerReference[]
+  /** An SGF file was uploaded earlier. */
+  readonly hasUploadedSgf: boolean
 }
 
 export function GameForm({
   slugParam,
   initial,
   playerOptions,
+  hasUploadedSgf,
 }: GameFormProps) {
   const [state, formAction, isPending] = useActionState<
     GameFormState,
@@ -41,6 +46,13 @@ export function GameForm({
     state.status === "idle" ? initial : state.values
   const errors =
     state.status === "invalid" ? state.errors : {}
+  const playerLinkOptions = [
+    { value: "", label: "No link" },
+    ...playerOptions.map((player) => ({
+      value: player.slug,
+      label: player.name,
+    })),
+  ]
 
   return (
     <form
@@ -102,6 +114,24 @@ export function GameForm({
           required
         />
       </div>
+      <div className="grid gap-4 min-[560px]:grid-cols-2">
+        <SelectField
+          name="blackPlayerSlug"
+          label="Black links to"
+          defaultValue={values.blackPlayerSlug}
+          options={playerLinkOptions}
+          error={errors.blackPlayerSlug}
+          hint="A Hall player: the Black name on the site links to their page."
+        />
+        <SelectField
+          name="whitePlayerSlug"
+          label="White links to"
+          defaultValue={values.whitePlayerSlug}
+          options={playerLinkOptions}
+          error={errors.whitePlayerSlug}
+          hint="A Hall player: the White name on the site links to their page."
+        />
+      </div>
       <TextAreaField
         name="hook"
         label="Hook"
@@ -126,24 +156,30 @@ export function GameForm({
         maxLength={GAME_LIMITS.legacy}
         error={errors.legacy}
       />
-      <CheckboxGroup
-        name="playerSlugs"
-        label="In the Hall (players who played this game)"
-        options={playerOptions.map((player) => ({
-          value: player.slug,
-          label: player.name,
-        }))}
-        defaultValues={values.playerSlugs}
-      />
-      {errors.playerSlugs && (
-        <FormMessage message={errors.playerSlugs} />
-      )}
       <TextField
         name="sgfUrl"
         label="SGF record"
         defaultValue={values.sgfUrl}
-        hint="A path under public/ such as /sgf/alphago-game-4.sgf, or an https URL. When set, the game page shows a playable board."
+        hint="Option 1: a path under public/ such as /sgf/alphago-game-4.sgf, or an https URL."
         error={errors.sgfUrl}
+      />
+      <FileField
+        name="sgfFile"
+        label="SGF file"
+        accept=".sgf,text/plain"
+        hint="Option 2: upload the file; its text is saved in the database (choose it again if the form comes back with errors). An uploaded file wins over the record above. The game page and the games list then show a playable board."
+        error={errors.sgfFile}
+      />
+      {hasUploadedSgf && (
+        <CheckboxField
+          name="removeSgf"
+          label="Remove the SGF uploaded earlier"
+          defaultChecked={values.removeSgf}
+        />
+      )}
+      <ResourceFields
+        initial={values.resources}
+        error={errors.resources}
       />
       <div className="grid gap-4 min-[560px]:grid-cols-2">
         <TextField

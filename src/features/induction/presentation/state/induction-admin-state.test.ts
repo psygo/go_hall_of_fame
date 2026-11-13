@@ -143,9 +143,12 @@ describe("loadAdminCriteria", () => {
     const { state, requireAdmin, listCriteria } =
       buildState()
 
-    expect(await state.loadAdminCriteria()).toEqual([
-      criterion,
-    ])
+    expect(await state.loadAdminCriteria()).toEqual({
+      items: [criterion],
+      page: 1,
+      pageCount: 1,
+      total: 1,
+    })
     expect(
       requireAdmin.mock.invocationCallOrder[0],
     ).toBeLessThan(listCriteria.mock.invocationCallOrder[0])
@@ -409,9 +412,12 @@ describe("loadNominations", () => {
     const { state, requireAdmin, listNominations } =
       buildState()
 
-    expect(await state.loadNominations()).toEqual([
-      nomination,
-    ])
+    expect(await state.loadNominations()).toEqual({
+      items: [nomination],
+      page: 1,
+      pageCount: 1,
+      total: 1,
+    })
     expect(
       requireAdmin.mock.invocationCallOrder[0],
     ).toBeLessThan(
@@ -535,5 +541,50 @@ describe("deleteNominationById", () => {
       state.deleteNominationById(6),
     ).rejects.toThrow("NEXT_REDIRECT:/admin/sign-in")
     expect(deleteNomination).not.toHaveBeenCalled()
+  })
+})
+
+describe("admin list pagination", () => {
+  const criteria = Array.from(
+    { length: 16 },
+    (_, index) => ({
+      ...criterion,
+      id: index + 1,
+    }),
+  )
+  const nominations = Array.from(
+    { length: 31 },
+    (_, index) => ({
+      ...nomination,
+      id: index + 1,
+    }),
+  )
+
+  it("pages the criteria, clamping and ignoring garbage", async () => {
+    const { state } = buildState({
+      listResult: succeed(criteria),
+    })
+
+    expect(
+      (await state.loadAdminCriteria("2")).items,
+    ).toHaveLength(1)
+    expect((await state.loadAdminCriteria("99")).page).toBe(
+      2,
+    )
+    expect((await state.loadAdminCriteria("-1")).page).toBe(
+      1,
+    )
+  })
+
+  it("pages the nominations, clamping and ignoring garbage", async () => {
+    const { state } = buildState({
+      nominationsResult: succeed(nominations),
+    })
+
+    expect(
+      (await state.loadNominations("3")).items,
+    ).toHaveLength(1)
+    expect((await state.loadNominations("99")).page).toBe(3)
+    expect((await state.loadNominations("zz")).page).toBe(1)
   })
 })

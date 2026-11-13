@@ -1,3 +1,4 @@
+import type { QueryParam } from "@/core/list-query"
 import Link from "next/link"
 
 import { timelineAdminState } from "@/config/di"
@@ -5,14 +6,22 @@ import {
   AdminList,
   AdminListRow,
 } from "@/shared/ui/presentation/admin-section"
+import { Pagination } from "@/shared/ui/presentation/pagination"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
 
 import { deleteTimelineEventAction } from "../state/timeline-admin-actions"
 import { ConfirmDeleteButton } from "@/shared/ui/presentation/confirm-delete-button"
 
-export async function AdminTimelineScreen() {
+export async function AdminTimelineScreen({
+  searchParams,
+}: {
+  readonly searchParams: Promise<{
+    readonly page?: QueryParam
+  }>
+}) {
+  const { page: pageParam } = await searchParams
   const events =
-    await timelineAdminState.loadAdminTimeline()
+    await timelineAdminState.loadAdminTimeline(pageParam)
 
   return (
     <>
@@ -25,7 +34,7 @@ export async function AdminTimelineScreen() {
         </Link>
       </PageHeader>
       <AdminList>
-        {events.map((event) => (
+        {events.items.map((event) => (
           <AdminListRow key={event.id}>
             <div>
               <span className="text-accent mr-3 font-bold">
@@ -54,6 +63,11 @@ export async function AdminTimelineScreen() {
           </AdminListRow>
         ))}
       </AdminList>
+      <Pagination
+        page={events.page}
+        pageCount={events.pageCount}
+        basePath="/admin/timeline"
+      />
     </>
   )
 }

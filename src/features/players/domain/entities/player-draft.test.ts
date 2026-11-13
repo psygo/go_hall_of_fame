@@ -48,6 +48,7 @@ function buildForm(
     photoPosition: "40% 20%",
     inductionNumber: "3",
     featured: true,
+    resources: [],
     ...overrides,
   }
 }
@@ -104,6 +105,7 @@ describe("validatePlayerForm", () => {
         photoPosition: "40% 20%",
         inductionNumber: 3,
         featured: true,
+        resources: [],
       },
     })
   })
@@ -470,5 +472,45 @@ describe("validatePlayerForm", () => {
       "inductionNumber",
       "name",
     ])
+  })
+})
+
+describe("validatePlayerForm resources", () => {
+  it("returns the cleaned links in the draft", () => {
+    expect(
+      validate(
+        buildForm({
+          resources: [
+            {
+              url: " https://example.com ",
+              description: " Bio ",
+            },
+            { url: "", description: "" },
+          ],
+        }),
+      ),
+    ).toEqual({
+      valid: true,
+      draft: expect.objectContaining({
+        resources: [
+          {
+            url: "https://example.com",
+            description: "Bio",
+          },
+        ],
+      }),
+    })
+  })
+
+  it("reports an unsafe link as a resources error", () => {
+    expect(
+      errorsOf(
+        buildForm({
+          resources: [
+            { url: "http://example.com", description: "" },
+          ],
+        }),
+      ).resources,
+    ).toMatch(/not a valid link/)
   })
 })

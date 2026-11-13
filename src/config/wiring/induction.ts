@@ -9,6 +9,7 @@ import { DeleteNomination } from "@/features/induction/domain/use-cases/delete-n
 import { GetCriterion } from "@/features/induction/domain/use-cases/get-criterion"
 import { ListCriteria } from "@/features/induction/domain/use-cases/list-criteria"
 import { ListNominations } from "@/features/induction/domain/use-cases/list-nominations"
+import { PageCriteria } from "@/features/induction/domain/use-cases/page-criteria"
 import { SaveCriterion } from "@/features/induction/domain/use-cases/save-criterion"
 import { SetNominationStatus } from "@/features/induction/domain/use-cases/set-nomination-status"
 import { SubmitNomination } from "@/features/induction/domain/use-cases/submit-nomination"
@@ -27,7 +28,7 @@ const nominations = new NominationsRepositoryImpl(
 const listCriteria = new ListCriteria(criteria)
 
 export const inductionState = createInductionState({
-  listCriteria,
+  pageCriteria: new PageCriteria(criteria),
   submitNomination: new SubmitNomination(nominations),
 })
 

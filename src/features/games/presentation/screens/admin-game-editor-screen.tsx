@@ -25,6 +25,7 @@ export async function AdminGameEditorScreen({
         <GameForm
           slugParam={slug}
           playerOptions={playerOptions}
+          hasUploadedSgf={game?.hasUploadedSgf ?? false}
           initial={{
             slug: game?.slug ?? "",
             year: game === null ? "" : String(game.year),
@@ -39,9 +40,17 @@ export async function AdminGameEditorScreen({
             sgfUrl: game?.sgfUrl ?? "",
             sequence: String(game?.sequence ?? 0),
             featured: game?.featured ?? false,
-            playerSlugs:
-              game?.players.map((player) => player.slug) ??
-              [],
+            sgfFileText: "",
+            sgfFileTooLarge: false,
+            removeSgf: false,
+            blackPlayerSlug: game?.blackPlayerSlug ?? "",
+            whitePlayerSlug: game?.whitePlayerSlug ?? "",
+            resources: (game?.resources ?? []).map(
+              (resource) => ({
+                url: resource.url,
+                description: resource.description ?? "",
+              }),
+            ),
           }}
         />
       </AdminSection>

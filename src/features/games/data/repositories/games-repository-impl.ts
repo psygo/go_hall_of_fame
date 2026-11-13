@@ -24,6 +24,12 @@ export class GamesRepositoryImpl implements GamesRepository {
     })
   }
 
+  findSgfTextBySlug(slug: string) {
+    return captureDataState(() =>
+      this.dataSource.fetchSgfTextBySlug(slug),
+    )
+  }
+
   listPlayerOptions() {
     return captureDataState(() =>
       this.dataSource.listPlayerOptions(),

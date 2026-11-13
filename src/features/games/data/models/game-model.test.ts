@@ -15,7 +15,10 @@ const validGame = {
   hook: "Hook",
   moment: "Moment",
   legacy: "Legacy",
+  blackPlayerSlug: "shusaku",
+  whitePlayerSlug: null,
   sgfUrl: "https://example.com/g.sgf",
+  hasUploadedSgf: false,
   featured: false,
   sequence: 2,
 }
@@ -44,7 +47,12 @@ describe("GameModel", () => {
 
   it.each(
     Object.keys(validGame).filter(
-      (key) => key !== "sgfUrl",
+      (key) =>
+        ![
+          "sgfUrl",
+          "blackPlayerSlug",
+          "whitePlayerSlug",
+        ].includes(key),
     ),
   )("throws when %s is missing", (key) => {
     expect(() =>
@@ -66,6 +74,18 @@ describe("GameModel", () => {
     expect(() =>
       GameModel.fromRawData({ ...validGame, year: "1846" }),
     ).toThrow('"year" must be an integer')
+  })
+
+  it("reads missing player links as null", () => {
+    const model = GameModel.fromRawData(
+      without(
+        without(validGame, "blackPlayerSlug"),
+        "whitePlayerSlug",
+      ),
+    )
+
+    expect(model.blackPlayerSlug).toBeNull()
+    expect(model.whitePlayerSlug).toBeNull()
   })
 
   it("reads a null SGF URL as null", () => {
@@ -111,6 +131,9 @@ describe("GameDetailModel", () => {
   const validDetail = {
     ...validGame,
     players: validPlayers,
+    resources: [
+      { url: "https://example.com", description: null },
+    ],
   }
 
   it("parses a game with its player references", () => {
@@ -125,6 +148,7 @@ describe("GameDetailModel", () => {
       GameDetailModel.fromRawData({
         ...validGame,
         players: [],
+        resources: [],
       }).players,
     ).toEqual([])
   })
@@ -135,10 +159,30 @@ describe("GameDetailModel", () => {
     ).toThrow('"players" must be an array')
   })
 
+  it("throws when resources is missing", () => {
+    expect(() =>
+      GameDetailModel.fromRawData({
+        ...validGame,
+        players: [],
+      }),
+    ).toThrow('"resources" must be an array')
+  })
+
+  it("throws when a resource has no url", () => {
+    expect(() =>
+      GameDetailModel.fromRawData({
+        ...validGame,
+        players: [],
+        resources: [{ description: "x" }],
+      }),
+    ).toThrow(InvalidRawDataError)
+  })
+
   it("throws when a player reference is not an object", () => {
     expect(() =>
       GameDetailModel.fromRawData({
         ...validGame,
+        resources: [],
         players: [null],
       }),
     ).toThrow("player reference must be an object")
@@ -150,6 +194,7 @@ describe("GameDetailModel", () => {
       expect(() =>
         GameDetailModel.fromRawData({
           ...validGame,
+          resources: [],
           players: [without(validPlayers[0], key)],
         }),
       ).toThrow(InvalidRawDataError)

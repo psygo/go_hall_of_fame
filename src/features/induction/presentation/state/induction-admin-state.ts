@@ -5,6 +5,13 @@ import { connection } from "next/server"
 import type { AdminFormState } from "@/core/admin-form-state"
 import type { RequireAdmin } from "@/core/admin-guard"
 import {
+  ADMIN_PAGE_SIZE,
+  paginate,
+  readPageParam,
+  type Page,
+  type QueryParam,
+} from "@/core/list-query"
+import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
@@ -73,13 +80,18 @@ export type InductionAdminDependencies = {
 export function createInductionAdminState(
   dependencies: InductionAdminDependencies,
 ) {
-  async function loadAdminCriteria(): Promise<
-    readonly Criterion[]
-  > {
+  async function loadAdminCriteria(
+    pageParam?: QueryParam,
+  ): Promise<Page<Criterion>> {
     await connection()
     await dependencies.requireAdmin()
-    return unwrapDataState(
+    const all = unwrapDataState(
       await dependencies.listCriteria.call({}),
+    )
+    return paginate(
+      all,
+      readPageParam(pageParam),
+      ADMIN_PAGE_SIZE,
     )
   }
 
@@ -157,13 +169,18 @@ export function createInductionAdminState(
     redirect(CRITERIA_ADMIN_PATH)
   }
 
-  async function loadNominations(): Promise<
-    readonly NominationRecord[]
-  > {
+  async function loadNominations(
+    pageParam?: QueryParam,
+  ): Promise<Page<NominationRecord>> {
     await connection()
     await dependencies.requireAdmin()
-    return unwrapDataState(
+    const all = unwrapDataState(
       await dependencies.listNominations.call({}),
+    )
+    return paginate(
+      all,
+      readPageParam(pageParam),
+      ADMIN_PAGE_SIZE,
     )
   }
 

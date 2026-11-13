@@ -2,6 +2,10 @@ import { asc, eq } from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
 import {
+  replaceResources,
+  selectResources,
+} from "@/shared/database/data/resources"
+import {
   gamePlayersTable,
   gamesTable,
   playersTable,
@@ -33,7 +37,15 @@ export class PlayersDataSource {
       .where(eq(playersTable.slug, slug))
     if (row === undefined) return null
     const games = await this.fetchGameReferences(row.id)
-    return PlayerDetailModel.fromRawData({ ...row, games })
+    const resources = await selectResources(this.database, {
+      kind: "player",
+      id: row.id,
+    })
+    return PlayerDetailModel.fromRawData({
+      ...row,
+      games,
+      resources,
+    })
   }
 
   private fetchGameReferences(playerId: number) {
@@ -60,20 +72,33 @@ export class PlayersDataSource {
     draft: PlayerDraft,
     originalSlug: string | null,
   ): Promise<void> {
+    const { resources, ...fields } = draft
     await this.database.transaction(async (tx) => {
       if (draft.featured) {
         await tx
           .update(playersTable)
           .set({ featured: false })
       }
-      if (originalSlug === null) {
-        await tx.insert(playersTable).values(draft)
-        return
-      }
-      await tx
-        .update(playersTable)
-        .set(draft)
-        .where(eq(playersTable.slug, originalSlug))
+      const [row] =
+        originalSlug === null
+          ? await tx
+              .insert(playersTable)
+              .values(fields)
+              .returning({ id: playersTable.id })
+          : await tx
+              .update(playersTable)
+              .set(fields)
+              .where(eq(playersTable.slug, originalSlug))
+              .returning({ id: playersTable.id })
+      if (row === undefined)
+        throw new Error(
+          "The player to update was not found",
+        )
+      await replaceResources(
+        tx,
+        { kind: "player", id: row.id },
+        resources,
+      )
     })
   }
 

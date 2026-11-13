@@ -80,6 +80,7 @@ describe("PlayersRepositoryImpl", () => {
         PlayerDetailModel.fromRawData({
           ...rawPlayer,
           games: [],
+          resources: [],
         }),
       )
       const repository = buildRepository({
@@ -94,7 +95,7 @@ describe("PlayersRepositoryImpl", () => {
       )
       expect(state).toEqual({
         status: "success",
-        data: { ...rawPlayer, games: [] },
+        data: { ...rawPlayer, games: [], resources: [] },
       })
     })
 
@@ -140,6 +141,7 @@ describe("PlayersRepositoryImpl", () => {
       photoPosition: "center",
       inductionNumber: 3,
       featured: true,
+      resources: [],
     }
 
     it("passes the draft and the original slug to the data source", async () => {

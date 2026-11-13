@@ -8,6 +8,8 @@ import {
   readString,
 } from "@/core/raw-data"
 
+import type { ResourceLink } from "@/core/resources"
+
 import {
   COUNTRIES,
   type Player,
@@ -46,6 +48,7 @@ export class PlayerDetailModel
   implements PlayerDetail
 {
   declare readonly games: readonly PlayerGameReference[]
+  declare readonly resources: readonly ResourceLink[]
 
   private constructor(fields: PlayerDetail) {
     super(fields)
@@ -58,9 +61,13 @@ export class PlayerDetailModel
     const games = readArray(record, "games").map(
       parseGameReference,
     )
+    const resources = readArray(record, "resources").map(
+      parseResourceLink,
+    )
     return new PlayerDetailModel({
       ...parsePlayerFields(record),
       games,
+      resources,
     })
   }
 
@@ -94,5 +101,13 @@ function parseGameReference(
     slug: readString(record, "slug"),
     year: readInteger(record, "year"),
     name: readString(record, "name"),
+  }
+}
+
+function parseResourceLink(raw: unknown): ResourceLink {
+  const record = asRecord(raw, "resource")
+  return {
+    url: readString(record, "url"),
+    description: readNullableString(record, "description"),
   }
 }

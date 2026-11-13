@@ -145,7 +145,13 @@ describe("PlayerModel", () => {
 })
 
 describe("PlayerDetailModel", () => {
-  const validDetail = { ...validPlayer, games: validGames }
+  const validDetail = {
+    ...validPlayer,
+    games: validGames,
+    resources: [
+      { url: "https://example.com", description: "Notes" },
+    ],
+  }
 
   it("parses a player with its game references", () => {
     const model = PlayerDetailModel.fromRawData(validDetail)
@@ -159,6 +165,7 @@ describe("PlayerDetailModel", () => {
       PlayerDetailModel.fromRawData({
         ...validPlayer,
         games: [],
+        resources: [],
       }).games,
     ).toEqual([])
   })
@@ -169,10 +176,20 @@ describe("PlayerDetailModel", () => {
     ).toThrow('"games" must be an array')
   })
 
+  it("throws when resources is missing", () => {
+    expect(() =>
+      PlayerDetailModel.fromRawData({
+        ...validPlayer,
+        games: [],
+      }),
+    ).toThrow('"resources" must be an array')
+  })
+
   it("throws when a game reference is not an object", () => {
     expect(() =>
       PlayerDetailModel.fromRawData({
         ...validPlayer,
+        resources: [],
         games: ["x"],
       }),
     ).toThrow("game reference must be an object")
@@ -184,6 +201,7 @@ describe("PlayerDetailModel", () => {
       expect(() =>
         PlayerDetailModel.fromRawData({
           ...validPlayer,
+          resources: [],
           games: [without(validGames[0], key)],
         }),
       ).toThrow(InvalidRawDataError)

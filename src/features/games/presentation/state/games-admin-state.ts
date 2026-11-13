@@ -5,6 +5,13 @@ import { connection } from "next/server"
 import type { AdminFormState } from "@/core/admin-form-state"
 import type { RequireAdmin } from "@/core/admin-guard"
 import {
+  ADMIN_PAGE_SIZE,
+  paginate,
+  readPageParam,
+  type Page,
+  type QueryParam,
+} from "@/core/list-query"
+import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
@@ -14,7 +21,7 @@ import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import {
   readFormFlag,
   readFormText,
-  readFormTexts,
+  readResourceRows,
 } from "@/shared/ui/presentation/form-data"
 
 import type {
@@ -22,9 +29,10 @@ import type {
   GameDetail,
   GamePlayerReference,
 } from "../../domain/entities/game"
-import type {
-  GameErrors,
-  GameForm,
+import {
+  GAME_LIMITS,
+  type GameErrors,
+  type GameForm,
 } from "../../domain/entities/game-draft"
 import type { GameSlugParams } from "../../domain/params/game-slug-params"
 import type { SaveGameParams } from "../../domain/params/save-game-params"
@@ -69,13 +77,18 @@ export type GamesAdminDependencies = {
 export function createGamesAdminState(
   dependencies: GamesAdminDependencies,
 ) {
-  async function loadAdminGames(): Promise<
-    readonly Game[]
-  > {
+  async function loadAdminGames(
+    pageParam?: QueryParam,
+  ): Promise<Page<Game>> {
     await connection()
     await dependencies.requireAdmin()
-    return unwrapDataState(
+    const all = unwrapDataState(
       await dependencies.listGames.call({}),
+    )
+    return paginate(
+      all,
+      readPageParam(pageParam),
+      ADMIN_PAGE_SIZE,
     )
   }
 
@@ -104,7 +117,7 @@ export function createGamesAdminState(
     formData: FormData,
   ): Promise<GameFormState> {
     await dependencies.requireAdmin()
-    const form = readGameForm(formData)
+    const form = await readGameForm(formData)
     const result = await dependencies.saveGame.call({
       originalSlug: slugParam === "new" ? null : slugParam,
       form,
@@ -156,7 +169,9 @@ export function createGamesAdminState(
   }
 }
 
-function readGameForm(formData: FormData): GameForm {
+async function readGameForm(
+  formData: FormData,
+): Promise<GameForm> {
   return {
     slug: readFormText(formData, "slug"),
     year: readFormText(formData, "year"),
@@ -171,6 +186,35 @@ function readGameForm(formData: FormData): GameForm {
     sgfUrl: readFormText(formData, "sgfUrl"),
     sequence: readFormText(formData, "sequence"),
     featured: readFormFlag(formData, "featured"),
-    playerSlugs: readFormTexts(formData, "playerSlugs"),
+    ...(await readSgfFile(formData)),
+    removeSgf: readFormFlag(formData, "removeSgf"),
+    blackPlayerSlug: readFormText(
+      formData,
+      "blackPlayerSlug",
+    ),
+    whitePlayerSlug: readFormText(
+      formData,
+      "whitePlayerSlug",
+    ),
+    resources: readResourceRows(formData),
+  }
+}
+
+/** The text of the SGF file that was chosen: empty when none, and not read when it is too large. */
+async function readSgfFile(
+  formData: FormData,
+): Promise<
+  Pick<GameForm, "sgfFileText" | "sgfFileTooLarge">
+> {
+  const file = formData.get("sgfFile")
+  if (!(file instanceof File) || file.size === 0) {
+    return { sgfFileText: "", sgfFileTooLarge: false }
+  }
+  if (file.size > GAME_LIMITS.maxSgfBytes) {
+    return { sgfFileText: "", sgfFileTooLarge: true }
+  }
+  return {
+    sgfFileText: await file.text(),
+    sgfFileTooLarge: false,
   }
 }

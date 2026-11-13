@@ -49,7 +49,11 @@ const player: Player = {
   photoPosition: "50% 50%",
   featured: false,
 }
-const detail: PlayerDetail = { ...player, games: [] }
+const detail: PlayerDetail = {
+  ...player,
+  games: [],
+  resources: [],
+}
 
 const fields = {
   slug: "shusaku",
@@ -133,7 +137,12 @@ describe("loadAdminPlayers", () => {
   it("lists every country after checking the admin", async () => {
     const { state, requireAdmin, list } = buildState()
 
-    expect(await state.loadAdminPlayers()).toEqual([player])
+    expect(await state.loadAdminPlayers()).toEqual({
+      items: [player],
+      page: 1,
+      pageCount: 1,
+      total: 1,
+    })
     expect(list).toHaveBeenCalledWith({ country: null })
     expect(
       requireAdmin.mock.invocationCallOrder[0],
@@ -160,6 +169,27 @@ describe("loadAdminPlayers", () => {
     await expect(state.loadAdminPlayers()).rejects.toBe(
       cause,
     )
+  })
+})
+
+describe("loadAdminPlayers pagination", () => {
+  const many = Array.from({ length: 16 }, (_, index) => ({
+    ...player,
+    slug: `p${index}`,
+  }))
+
+  it("returns the requested page, clamped and tolerant", async () => {
+    const { state } = buildState({
+      listResult: succeed(many),
+    })
+
+    expect(
+      (await state.loadAdminPlayers("2")).items,
+    ).toHaveLength(1)
+    expect((await state.loadAdminPlayers("99")).page).toBe(
+      2,
+    )
+    expect((await state.loadAdminPlayers("x")).page).toBe(1)
   })
 })
 
@@ -227,7 +257,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       originalSlug: null,
-      form: { ...fields, featured: false },
+      form: { ...fields, featured: false, resources: [] },
     })
   })
 
@@ -243,7 +273,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       originalSlug: "old-slug",
-      form: { ...fields, featured: true },
+      form: { ...fields, featured: true, resources: [] },
     })
   })
 
@@ -268,7 +298,30 @@ describe("saveFromForm", () => {
         photoPosition: "",
         inductionNumber: "",
         featured: false,
+        resources: [],
       },
+    })
+  })
+
+  it("reads the resource rows in order", async () => {
+    const { state, save } = buildState()
+    const formData = buildFormData(fields)
+    formData.append("resourceUrl", "https://a.example")
+    formData.append("resourceUrl", "https://b.example")
+    formData.append("resourceDescription", "A")
+
+    await expect(
+      state.saveFromForm("new", formData),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({
+        resources: [
+          { url: "https://a.example", description: "A" },
+          { url: "https://b.example", description: "" },
+        ],
+      }),
     })
   })
 
@@ -299,7 +352,12 @@ describe("saveFromForm", () => {
     ).toEqual({
       status: "invalid",
       errors,
-      values: { ...fields, name: "", featured: false },
+      values: {
+        ...fields,
+        name: "",
+        featured: false,
+        resources: [],
+      },
     })
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
@@ -325,7 +383,7 @@ describe("saveFromForm", () => {
       status: "failed",
       message:
         "The player could not be saved. Try again in a moment.",
-      values: { ...fields, featured: false },
+      values: { ...fields, featured: false, resources: [] },
     })
     expect(logged).toHaveBeenCalledWith(
       "Could not save the player:",

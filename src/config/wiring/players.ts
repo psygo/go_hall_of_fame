@@ -6,6 +6,7 @@ import { DeletePlayer } from "@/features/players/domain/use-cases/delete-player"
 import { GetPlayerDetail } from "@/features/players/domain/use-cases/get-player-detail"
 import { GetPlayerProfile } from "@/features/players/domain/use-cases/get-player-profile"
 import { ListPlayers } from "@/features/players/domain/use-cases/list-players"
+import { SearchPlayers } from "@/features/players/domain/use-cases/search-players"
 import { SavePlayer } from "@/features/players/domain/use-cases/save-player"
 import { createPlayersAdminState } from "@/features/players/presentation/state/players-admin-state"
 import { createPlayersLoaders } from "@/features/players/presentation/state/players-loaders"
@@ -19,7 +20,7 @@ const repository = new PlayersRepositoryImpl(
 const listPlayers = new ListPlayers(repository)
 
 export const playersLoaders = createPlayersLoaders({
-  listPlayers,
+  searchPlayers: new SearchPlayers(repository),
   getPlayerProfile: new GetPlayerProfile(repository),
 })
 

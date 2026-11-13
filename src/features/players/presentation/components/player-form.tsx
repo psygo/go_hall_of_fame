@@ -2,6 +2,7 @@
 
 import { useActionState } from "react"
 
+import { ResourceFields } from "@/shared/ui/presentation/resource-fields"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { idleAdminForm } from "@/core/admin-form-state"
 import {
@@ -129,6 +130,10 @@ export function PlayerForm({
         defaultValue={values.photoPosition}
         hint="Where the 4:5 crop is centred, for example 50% 20%."
         error={errors.photoPosition}
+      />
+      <ResourceFields
+        initial={values.resources}
+        error={errors.resources}
       />
       <CheckboxField
         name="featured"

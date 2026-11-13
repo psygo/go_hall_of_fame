@@ -39,26 +39,39 @@ const game: Game = {
   hook: "H",
   moment: "M",
   legacy: "L",
+  blackPlayerSlug: null,
+  whitePlayerSlug: null,
   sgfUrl: null,
+  hasUploadedSgf: false,
   featured: false,
   sequence: 0,
 }
 
 const profile: GameProfile = {
-  detail: { ...game, players: [] },
+  detail: { ...game, players: [], resources: [] },
   previous: game,
   next: game,
 }
 
+const emptyPage = {
+  items: [game],
+  page: 1,
+  pageCount: 1,
+  total: 1,
+}
+
 function buildLoaders({
-  listGames = vi.fn(async () => succeed([game])),
+  searchGames = vi.fn(async () => succeed(emptyPage)),
+  getGameSgf = vi.fn(async () => succeed(null)),
   getGameProfile = vi.fn(async () => succeed(profile)),
 }: {
-  listGames?: ReturnType<typeof vi.fn>
+  searchGames?: ReturnType<typeof vi.fn>
+  getGameSgf?: ReturnType<typeof vi.fn>
   getGameProfile?: ReturnType<typeof vi.fn>
 } = {}) {
   return createGamesLoaders({
-    listGames: { call: listGames },
+    searchGames: { call: searchGames },
+    getGameSgf: { call: getGameSgf },
     getGameProfile: { call: getGameProfile },
   })
 }
@@ -67,18 +80,72 @@ beforeEach(() => {
   vi.mocked(notFound).mockClear()
 })
 
-describe("loadGames", () => {
-  it("returns the games", async () => {
-    expect(await buildLoaders().loadGames()).toEqual([game])
+describe("loadGamesPage", () => {
+  it("returns the page with the parsed query and sort", async () => {
+    const searchGames = vi.fn(async () =>
+      succeed(emptyPage),
+    )
+
+    const state = await buildLoaders({
+      searchGames,
+    }).loadGamesPage({
+      q: "  shusaku ",
+      sort: "newest",
+      page: "3",
+    })
+
+    expect(searchGames).toHaveBeenCalledWith({
+      query: "shusaku",
+      sort: "newest",
+      page: 3,
+    })
+    expect(state).toEqual({
+      games: emptyPage,
+      query: "shusaku",
+      sort: "newest",
+    })
+  })
+
+  it("falls back to defaults for garbage parameters", async () => {
+    const searchGames = vi.fn(async () =>
+      succeed(emptyPage),
+    )
+
+    await buildLoaders({ searchGames }).loadGamesPage({
+      sort: "drop table",
+      page: "-4",
+    })
+
+    expect(searchGames).toHaveBeenCalledWith({
+      query: "",
+      sort: "oldest",
+      page: 1,
+    })
   })
 
   it("throws the original error when the use case fails", async () => {
     const cause = new Error("db down")
     const loaders = buildLoaders({
-      listGames: vi.fn(async () => fail(cause)),
+      searchGames: vi.fn(async () => fail(cause)),
     })
 
-    await expect(loaders.loadGames()).rejects.toBe(cause)
+    await expect(loaders.loadGamesPage({})).rejects.toBe(
+      cause,
+    )
+  })
+})
+
+describe("loadGameSgf", () => {
+  it("returns the text, or null when none is stored", async () => {
+    const getGameSgf = vi
+      .fn()
+      .mockResolvedValueOnce(succeed("(;GM[1])"))
+      .mockResolvedValueOnce(succeed(null))
+    const loaders = buildLoaders({ getGameSgf })
+
+    expect(await loaders.loadGameSgf("a")).toBe("(;GM[1])")
+    expect(await loaders.loadGameSgf("b")).toBeNull()
+    expect(getGameSgf).toHaveBeenCalledWith({ slug: "a" })
   })
 })
 

@@ -4,9 +4,20 @@ import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
-import type { NoParams, UseCase } from "@/core/use-case"
+import {
+  readChoice,
+  readPageParam,
+  type Page,
+  type QueryParam,
+} from "@/core/list-query"
+import type { UseCase } from "@/core/use-case"
 
-import type { Criterion } from "../../domain/entities/criterion"
+import {
+  CRITERIA_ORDERS,
+  type CriteriaOrder,
+  type Criterion,
+} from "../../domain/entities/criterion"
+import type { PageCriteriaParams } from "../../domain/params/page-criteria-params"
 import {
   isNominationCategory,
   type NominationSubmission,
@@ -18,9 +29,9 @@ import type {
 } from "./nomination-form-state"
 
 export type InductionDependencies = {
-  readonly listCriteria: UseCase<
-    NoParams,
-    DataState<readonly Criterion[]>
+  readonly pageCriteria: UseCase<
+    PageCriteriaParams,
+    DataState<Page<Criterion>>
   >
   readonly submitNomination: UseCase<
     SubmitNominationParams,
@@ -28,16 +39,35 @@ export type InductionDependencies = {
   >
 }
 
+export type CriteriaSearchParams = {
+  readonly sort?: QueryParam
+  readonly page?: QueryParam
+}
+
+export type CriteriaPageState = {
+  readonly criteria: Page<Criterion>
+  readonly order: CriteriaOrder
+}
+
 export function createInductionState(
   dependencies: InductionDependencies,
 ) {
-  async function loadCriteria(): Promise<
-    readonly Criterion[]
-  > {
+  async function loadCriteriaPage(
+    params: CriteriaSearchParams,
+  ): Promise<CriteriaPageState> {
     await connection()
-    return unwrapDataState(
-      await dependencies.listCriteria.call({}),
+    const order = readChoice(
+      params.sort,
+      CRITERIA_ORDERS,
+      "first",
     )
+    const criteria = unwrapDataState(
+      await dependencies.pageCriteria.call({
+        order,
+        page: readPageParam(params.page),
+      }),
+    )
+    return { criteria, order }
   }
 
   async function submitNominationForm(
@@ -67,7 +97,7 @@ export function createInductionState(
     return { status: "failed", values }
   }
 
-  return { loadCriteria, submitNominationForm }
+  return { loadCriteriaPage, submitNominationForm }
 }
 
 function readFormValues(

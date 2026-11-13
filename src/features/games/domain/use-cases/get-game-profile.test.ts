@@ -10,6 +10,7 @@ const unusedMethods = {
   listPlayerOptions: vi.fn(),
   save: vi.fn(),
   deleteBySlug: vi.fn(),
+  findSgfTextBySlug: vi.fn(),
 }
 
 function buildGame(slug: string): Game {
@@ -24,14 +25,17 @@ function buildGame(slug: string): Game {
     hook: "H",
     moment: "M",
     legacy: "L",
+    blackPlayerSlug: null,
+    whitePlayerSlug: null,
     sgfUrl: null,
+    hasUploadedSgf: false,
     featured: false,
     sequence: 0,
   }
 }
 
 function buildDetail(slug: string): GameDetail {
-  return { ...buildGame(slug), players: [] }
+  return { ...buildGame(slug), players: [], resources: [] }
 }
 
 describe("GetGameProfile", () => {

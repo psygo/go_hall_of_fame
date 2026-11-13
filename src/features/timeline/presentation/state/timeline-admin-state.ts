@@ -5,6 +5,13 @@ import { connection } from "next/server"
 import type { RequireAdmin } from "@/core/admin-guard"
 import type { AdminFormState } from "@/core/admin-form-state"
 import {
+  ADMIN_PAGE_SIZE,
+  paginate,
+  readPageParam,
+  type Page,
+  type QueryParam,
+} from "@/core/list-query"
+import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
@@ -54,13 +61,18 @@ export type TimelineAdminDependencies = {
 export function createTimelineAdminState(
   dependencies: TimelineAdminDependencies,
 ) {
-  async function loadAdminTimeline(): Promise<
-    readonly TimelineEvent[]
-  > {
+  async function loadAdminTimeline(
+    pageParam?: QueryParam,
+  ): Promise<Page<TimelineEvent>> {
     await connection()
     await dependencies.requireAdmin()
-    return unwrapDataState(
+    const all = unwrapDataState(
       await dependencies.listTimelineEvents.call({}),
+    )
+    return paginate(
+      all,
+      readPageParam(pageParam),
+      ADMIN_PAGE_SIZE,
     )
   }
 

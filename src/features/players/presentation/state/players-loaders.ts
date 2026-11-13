@@ -6,22 +6,32 @@ import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
+import {
+  readChoice,
+  readPageParam,
+  readParam,
+  readSearchParam,
+  type Page,
+  type QueryParam,
+} from "@/core/list-query"
 import type { UseCase } from "@/core/use-case"
 
 import {
   COUNTRIES,
   isCountry,
+  PLAYER_SORTS,
   type Country,
   type Player,
   type PlayerProfile,
+  type PlayerSort,
 } from "../../domain/entities/player"
 import type { GetPlayerProfileParams } from "../../domain/params/get-player-profile-params"
-import type { ListPlayersParams } from "../../domain/params/list-players-params"
+import type { SearchPlayersParams } from "../../domain/params/search-players-params"
 
 export type PlayersLoaderDependencies = {
-  readonly listPlayers: UseCase<
-    ListPlayersParams,
-    DataState<readonly Player[]>
+  readonly searchPlayers: UseCase<
+    SearchPlayersParams,
+    DataState<Page<Player>>
   >
   readonly getPlayerProfile: UseCase<
     GetPlayerProfileParams,
@@ -29,26 +39,53 @@ export type PlayersLoaderDependencies = {
   >
 }
 
+export type PlayersSearchParams = {
+  readonly country?: QueryParam
+  readonly q?: QueryParam
+  readonly sort?: QueryParam
+  readonly page?: QueryParam
+}
+
 export type PlayersPageState = {
-  readonly players: readonly Player[]
+  readonly players: Page<Player>
   readonly country: Country | null
   readonly countries: readonly Country[]
+  readonly query: string
+  readonly sort: PlayerSort
 }
 
 export function createPlayersLoaders(
   dependencies: PlayersLoaderDependencies,
 ) {
   async function loadPlayersPage(
-    countryParam: string | readonly string[] | undefined,
+    params: PlayersSearchParams,
   ): Promise<PlayersPageState> {
     await connection()
+    const countryParam = readParam(params.country)
     const country = isCountry(countryParam)
       ? countryParam
       : null
-    const players = unwrapDataState(
-      await dependencies.listPlayers.call({ country }),
+    const query = readSearchParam(params.q)
+    const sort = readChoice(
+      params.sort,
+      PLAYER_SORTS,
+      "number",
     )
-    return { players, country, countries: COUNTRIES }
+    const players = unwrapDataState(
+      await dependencies.searchPlayers.call({
+        country,
+        query,
+        sort,
+        page: readPageParam(params.page),
+      }),
+    )
+    return {
+      players,
+      country,
+      countries: COUNTRIES,
+      query,
+      sort,
+    }
   }
 
   const loadPlayerProfile = cache(

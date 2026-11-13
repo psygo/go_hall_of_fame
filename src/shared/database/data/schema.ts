@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm"
 import {
   boolean,
+  check,
   integer,
   pgEnum,
   pgTable,
@@ -55,6 +57,15 @@ export const gamesTable = pgTable("games", {
   name: text().notNull(),
   black: text().notNull(),
   white: text().notNull(),
+  /** The Hall player behind the Black / White name, when there is one (links to their page). */
+  blackPlayerId: integer("black_player_id").references(
+    () => playersTable.id,
+    { onDelete: "set null" },
+  ),
+  whitePlayerId: integer("white_player_id").references(
+    () => playersTable.id,
+    { onDelete: "set null" },
+  ),
   result: text().notNull(),
   setting: text().notNull(),
   hook: text().notNull(),
@@ -62,6 +73,8 @@ export const gamesTable = pgTable("games", {
   legacy: text().notNull(),
   /** URL of an SGF record, rendered by goban-web when present. */
   sgfUrl: text("sgf_url"),
+  /** The text of an uploaded SGF file. It wins over `sgfUrl` and is served at /games/{slug}/sgf. */
+  sgfText: text("sgf_text"),
   /** Orders games with the same year. */
   sequence: integer().notNull().default(0),
   featured: boolean().notNull().default(false),
@@ -84,6 +97,31 @@ export const gamePlayersTable = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.gameId, table.playerId] }),
+  ],
+)
+
+/** A link with an optional description, listed on a game's or a player's page. Exactly one owner. */
+export const resourcesTable = pgTable(
+  "resources",
+  {
+    id: serial().primaryKey(),
+    gameId: integer("game_id").references(
+      () => gamesTable.id,
+      { onDelete: "cascade" },
+    ),
+    playerId: integer("player_id").references(
+      () => playersTable.id,
+      { onDelete: "cascade" },
+    ),
+    url: text().notNull(),
+    description: text(),
+    position: integer().notNull().default(0),
+  },
+  (table) => [
+    check(
+      "resources_one_owner",
+      sql`(${table.gameId} is null) <> (${table.playerId} is null)`,
+    ),
   ],
 )
 
@@ -147,6 +185,29 @@ export const adminSessionsTable = pgTable(
     expiresAt: timestamp("expires_at", {
       withTimezone: true,
     }).notNull(),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+)
+
+/** One-time links for choosing a new password. Only the SHA-256 of the token is kept. */
+export const passwordResetsTable = pgTable(
+  "password_resets",
+  {
+    id: serial().primaryKey(),
+    adminId: integer("admin_id")
+      .notNull()
+      .references(() => adminsTable.id, {
+        onDelete: "cascade",
+      }),
+    tokenHash: text("token_hash").notNull().unique(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+    }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })

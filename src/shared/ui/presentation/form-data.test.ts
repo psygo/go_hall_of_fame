@@ -4,6 +4,7 @@ import {
   readFormFlag,
   readFormText,
   readFormTexts,
+  readResourceRows,
 } from "./form-data"
 
 describe("readFormText", () => {
@@ -82,5 +83,55 @@ describe("readFormTexts", () => {
     formData.append("slugs", new File(["x"], "x.txt"))
 
     expect(readFormTexts(formData, "slugs")).toEqual(["a"])
+  })
+})
+
+describe("readResourceRows", () => {
+  it("pairs urls with descriptions by position", () => {
+    const formData = new FormData()
+    formData.append("resourceUrl", "https://a.example")
+    formData.append("resourceDescription", "A")
+    formData.append("resourceUrl", "/b")
+    formData.append("resourceDescription", "B")
+
+    expect(readResourceRows(formData)).toEqual([
+      { url: "https://a.example", description: "A" },
+      { url: "/b", description: "B" },
+    ])
+  })
+
+  it("uses an empty description when one is missing", () => {
+    const formData = new FormData()
+    formData.append("resourceUrl", "/a")
+    formData.append("resourceUrl", "/b")
+    formData.append("resourceDescription", "A")
+
+    expect(readResourceRows(formData)).toEqual([
+      { url: "/a", description: "A" },
+      { url: "/b", description: "" },
+    ])
+  })
+
+  it("returns no rows for a form without resources", () => {
+    expect(readResourceRows(new FormData())).toEqual([])
+  })
+
+  it("keeps a description typed without a link as a row with an empty url", () => {
+    const formData = new FormData()
+    formData.append("resourceUrl", "/a")
+    formData.append("resourceDescription", "A")
+    formData.append("resourceDescription", "Orphan")
+
+    expect(readResourceRows(formData)).toEqual([
+      { url: "/a", description: "A" },
+      { url: "", description: "Orphan" },
+    ])
+  })
+
+  it("ignores file values", () => {
+    const formData = new FormData()
+    formData.append("resourceUrl", new File(["x"], "x.txt"))
+
+    expect(readResourceRows(formData)).toEqual([])
   })
 })

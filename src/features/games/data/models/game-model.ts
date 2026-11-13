@@ -7,6 +7,8 @@ import {
   readString,
 } from "@/core/raw-data"
 
+import type { ResourceLink } from "@/core/resources"
+
 import type {
   Game,
   GameDetail,
@@ -19,12 +21,15 @@ export class GameModel implements Game {
   declare readonly name: string
   declare readonly black: string
   declare readonly white: string
+  declare readonly blackPlayerSlug: string | null
+  declare readonly whitePlayerSlug: string | null
   declare readonly result: string
   declare readonly setting: string
   declare readonly hook: string
   declare readonly moment: string
   declare readonly legacy: string
   declare readonly sgfUrl: string | null
+  declare readonly hasUploadedSgf: boolean
   declare readonly featured: boolean
   declare readonly sequence: number
 
@@ -46,6 +51,7 @@ export class GameDetailModel
   implements GameDetail
 {
   declare readonly players: readonly GamePlayerReference[]
+  declare readonly resources: readonly ResourceLink[]
 
   private constructor(fields: GameDetail) {
     super(fields)
@@ -58,9 +64,13 @@ export class GameDetailModel
     const players = readArray(record, "players").map(
       parsePlayerReference,
     )
+    const resources = readArray(record, "resources").map(
+      parseResourceLink,
+    )
     return new GameDetailModel({
       ...parseGameFields(record),
       players,
+      resources,
     })
   }
 
@@ -77,12 +87,21 @@ function parseGameFields(raw: unknown): Game {
     name: readString(record, "name"),
     black: readString(record, "black"),
     white: readString(record, "white"),
+    blackPlayerSlug: readNullableString(
+      record,
+      "blackPlayerSlug",
+    ),
+    whitePlayerSlug: readNullableString(
+      record,
+      "whitePlayerSlug",
+    ),
     result: readString(record, "result"),
     setting: readString(record, "setting"),
     hook: readString(record, "hook"),
     moment: readString(record, "moment"),
     legacy: readString(record, "legacy"),
     sgfUrl: readNullableString(record, "sgfUrl"),
+    hasUploadedSgf: readBoolean(record, "hasUploadedSgf"),
     featured: readBoolean(record, "featured"),
     sequence: readInteger(record, "sequence"),
   }
@@ -95,5 +114,13 @@ function parsePlayerReference(
   return {
     slug: readString(record, "slug"),
     name: readString(record, "name"),
+  }
+}
+
+function parseResourceLink(raw: unknown): ResourceLink {
+  const record = asRecord(raw, "resource")
+  return {
+    url: readString(record, "url"),
+    description: readNullableString(record, "description"),
   }
 }
