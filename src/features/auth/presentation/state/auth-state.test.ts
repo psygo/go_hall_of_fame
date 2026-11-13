@@ -21,8 +21,14 @@ vi.mock("next/navigation", () => ({
     throw new Error(`NEXT_REDIRECT:${path}`)
   }),
 }))
+const afterCallbacks = vi.hoisted(
+  () => [] as Array<() => Promise<void> | void>,
+)
 vi.mock("next/server", () => ({
   connection: vi.fn(async () => undefined),
+  after: vi.fn((fn: () => Promise<void> | void) => {
+    afterCallbacks.push(fn)
+  }),
 }))
 vi.mock("react", () => ({
   cache: <T>(fn: T) => fn,
@@ -33,6 +39,10 @@ import { connection } from "next/server"
 import { fail, succeed } from "@/core/data-state"
 
 import type { Admin } from "../../domain/entities/admin"
+import type {
+  RequestResetResult,
+  ResetPasswordResult,
+} from "../../domain/entities/password-reset"
 import type { SignInResult } from "../../domain/entities/sign-in-result"
 import {
   createAuthState,
@@ -78,16 +88,35 @@ function buildState({
   const signIn = vi.fn(async () => signInResult)
   const signOut = vi.fn(async () => endResult)
   const getAdminBySession = vi.fn(async () => lookupResult)
+  const requestPasswordReset = vi.fn(
+    async (): Promise<RequestResetResult> => ({
+      status: "requested",
+      error: null,
+      deliver: null,
+    }),
+  )
+  const checkResetLink = vi.fn(async () => succeed(true))
+  const resetPassword = vi.fn(
+    async (): Promise<ResetPasswordResult> => ({
+      status: "reset",
+    }),
+  )
   const dependencies: AuthDependencies = {
     signIn: { call: signIn },
     signOut: { call: signOut },
     getAdminBySession: { call: getAdminBySession },
+    requestPasswordReset: { call: requestPasswordReset },
+    checkResetLink: { call: checkResetLink },
+    resetPassword: { call: resetPassword },
   }
   return {
     state: createAuthState(dependencies),
     signIn,
     signOut,
     getAdminBySession,
+    requestPasswordReset,
+    checkResetLink,
+    resetPassword,
   }
 }
 
@@ -102,6 +131,7 @@ function hasCookie(token: string | undefined) {
 beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => {})
   hasCookie(undefined)
+  afterCallbacks.length = 0
 })
 
 afterEach(() => {
@@ -421,6 +451,272 @@ describe("requireAdmin", () => {
 
     await expect(state.requireAdmin()).rejects.toThrow(
       "NEXT_REDIRECT:/admin/sign-in",
+    )
+  })
+})
+
+describe("requestResetFromForm", () => {
+  it.each([
+    ["a blank email", "   "],
+    ["an email over 254 characters", "a".repeat(255)],
+  ])(
+    "rejects %s without calling the use case",
+    async (_n, email) => {
+      const { state, requestPasswordReset } = buildState()
+
+      const result = await state.requestResetFromForm(
+        buildFormData({ email }),
+      )
+
+      expect(result).toMatchObject({ status: "rejected" })
+      expect(requestPasswordReset).not.toHaveBeenCalled()
+    },
+  )
+
+  it("trims the email and answers sent", async () => {
+    const { state, requestPasswordReset } = buildState()
+
+    expect(
+      await state.requestResetFromForm(
+        buildFormData({ email: "  ada@example.com " }),
+      ),
+    ).toEqual({ status: "sent" })
+    expect(requestPasswordReset).toHaveBeenCalledWith({
+      email: "ada@example.com",
+    })
+  })
+
+  it("answers sent and sends nothing when there is nothing to deliver", async () => {
+    const { state } = buildState()
+
+    expect(
+      await state.requestResetFromForm(
+        buildFormData({ email: "nobody@example.com" }),
+      ),
+    ).toEqual({ status: "sent" })
+    expect(afterCallbacks).toHaveLength(0)
+  })
+
+  it("logs why nothing was prepared by error name only, and still answers sent", async () => {
+    const { state, requestPasswordReset } = buildState()
+    requestPasswordReset.mockResolvedValue({
+      status: "requested",
+      error: new TypeError("secret ada@example.com"),
+      deliver: null,
+    })
+
+    expect(
+      await state.requestResetFromForm(
+        buildFormData({ email: "ada@example.com" }),
+      ),
+    ).toEqual({ status: "sent" })
+    expect(console.error).toHaveBeenCalledWith(
+      "Could not prepare the password reset email:",
+      "TypeError",
+    )
+  })
+
+  it("runs deliver after the response, not before", async () => {
+    const { state, requestPasswordReset } = buildState()
+    const deliver = vi.fn(async () => null)
+    requestPasswordReset.mockResolvedValue({
+      status: "requested",
+      error: null,
+      deliver,
+    })
+
+    expect(
+      await state.requestResetFromForm(
+        buildFormData({ email: "ada@example.com" }),
+      ),
+    ).toEqual({ status: "sent" })
+    expect(deliver).not.toHaveBeenCalled()
+
+    await afterCallbacks[0]()
+
+    expect(deliver).toHaveBeenCalledTimes(1)
+    expect(console.error).not.toHaveBeenCalled()
+  })
+
+  it("logs a delivery failure by error name only", async () => {
+    const { state, requestPasswordReset } = buildState()
+    requestPasswordReset.mockResolvedValue({
+      status: "requested",
+      error: null,
+      deliver: async () =>
+        new RangeError("to ada@example.com"),
+    })
+
+    await state.requestResetFromForm(
+      buildFormData({ email: "ada@example.com" }),
+    )
+    await afterCallbacks[0]()
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Could not send the password reset email:",
+      "RangeError",
+    )
+  })
+
+  it("rejects with a generic message when the use case fails", async () => {
+    const { state, requestPasswordReset } = buildState()
+    requestPasswordReset.mockResolvedValue({
+      status: "failed",
+      error: new Error("db down"),
+    })
+
+    expect(
+      await state.requestResetFromForm(
+        buildFormData({ email: "ada@example.com" }),
+      ),
+    ).toEqual({
+      status: "rejected",
+      message:
+        "Could not send the link. Try again in a moment.",
+      email: "ada@example.com",
+    })
+  })
+})
+
+describe("loadResetLink", () => {
+  it.each(["", "t".repeat(129)])(
+    "is not usable for the token %j without a lookup",
+    async (token) => {
+      const { state, checkResetLink } = buildState()
+
+      expect(await state.loadResetLink(token)).toEqual({
+        isUsable: false,
+      })
+      expect(checkResetLink).not.toHaveBeenCalled()
+    },
+  )
+
+  it("returns what the use case says", async () => {
+    const { state, checkResetLink } = buildState()
+    checkResetLink
+      .mockResolvedValueOnce(succeed(true))
+      .mockResolvedValueOnce(succeed(false))
+
+    expect(await state.loadResetLink("t")).toEqual({
+      isUsable: true,
+    })
+    expect(await state.loadResetLink("t")).toEqual({
+      isUsable: false,
+    })
+  })
+
+  it("is not usable when the check fails", async () => {
+    const { state, checkResetLink } = buildState()
+    checkResetLink.mockResolvedValue(
+      fail(new Error("db down")) as never,
+    )
+
+    expect(await state.loadResetLink("t")).toEqual({
+      isUsable: false,
+    })
+  })
+})
+
+describe("resetPasswordFromForm", () => {
+  const fields = {
+    password: "a-long-enough-password",
+    confirmation: "a-long-enough-password",
+  }
+
+  it("redirects to the sign-in page when the password is reset", async () => {
+    const { state, resetPassword } = buildState()
+
+    await expect(
+      state.resetPasswordFromForm(
+        "tok",
+        buildFormData(fields),
+      ),
+    ).rejects.toThrow(
+      "NEXT_REDIRECT:/admin/sign-in?reset=done",
+    )
+    expect(resetPassword).toHaveBeenCalledWith({
+      token: "tok",
+      ...fields,
+    })
+  })
+
+  it.each([
+    [
+      "a token over 128 characters",
+      "t".repeat(129),
+      fields,
+    ],
+    [
+      "a password over 256 characters",
+      "tok",
+      { ...fields, password: "a".repeat(257) },
+    ],
+    [
+      "a confirmation over 256 characters",
+      "tok",
+      { ...fields, confirmation: "a".repeat(257) },
+    ],
+  ])(
+    "rejects %s as an expired link without the use case",
+    async (_n, token, input) => {
+      const { state, resetPassword } = buildState()
+
+      expect(
+        await state.resetPasswordFromForm(
+          token,
+          buildFormData(input),
+        ),
+      ).toEqual({
+        status: "rejected",
+        message:
+          "This link has expired or was already used. Ask for a new one.",
+      })
+      expect(resetPassword).not.toHaveBeenCalled()
+    },
+  )
+
+  it.each([
+    ["weak", /at least 12 characters/],
+    ["mismatch", /do not match/],
+    ["invalid-link", /expired or was already used/],
+  ] as const)(
+    "describes the %s result",
+    async (status, message) => {
+      const { state, resetPassword } = buildState()
+      resetPassword.mockResolvedValue({ status })
+
+      const result = await state.resetPasswordFromForm(
+        "tok",
+        buildFormData(fields),
+      )
+
+      expect(result).toMatchObject({ status: "rejected" })
+      expect(
+        result.status === "rejected" && result.message,
+      ).toMatch(message)
+    },
+  )
+
+  it("describes a failure generically, logging only the error name", async () => {
+    const { state, resetPassword } = buildState()
+    resetPassword.mockResolvedValue({
+      status: "failed",
+      error: new RangeError("hash for ada"),
+    })
+
+    const result = await state.resetPasswordFromForm(
+      "tok",
+      buildFormData(fields),
+    )
+
+    expect(result).toEqual({
+      status: "rejected",
+      message:
+        "Could not save the password. Try again in a moment.",
+    })
+    expect(console.error).toHaveBeenCalledWith(
+      "Password reset failed:",
+      "RangeError",
     )
   })
 })

@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useActionState } from "react"
 
 import { signInAction } from "../state/sign-in-action"
@@ -52,13 +53,21 @@ export function SignInForm() {
           {state.message}
         </p>
       )}
-      <button
-        type="submit"
-        className="btn btn-primary self-start"
-        disabled={isPending}
-      >
-        {isPending ? "Signing in…" : "Sign in"}
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isPending}
+        >
+          {isPending ? "Signing in…" : "Sign in"}
+        </button>
+        <Link
+          href="/admin/forgot-password"
+          className="font-bold"
+        >
+          Forgot your password?
+        </Link>
+      </div>
     </form>
   )
 }
