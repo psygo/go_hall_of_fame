@@ -20,4 +20,8 @@ export const tr: Messages = {
   contributorsIntro: "Bu siteyi yapan kişiler.",
   roleCreator: "Yaratıcı ve bakımcı",
   roleAssistant: "Yapay zekâ programlama ortağı",
+  homeTitle:
+    "Go tarihindeki sanat eserleri ve efsanevi oyuncular.",
+  homeIntro:
+    "En karmaşık oyunda iz bırakan ikonik başyapıtlar ve sanatçılar.",
 }

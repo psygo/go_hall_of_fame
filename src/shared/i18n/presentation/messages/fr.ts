@@ -20,4 +20,8 @@ export const fr: Messages = {
   contributorsIntro: "Les personnes qui ont créé ce site.",
   roleCreator: "Créateur et mainteneur",
   roleAssistant: "Programmeur IA",
+  homeTitle:
+    "Les chefs-d'œuvre et les joueurs légendaires de l'histoire du Go.",
+  homeIntro:
+    "Les chefs-d'œuvre emblématiques et les artistes qui ont marqué de leur empreinte le jeu le plus complexe de tous.",
 }

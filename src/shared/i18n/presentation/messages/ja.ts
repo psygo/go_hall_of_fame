@@ -20,4 +20,7 @@ export const ja: Messages = {
   contributorsIntro: "このサイトを作った人たち。",
   roleCreator: "作者・メンテナー",
   roleAssistant: "AIペアプログラマー",
+  homeTitle: "囲碁の歴史における芸術作品と伝説の棋士たち。",
+  homeIntro:
+    "象徴的な名局と、最も複雑なゲームに名を刻んだ棋士たち。",
 }

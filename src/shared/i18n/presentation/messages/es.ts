@@ -21,4 +21,8 @@ export const es: Messages = {
     "Las personas que hicieron este sitio.",
   roleCreator: "Creador y responsable",
   roleAssistant: "Programador de IA",
+  homeTitle:
+    "Las obras de arte y los jugadores legendarios de la historia del Go.",
+  homeIntro:
+    "Las obras maestras icónicas y los artistas que dejaron su huella en el juego más complejo de todos.",
 }

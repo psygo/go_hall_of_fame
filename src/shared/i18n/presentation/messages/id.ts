@@ -20,4 +20,8 @@ export const id: Messages = {
   contributorsIntro: "Orang-orang yang membuat situs ini.",
   roleCreator: "Pembuat dan pemelihara",
   roleAssistant: "Rekan pemrograman AI",
+  homeTitle:
+    "Karya seni dan para pemain legendaris dalam sejarah Go.",
+  homeIntro:
+    "Mahakarya ikonik dan para seniman yang meninggalkan jejak dalam permainan paling kompleks dari semuanya.",
 }

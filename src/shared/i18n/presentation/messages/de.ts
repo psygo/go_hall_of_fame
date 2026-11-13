@@ -21,4 +21,8 @@ export const de: Messages = {
     "Die Menschen, die diese Seite gebaut haben.",
   roleCreator: "Urheber und Betreuer",
   roleAssistant: "KI-Programmierpartner",
+  homeTitle:
+    "Die Kunstwerke und die legendären Spieler der Geschichte des Go.",
+  homeIntro:
+    "Die ikonischen Meisterwerke und die Künstler, die im komplexesten aller Spiele ihre Spuren hinterlassen haben.",
 }

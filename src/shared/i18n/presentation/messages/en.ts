@@ -18,6 +18,10 @@ export const en = {
   contributorsIntro: "The people who made this site.",
   roleCreator: "Creator and maintainer",
   roleAssistant: "AI pair programmer",
+  homeTitle:
+    "The works of art and the legendary players in the history of Go.",
+  homeIntro:
+    "The iconic masterpieces and the artists who made their mark in the most complex game of all.",
 } as const
 
 export type Messages = {

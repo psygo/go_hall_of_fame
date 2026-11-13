@@ -21,4 +21,8 @@ export const vi: Messages = {
     "Những người đã tạo nên trang web này.",
   roleCreator: "Người tạo và duy trì",
   roleAssistant: "Cộng sự lập trình AI",
+  homeTitle:
+    "Những tác phẩm nghệ thuật và các kỳ thủ huyền thoại trong lịch sử cờ vây.",
+  homeIntro:
+    "Những kiệt tác biểu tượng và các nghệ sĩ đã để lại dấu ấn trong trò chơi phức tạp nhất từ trước đến nay.",
 }

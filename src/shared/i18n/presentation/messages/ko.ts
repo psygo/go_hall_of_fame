@@ -20,4 +20,7 @@ export const ko: Messages = {
   contributorsIntro: "이 사이트를 만든 사람들.",
   roleCreator: "제작자 및 유지관리자",
   roleAssistant: "AI 페어 프로그래머",
+  homeTitle: "바둑의 역사 속 예술 작품과 전설적인 기사들.",
+  homeIntro:
+    "가장 복잡한 게임에 자신의 이름을 새긴 상징적인 명작들과 예술가들.",
 }

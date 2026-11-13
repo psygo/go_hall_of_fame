@@ -20,4 +20,8 @@ export const pl: Messages = {
   contributorsIntro: "Osoby, które stworzyły tę stronę.",
   roleCreator: "Twórca i opiekun",
   roleAssistant: "Programista AI",
+  homeTitle:
+    "Dzieła sztuki i legendarni gracze w historii Go.",
+  homeIntro:
+    "Ikoniczne arcydzieła i artyści, którzy zapisali się w historii najbardziej złożonej gry ze wszystkich.",
 }

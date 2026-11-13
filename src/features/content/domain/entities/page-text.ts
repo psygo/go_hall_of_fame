@@ -33,7 +33,7 @@ export const PAGE_TEXT_DEFINITIONS: readonly PageTextDefinition[] =
       page: "home",
       label: "Hero heading",
       defaultValue:
-        "The finest hands in the history of Go.",
+        "The works of art and the legendary players in the history of Go.",
       maxLength: 120,
       multiline: false,
     },
@@ -42,10 +42,10 @@ export const PAGE_TEXT_DEFINITIONS: readonly PageTextDefinition[] =
       page: "home",
       label: "Hero introduction",
       defaultValue:
-        "{playerCount} players and {gameCount} games that changed how the board is read, from the Edo castle matches to a wedge on move 78 in Seoul.",
+        "The iconic masterpieces and the artists who made their mark in the most complex game of all.",
       maxLength: 300,
       multiline: true,
-      hint: "{playerCount} and {gameCount} are replaced by the live counts.",
+      hint: "{playerCount} and {gameCount} are replaced by the live counts, if you use them.",
     },
     {
       key: "home.playersCardText",

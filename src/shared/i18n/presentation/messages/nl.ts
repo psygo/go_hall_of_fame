@@ -20,4 +20,8 @@ export const nl: Messages = {
   contributorsIntro: "De mensen die deze site maakten.",
   roleCreator: "Maker en beheerder",
   roleAssistant: "AI-programmeerpartner",
+  homeTitle:
+    "De kunstwerken en de legendarische spelers uit de geschiedenis van Go.",
+  homeIntro:
+    "De iconische meesterwerken en de kunstenaars die hun stempel drukten op het meest complexe spel ter wereld.",
 }
