@@ -22,4 +22,12 @@ export const zh: Messages = {
   homeTitle: "围棋历史上的艺术杰作与传奇棋手。",
   homeIntro:
     "那些标志性的杰作，以及在这项最复杂的游戏中留下印记的艺术家。",
+  feedbackTitle: "向我们提供反馈",
+  feedbackEmail: "您的邮箱",
+  feedbackDescription: "描述",
+  feedbackSend: "发送反馈",
+  feedbackSending: "发送中…",
+  feedbackThanks: "谢谢。",
+  feedbackSent: "您的反馈已发送。",
+  feedbackAnother: "再发送一条反馈",
 }

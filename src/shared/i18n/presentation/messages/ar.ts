@@ -23,4 +23,12 @@ export const ar: Messages = {
     "الأعمال الفنية واللاعبون الأسطوريون في تاريخ لعبة الغو.",
   homeIntro:
     "التحف الأيقونية والفنانون الذين تركوا بصمتهم في أكثر الألعاب تعقيدًا على الإطلاق.",
+  feedbackTitle: "أرسل لنا ملاحظاتك",
+  feedbackEmail: "بريدك الإلكتروني",
+  feedbackDescription: "الوصف",
+  feedbackSend: "إرسال الملاحظات",
+  feedbackSending: "جارٍ الإرسال…",
+  feedbackThanks: "شكرًا لك.",
+  feedbackSent: "تم إرسال ملاحظاتك.",
+  feedbackAnother: "إرسال ملاحظات أخرى",
 }

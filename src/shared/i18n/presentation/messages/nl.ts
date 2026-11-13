@@ -23,4 +23,12 @@ export const nl: Messages = {
     "De kunstwerken en de legendarische spelers uit de geschiedenis van Go.",
   homeIntro:
     "De iconische meesterwerken en de kunstenaars die hun stempel drukten op het meest complexe spel ter wereld.",
+  feedbackTitle: "Stuur ons feedback",
+  feedbackEmail: "Je e-mail",
+  feedbackDescription: "Beschrijving",
+  feedbackSend: "Feedback versturen",
+  feedbackSending: "Versturen…",
+  feedbackThanks: "Bedankt.",
+  feedbackSent: "Je feedback is verstuurd.",
+  feedbackAnother: "Meer feedback sturen",
 }

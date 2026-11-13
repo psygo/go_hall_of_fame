@@ -22,4 +22,12 @@ export const ja: Messages = {
   homeTitle: "囲碁の歴史における芸術作品と伝説の棋士たち。",
   homeIntro:
     "象徴的な名局と、最も複雑なゲームに名を刻んだ棋士たち。",
+  feedbackTitle: "フィードバックを送る",
+  feedbackEmail: "メールアドレス",
+  feedbackDescription: "内容",
+  feedbackSend: "送信",
+  feedbackSending: "送信中…",
+  feedbackThanks: "ありがとうございます。",
+  feedbackSent: "フィードバックを送信しました。",
+  feedbackAnother: "さらに送信する",
 }

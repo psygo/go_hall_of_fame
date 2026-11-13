@@ -23,4 +23,12 @@ export const tr: Messages = {
     "Go tarihindeki sanat eserleri ve efsanevi oyuncular.",
   homeIntro:
     "En karmaşık oyunda iz bırakan ikonik başyapıtlar ve sanatçılar.",
+  feedbackTitle: "Bize geri bildirim gönderin",
+  feedbackEmail: "E-posta adresiniz",
+  feedbackDescription: "Açıklama",
+  feedbackSend: "Geri bildirim gönder",
+  feedbackSending: "Gönderiliyor…",
+  feedbackThanks: "Teşekkürler.",
+  feedbackSent: "Geri bildiriminiz gönderildi.",
+  feedbackAnother: "Başka geri bildirim gönder",
 }

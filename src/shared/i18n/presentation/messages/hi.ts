@@ -22,4 +22,12 @@ export const hi: Messages = {
   homeTitle: "गो के इतिहास की कलाकृतियाँ और महान खिलाड़ी।",
   homeIntro:
     "प्रतिष्ठित उत्कृष्ट कृतियाँ और वे कलाकार जिन्होंने सबसे जटिल खेल में अपनी छाप छोड़ी।",
+  feedbackTitle: "हमें प्रतिक्रिया भेजें",
+  feedbackEmail: "आपका ईमेल",
+  feedbackDescription: "विवरण",
+  feedbackSend: "प्रतिक्रिया भेजें",
+  feedbackSending: "भेजा जा रहा है…",
+  feedbackThanks: "धन्यवाद।",
+  feedbackSent: "आपकी प्रतिक्रिया भेज दी गई।",
+  feedbackAnother: "और प्रतिक्रिया भेजें",
 }

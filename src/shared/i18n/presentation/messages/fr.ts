@@ -23,4 +23,12 @@ export const fr: Messages = {
     "Les chefs-d'œuvre et les joueurs légendaires de l'histoire du Go.",
   homeIntro:
     "Les chefs-d'œuvre emblématiques et les artistes qui ont marqué de leur empreinte le jeu le plus complexe de tous.",
+  feedbackTitle: "Envoyez-nous vos commentaires",
+  feedbackEmail: "Votre e-mail",
+  feedbackDescription: "Description",
+  feedbackSend: "Envoyer",
+  feedbackSending: "Envoi…",
+  feedbackThanks: "Merci.",
+  feedbackSent: "Votre message a été envoyé.",
+  feedbackAnother: "Envoyer un autre message",
 }

@@ -22,4 +22,12 @@ export const ko: Messages = {
   homeTitle: "바둑의 역사 속 예술 작품과 전설적인 기사들.",
   homeIntro:
     "가장 복잡한 게임에 자신의 이름을 새긴 상징적인 명작들과 예술가들.",
+  feedbackTitle: "의견 보내기",
+  feedbackEmail: "이메일",
+  feedbackDescription: "설명",
+  feedbackSend: "의견 보내기",
+  feedbackSending: "보내는 중…",
+  feedbackThanks: "감사합니다.",
+  feedbackSent: "의견이 전송되었습니다.",
+  feedbackAnother: "의견 더 보내기",
 }

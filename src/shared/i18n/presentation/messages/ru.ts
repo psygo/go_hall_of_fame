@@ -23,4 +23,12 @@ export const ru: Messages = {
     "Произведения искусства и легендарные игроки в истории го.",
   homeIntro:
     "Знаковые шедевры и мастера, оставившие свой след в самой сложной из всех игр.",
+  feedbackTitle: "Отправьте нам отзыв",
+  feedbackEmail: "Ваш e-mail",
+  feedbackDescription: "Описание",
+  feedbackSend: "Отправить отзыв",
+  feedbackSending: "Отправка…",
+  feedbackThanks: "Спасибо.",
+  feedbackSent: "Ваш отзыв отправлен.",
+  feedbackAnother: "Отправить ещё отзыв",
 }

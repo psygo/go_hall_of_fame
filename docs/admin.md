@@ -50,6 +50,9 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + **Resources** (`/admin/resources`): the links of the public Resources page (`/resources`): a link and
   an optional description each, as a bulleted list. Its heading and eyebrow are editable under Pages.
 + **Criteria** (`/admin/criteria`): the induction criteria.
++ **Feedback** (`/admin/feedback`): what visitors sent from the form at the bottom of the About page
+  (an email and a description). Mark each read or new, or delete it. The form has a hidden field
+  that bots fill: those submissions are accepted and dropped without being stored.
 + **Nominations** (`/admin/nominations`): what visitors submitted. Mark each accepted or declined, or
   delete it. Accepting a nomination does not create the player or game: add it yourself.
 
@@ -104,5 +107,6 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + Admin pages send `noindex`.
 + Inputs are validated in the domain (lengths, slugs, safe URLs: a site path or https only), and all
   queries go through Drizzle's parameterization.
-+ Not done: rate limiting by IP, two-factor sign-in, an audit log, per-admin roles (every admin can do
++ Not done: rate limiting (by IP, and of the public feedback and nomination forms, which have only a hidden
+  field for bots),  two-factor sign-in, an audit log, per-admin roles (every admin can do
   everything), and email for password resets.

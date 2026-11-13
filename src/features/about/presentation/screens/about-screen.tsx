@@ -1,4 +1,5 @@
-import { PageHeader } from "./page-header"
+import { FeedbackForm } from "../components/feedback-form"
+import { PageHeader } from "@/shared/ui/presentation/page-header"
 import { getMessages } from "@/shared/i18n/presentation/server-locale"
 
 type Contributor = {
@@ -74,6 +75,9 @@ export async function AboutScreen() {
             </li>
           ))}
         </ul>
+      </section>
+      <section className="border-divider relative border-t px-4 py-8">
+        <FeedbackForm />
       </section>
     </>
   )

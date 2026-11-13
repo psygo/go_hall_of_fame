@@ -53,7 +53,7 @@ retired). The app talks to it with `pg`, so any Postgres works.
   links and the stored SGF text; `0003` adds the password-reset links table; `0004` adds the highlighted move and the timeline
   game link; `0005` and `0006` merge a game's hook, moment and legacy into one description (copying
   the text first, then dropping the old columns) and let the Resources page's links have no owner;
-  `0007` adds the `Others` country, `0008` the `tags` columns, `0009` the resource `title`, `0010` drops the `featured` columns, `0011` makes the timeline year text and adds `position`. Run `pnpm db:migrate`
+  `0007` adds the `Others` country, `0008` the `tags` columns, `0009` the resource `title`, `0010` drops the `featured` columns, `0011` makes the timeline year text and adds `position`, `0012` adds the `feedback` table. Run `pnpm db:migrate`
   against the hosted database before deploying code that needs them.
 
 + **Previews and the database.** If Preview deployments get the same `DATABASE_URL` as Production,

@@ -24,4 +24,12 @@ export const sv: Messages = {
     "Konstverken och de legendariska spelarna i Gos historia.",
   homeIntro:
     "De ikoniska mästerverken och konstnärerna som satte sitt avtryck i det mest komplexa spelet av alla.",
+  feedbackTitle: "Skicka oss feedback",
+  feedbackEmail: "Din e-post",
+  feedbackDescription: "Beskrivning",
+  feedbackSend: "Skicka feedback",
+  feedbackSending: "Skickar…",
+  feedbackThanks: "Tack.",
+  feedbackSent: "Din feedback har skickats.",
+  feedbackAnother: "Skicka mer feedback",
 }

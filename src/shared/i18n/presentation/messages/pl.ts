@@ -23,4 +23,12 @@ export const pl: Messages = {
     "Dzieła sztuki i legendarni gracze w historii Go.",
   homeIntro:
     "Ikoniczne arcydzieła i artyści, którzy zapisali się w historii najbardziej złożonej gry ze wszystkich.",
+  feedbackTitle: "Wyślij nam opinię",
+  feedbackEmail: "Twój e-mail",
+  feedbackDescription: "Opis",
+  feedbackSend: "Wyślij opinię",
+  feedbackSending: "Wysyłanie…",
+  feedbackThanks: "Dziękujemy.",
+  feedbackSent: "Twoja opinia została wysłana.",
+  feedbackAnother: "Wyślij kolejną opinię",
 }

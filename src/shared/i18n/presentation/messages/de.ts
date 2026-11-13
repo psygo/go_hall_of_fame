@@ -24,4 +24,12 @@ export const de: Messages = {
     "Die Kunstwerke und die legendären Spieler der Geschichte des Go.",
   homeIntro:
     "Die ikonischen Meisterwerke und die Künstler, die im komplexesten aller Spiele ihre Spuren hinterlassen haben.",
+  feedbackTitle: "Senden Sie uns Feedback",
+  feedbackEmail: "Ihre E-Mail",
+  feedbackDescription: "Beschreibung",
+  feedbackSend: "Feedback senden",
+  feedbackSending: "Wird gesendet…",
+  feedbackThanks: "Danke.",
+  feedbackSent: "Ihr Feedback wurde gesendet.",
+  feedbackAnother: "Weiteres Feedback senden",
 }

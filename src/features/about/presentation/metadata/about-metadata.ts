@@ -1,4 +1,4 @@
-import { pageMetadata } from "./site-metadata"
+import { pageMetadata } from "@/shared/ui/presentation/site-metadata"
 
 export const aboutMetadata = pageMetadata({
   title: "About",

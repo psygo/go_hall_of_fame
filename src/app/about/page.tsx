@@ -1,5 +1,5 @@
-import { AboutScreen } from "@/shared/ui/presentation/about-screen"
+import { AboutScreen } from "@/features/about/presentation/screens/about-screen"
 
-export { aboutMetadata as metadata } from "@/shared/ui/presentation/about-metadata"
+export { aboutMetadata as metadata } from "@/features/about/presentation/metadata/about-metadata"
 
 export default AboutScreen

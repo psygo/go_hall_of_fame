@@ -1,5 +1,9 @@
 import "server-only"
 
+export {
+  feedbackAdminState,
+  feedbackState,
+} from "./wiring/about"
 export { authState } from "./wiring/auth"
 export {
   contentAdminState,

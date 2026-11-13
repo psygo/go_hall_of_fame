@@ -23,4 +23,12 @@ export const id: Messages = {
     "Karya seni dan para pemain legendaris dalam sejarah Go.",
   homeIntro:
     "Mahakarya ikonik dan para seniman yang meninggalkan jejak dalam permainan paling kompleks dari semuanya.",
+  feedbackTitle: "Kirim masukan kepada kami",
+  feedbackEmail: "Email Anda",
+  feedbackDescription: "Deskripsi",
+  feedbackSend: "Kirim masukan",
+  feedbackSending: "Mengirim…",
+  feedbackThanks: "Terima kasih.",
+  feedbackSent: "Masukan Anda telah terkirim.",
+  feedbackAnother: "Kirim masukan lagi",
 }

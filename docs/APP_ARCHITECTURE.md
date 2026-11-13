@@ -51,7 +51,7 @@ admin loader and every mutation calls first. The root layout is built by the aut
   have only the layers it needs). Today: `shared/database` (data only: Drizzle schema and client),
   `shared/ui` and `shared/go-board` (presentation only).
 + `src/features/{feature}/`: `players`, `games`, `timeline`, `induction` (criteria and nominations),
-  `home`, `content` (editable page texts), `auth` (admin sign-in and sessions), `dashboard` (the
+  `home`, `about` (the About page and its feedback form), `content` (editable page texts), `auth` (admin sign-in and sessions), `dashboard` (the
   admin counts). Each feature owns the admin editing of its own data (its `*-admin-state.ts`,
   forms and admin screens); the routes under `src/app/admin/` just render them.
   + `data/`

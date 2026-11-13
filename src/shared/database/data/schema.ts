@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm"
 import {
+  boolean,
   check,
   integer,
   pgEnum,
@@ -174,6 +175,15 @@ export const nominationsTable = pgTable("nominations", {
   status: nominationStatusEnum()
     .notNull()
     .default("pending"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+})
+
+/** What visitors send from the About page. */
+export const feedbackTable = pgTable("feedback", {
+  id: serial().primaryKey(),
+  email: text().notNull(),
+  description: text().notNull(),
+  isRead: boolean("is_read").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 

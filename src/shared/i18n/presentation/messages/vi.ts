@@ -24,4 +24,12 @@ export const vi: Messages = {
     "Những tác phẩm nghệ thuật và các kỳ thủ huyền thoại trong lịch sử cờ vây.",
   homeIntro:
     "Những kiệt tác biểu tượng và các nghệ sĩ đã để lại dấu ấn trong trò chơi phức tạp nhất từ trước đến nay.",
+  feedbackTitle: "Gửi phản hồi cho chúng tôi",
+  feedbackEmail: "Email của bạn",
+  feedbackDescription: "Mô tả",
+  feedbackSend: "Gửi phản hồi",
+  feedbackSending: "Đang gửi…",
+  feedbackThanks: "Cảm ơn bạn.",
+  feedbackSent: "Phản hồi của bạn đã được gửi.",
+  feedbackAnother: "Gửi thêm phản hồi",
 }

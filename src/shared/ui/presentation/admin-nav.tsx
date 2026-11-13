@@ -12,6 +12,7 @@ const ADMIN_LINKS = [
   { href: "/admin/criteria", label: "Criteria" },
   { href: "/admin/resources", label: "Resources" },
   { href: "/admin/nominations", label: "Nominations" },
+  { href: "/admin/feedback", label: "Feedback" },
 ] as const
 
 export function AdminNav() {
