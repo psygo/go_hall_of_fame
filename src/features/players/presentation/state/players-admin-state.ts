@@ -129,7 +129,7 @@ export function createPlayersAdminState(
         "Could not delete the player:",
         deleted.error.name,
       )
-      throw deleted.error
+      throw new Error("The change could not be saved.")
     }
     revalidatePath("/", "layout")
     redirect(PLAYERS_ADMIN_PATH)

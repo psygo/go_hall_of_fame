@@ -385,9 +385,9 @@ describe("deleteCriterionById", () => {
       deleteCriterionResult: fail(cause),
     })
 
-    await expect(state.deleteCriterionById(4)).rejects.toBe(
-      cause,
-    )
+    await expect(
+      state.deleteCriterionById(4),
+    ).rejects.toThrow("The change could not be saved.")
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
   })
@@ -482,7 +482,7 @@ describe("setNominationStatus", () => {
 
     await expect(
       state.setNominationStatus(6, "accepted"),
-    ).rejects.toBe(cause)
+    ).rejects.toThrow("The change could not be saved.")
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
   })
@@ -521,7 +521,7 @@ describe("deleteNominationById", () => {
 
     await expect(
       state.deleteNominationById(6),
-    ).rejects.toBe(cause)
+    ).rejects.toThrow("The change could not be saved.")
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
   })

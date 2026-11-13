@@ -340,7 +340,9 @@ describe("deleteById", () => {
       deleteResult: fail(cause),
     })
 
-    await expect(state.deleteById(3)).rejects.toBe(cause)
+    await expect(state.deleteById(3)).rejects.toThrow(
+      "The change could not be saved.",
+    )
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
   })

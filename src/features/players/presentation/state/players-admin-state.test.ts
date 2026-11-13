@@ -368,7 +368,7 @@ describe("deleteBySlug", () => {
 
     await expect(
       state.deleteBySlug("shusaku"),
-    ).rejects.toBe(cause)
+    ).rejects.toThrow("The change could not be saved.")
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
   })

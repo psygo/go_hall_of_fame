@@ -142,7 +142,7 @@ export function createGamesAdminState(
         "Could not delete the game:",
         deleted.error.name,
       )
-      throw deleted.error
+      throw new Error("The change could not be saved.")
     }
     revalidatePath("/", "layout")
     redirect(GAMES_ADMIN_PATH)

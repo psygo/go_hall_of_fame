@@ -151,7 +151,7 @@ export function createInductionAdminState(
         "Could not delete the criterion:",
         deleted.error.name,
       )
-      throw deleted.error
+      throw new Error("The change could not be saved.")
     }
     revalidatePath("/", "layout")
     redirect(CRITERIA_ADMIN_PATH)
@@ -184,7 +184,7 @@ export function createInductionAdminState(
         "Could not update the nomination:",
         updated.error.name,
       )
-      throw updated.error
+      throw new Error("The change could not be saved.")
     }
     revalidatePath(NOMINATIONS_ADMIN_PATH)
     redirect(NOMINATIONS_ADMIN_PATH)
@@ -201,7 +201,7 @@ export function createInductionAdminState(
         "Could not delete the nomination:",
         deleted.error.name,
       )
-      throw deleted.error
+      throw new Error("The change could not be saved.")
     }
     revalidatePath(NOMINATIONS_ADMIN_PATH)
     redirect(NOMINATIONS_ADMIN_PATH)

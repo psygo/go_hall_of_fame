@@ -424,8 +424,8 @@ describe("deleteBySlug", () => {
       deleteResult: fail(cause),
     })
 
-    await expect(state.deleteBySlug("x")).rejects.toBe(
-      cause,
+    await expect(state.deleteBySlug("x")).rejects.toThrow(
+      "The change could not be saved.",
     )
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()

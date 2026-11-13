@@ -130,7 +130,7 @@ export function createTimelineAdminState(
         "Could not delete the event:",
         deleted.error.name,
       )
-      throw deleted.error
+      throw new Error("The change could not be saved.")
     }
     revalidatePath("/", "layout")
     redirect(TIMELINE_ADMIN_PATH)
