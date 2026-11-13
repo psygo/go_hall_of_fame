@@ -1,5 +1,5 @@
 import { alias } from "drizzle-orm/pg-core"
-import { eq, max, min, sql } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
 import {
@@ -13,6 +13,15 @@ import { HomeFactsModel } from "../models/home-facts-model"
 const yearNumber = sql<
   number | null
 >`nullif(substring(${timelineEventsTable.year} from '[0-9]{3,4}'), '')::int`
+
+/** The smallest or largest year, read as a number (drizzle would hand back text for min/max of an expression). */
+function yearBound(bound: "min" | "max") {
+  return sql<
+    number | null
+  >`${sql.raw(bound)}(${yearNumber})`.mapWith((value) =>
+    value === null ? null : Number(value),
+  )
+}
 
 export class HomeDataSource {
   constructor(private readonly database: Database) {}
@@ -53,8 +62,8 @@ export class HomeDataSource {
     const [row] = await this.database
       .select({
         // The years are text now: use the first 3-4 digit number of each ("c. 1670" gives 1670).
-        firstYear: min(yearNumber),
-        lastYear: max(yearNumber),
+        firstYear: yearBound("min"),
+        lastYear: yearBound("max"),
       })
       .from(timelineEventsTable)
     return row
