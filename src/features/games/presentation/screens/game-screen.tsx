@@ -67,6 +67,15 @@ export async function GameScreen({
               sgf={sgf}
               highlightMove={highlightMoveOf(detail)}
             />
+            <div>
+              <a
+                href={sgf}
+                download={`${detail.slug}.sgf`}
+                className="btn btn-secondary"
+              >
+                Download SGF
+              </a>
+            </div>
           </div>
         )}
         <ResourceList resources={detail.resources} />

@@ -745,7 +745,7 @@ class At extends HTMLElement {
    * (labels if shown, the grid itself otherwise), never eaten into by them.
    */
   computeLayout() {
-    const t = this._board.size, [e, s] = this.cropRange("x-start", "x-end"), [r, i] = this.cropRange("y-start", "y-end"), l = this.padding, d = this.coordinateSides.size > 0 ? this.coordinatesGap + this.coordinatesFontSizeUnits : 0, n = l + d;
+    const t = this._board.size, [e, s] = this.cropRange("x-start", "x-end"), [r, i] = this.cropRange("y-start", "y-end"), l = Math.max(this.padding, 0.6), d = this.coordinateSides.size > 0 ? this.coordinatesGap + this.coordinatesFontSizeUnits : 0, n = l + d;
     return {
       size: t,
       xStart: e,
@@ -1025,7 +1025,7 @@ class At extends HTMLElement {
         ${tt}
         <g class="stones"></g>
         <g class="markup"></g>
-        <circle class="ghost-stone" r="${z * this.stoneSizeScale}" visibility="hidden" />
+        <circle class="ghost-stone" r="${(0.5 - this.theme.stoneStrokeWidth / 2) * this.stoneSizeScale}" visibility="hidden" />
       </svg>
     `, this.svg = this.shadowRoot.querySelector("svg"), this.stonesGroup = this.shadowRoot.querySelector(".stones"), this.markupGroup = this.shadowRoot.querySelector(".markup"), this.gridMaskHoles = this.shadowRoot.querySelector(".grid-mask-holes"), this.ghostStone = this.shadowRoot.querySelector(".ghost-stone");
     const W = this.getAttribute("background-image") || L.boardImage || null;
@@ -1177,7 +1177,7 @@ class At extends HTMLElement {
     return this.getAttribute(e) || s || null;
   }
   createStone(t, e, s, r, i) {
-    const l = this.stoneImageUrl(s), d = z * this.stoneSizeScale;
+    const l = this.stoneImageUrl(s), d = (0.5 - this.theme.stoneStrokeWidth / 2) * this.stoneSizeScale;
     if (l) {
       const h = document.createElementNS(x, "image");
       return h.setAttribute("x", String(r + t - d)), h.setAttribute("y", String(i + e - d)), h.setAttribute("width", String(d * 2)), h.setAttribute("height", String(d * 2)), h.setAttribute("href", l), h.setAttribute("class", "stone"), h;
@@ -1193,7 +1193,7 @@ class At extends HTMLElement {
       return;
     }
     const { gridOffsetX: s, gridOffsetY: r } = this.computeLayout(), i = this.theme;
-    this.ghostStone.setAttribute("cx", String(s + t.x)), this.ghostStone.setAttribute("cy", String(r + t.y)), this.ghostStone.setAttribute("r", String(z * this.stoneSizeScale)), this.ghostStone.setAttribute(
+    this.ghostStone.setAttribute("cx", String(s + t.x)), this.ghostStone.setAttribute("cy", String(r + t.y)), this.ghostStone.setAttribute("r", String((0.5 - this.theme.stoneStrokeWidth / 2) * this.stoneSizeScale)), this.ghostStone.setAttribute(
       "fill",
       this._board.currentColor === b.Black ? i.markDark : i.markLight
     ), this.ghostStone.setAttribute("visibility", "visible");
