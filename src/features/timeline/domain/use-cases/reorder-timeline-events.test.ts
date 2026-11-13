@@ -14,7 +14,8 @@ const eventWithId = (id: number): TimelineEvent => ({
   year: String(id),
   title: "T",
   text: "x",
-  game: null,
+  games: [],
+  players: [],
   isDraft: false,
 })
 
@@ -27,6 +28,7 @@ function build(
     ),
     findById: vi.fn(),
     listGameOptions: vi.fn(),
+    listPlayerOptions: vi.fn(),
     save: vi.fn(),
     reorder: vi.fn(async () => succeed(undefined)),
     delete: vi.fn(),

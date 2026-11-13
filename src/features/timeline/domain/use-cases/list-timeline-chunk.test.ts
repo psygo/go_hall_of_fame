@@ -12,7 +12,8 @@ const eventIn = (year: number): TimelineEvent => ({
   year: String(year),
   title: `T${year}`,
   text: "x",
-  game: null,
+  games: [],
+  players: [],
   isDraft: false,
 })
 
@@ -23,6 +24,7 @@ function buildRepository(
     listAll,
     findById: vi.fn(),
     listGameOptions: vi.fn(),
+    listPlayerOptions: vi.fn(),
     save: vi.fn(),
     delete: vi.fn(),
     reorder: vi.fn(),

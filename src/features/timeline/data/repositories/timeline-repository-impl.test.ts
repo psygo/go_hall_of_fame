@@ -10,6 +10,8 @@ const rawEvent = {
   year: "1612",
   title: "Founded",
   text: "Text",
+  games: [],
+  players: [],
   isDraft: false,
 }
 
@@ -17,7 +19,8 @@ const draft: TimelineEventDraft = {
   year: "1612",
   title: "Founded",
   text: "Text",
-  gameSlug: null,
+  gameSlugs: [],
+  playerSlugs: [],
   isDraft: false,
 }
 
@@ -55,7 +58,7 @@ describe("TimelineRepositoryImpl", () => {
 
       expect(state).toEqual({
         status: "success",
-        data: [{ ...rawEvent, game: null }],
+        data: [rawEvent],
       })
       if (state.status === "success") {
         expect(Object.getPrototypeOf(state.data[0])).toBe(
@@ -97,6 +100,28 @@ describe("TimelineRepositoryImpl", () => {
     })
   })
 
+  describe("listPlayerOptions", () => {
+    it("returns the options of the data source", async () => {
+      const options = [{ slug: "a", name: "A" }]
+
+      expect(
+        await buildRepository({
+          listPlayerOptions: vi.fn(async () => options),
+        }).listPlayerOptions(),
+      ).toEqual({ status: "success", data: options })
+    })
+
+    it("returns a failure when the data source throws", async () => {
+      const cause = new Error("db down")
+
+      expect(
+        await buildRepository({
+          listPlayerOptions: throwing(cause),
+        }).listPlayerOptions(),
+      ).toEqual({ status: "failure", error: cause })
+    })
+  })
+
   describe("findById", () => {
     it("maps the model to a plain entity", async () => {
       const fetchById = vi.fn(async () =>
@@ -110,7 +135,7 @@ describe("TimelineRepositoryImpl", () => {
       expect(fetchById).toHaveBeenCalledWith(7, false)
       expect(state).toEqual({
         status: "success",
-        data: { ...rawEvent, game: null },
+        data: rawEvent,
       })
     })
 
@@ -250,6 +275,17 @@ describe("TimelineRepositoryImpl", () => {
           )
           await repository.listGameOptions()
           expect(listGameOptions).toHaveBeenCalledWith(
+            expected,
+          )
+        }
+        {
+          const listPlayerOptions = vi.fn(async () => [])
+          const repository = buildRepository(
+            { listPlayerOptions },
+            async () => canSee,
+          )
+          await repository.listPlayerOptions()
+          expect(listPlayerOptions).toHaveBeenCalledWith(
             expected,
           )
         }

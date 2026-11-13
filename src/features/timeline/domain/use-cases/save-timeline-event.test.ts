@@ -9,7 +9,8 @@ const form = {
   year: "1612",
   title: " The Four Houses ",
   text: " Go gets state backing. ",
-  gameSlug: "",
+  gameSlugs: [],
+  playerSlugs: [],
   isDraft: false,
 }
 
@@ -23,6 +24,9 @@ function buildRepository(
       succeed([
         { slug: "alphago-game-4", name: "AlphaGo" },
       ]),
+    ),
+    listPlayerOptions: vi.fn(async () =>
+      succeed([{ slug: "shusaku", name: "Shusaku" }]),
     ),
     save: vi.fn(async () => succeed(undefined)),
     delete: vi.fn(),
@@ -45,7 +49,8 @@ describe("SaveTimelineEvent", () => {
         year: "1612",
         title: "The Four Houses",
         text: "Go gets state backing.",
-        gameSlug: null,
+        gameSlugs: [],
+        playerSlugs: [],
         isDraft: false,
       },
       4,
@@ -86,12 +91,17 @@ describe("SaveTimelineEvent", () => {
     expect(
       await new SaveTimelineEvent(repository).call({
         id: null,
-        form: { ...form, gameSlug: "alphago-game-4" },
+        form: {
+          ...form,
+          gameSlugs: ["alphago-game-4"],
+          playerSlugs: ["shusaku"],
+        },
       }),
     ).toEqual({ status: "saved" })
     expect(repository.save).toHaveBeenCalledWith(
       expect.objectContaining({
-        gameSlug: "alphago-game-4",
+        gameSlugs: ["alphago-game-4"],
+        playerSlugs: ["shusaku"],
       }),
       null,
     )
@@ -99,12 +109,12 @@ describe("SaveTimelineEvent", () => {
     expect(
       await new SaveTimelineEvent(repository).call({
         id: null,
-        form: { ...form, gameSlug: "ghost" },
+        form: { ...form, gameSlugs: ["ghost"] },
       }),
     ).toEqual({
       status: "invalid",
       errors: {
-        gameSlug: "Choose a game that is in the Hall.",
+        gameSlugs: "Choose a game that is in the Hall.",
       },
     })
   })
@@ -121,6 +131,38 @@ describe("SaveTimelineEvent", () => {
         form,
       }),
     ).toEqual({ status: "failed", error })
+    expect(repository.save).not.toHaveBeenCalled()
+  })
+
+  it("returns failed without saving when the player options cannot be listed", async () => {
+    const error = new Error("db down")
+    const repository = buildRepository({
+      listPlayerOptions: vi.fn(async () => fail(error)),
+    })
+
+    expect(
+      await new SaveTimelineEvent(repository).call({
+        id: null,
+        form,
+      }),
+    ).toEqual({ status: "failed", error })
+    expect(repository.save).not.toHaveBeenCalled()
+  })
+
+  it("rejects an unknown player", async () => {
+    const repository = buildRepository()
+
+    expect(
+      await new SaveTimelineEvent(repository).call({
+        id: null,
+        form: { ...form, playerSlugs: ["ghost"] },
+      }),
+    ).toEqual({
+      status: "invalid",
+      errors: {
+        playerSlugs: "Choose a player who is in the Hall.",
+      },
+    })
     expect(repository.save).not.toHaveBeenCalled()
   })
 })

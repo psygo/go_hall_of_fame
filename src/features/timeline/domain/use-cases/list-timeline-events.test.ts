@@ -14,13 +14,15 @@ describe("ListTimelineEvents", () => {
         year: "1612",
         title: "Founded",
         text: "Text",
-        game: null,
+        games: [],
+        players: [],
         isDraft: false,
       },
     ]
     const repository: TimelineRepository = {
       findById: vi.fn(),
       listGameOptions: vi.fn(),
+      listPlayerOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       reorder: vi.fn(),
@@ -37,6 +39,7 @@ describe("ListTimelineEvents", () => {
     const repository: TimelineRepository = {
       findById: vi.fn(),
       listGameOptions: vi.fn(),
+      listPlayerOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
       reorder: vi.fn(),

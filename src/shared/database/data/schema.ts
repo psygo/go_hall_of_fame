@@ -148,12 +148,6 @@ export const timelineEventsTable = pgTable(
   "timeline_events",
   {
     id: serial().primaryKey(),
-    gameId: integer("game_id").references(
-      () => gamesTable.id,
-      {
-        onDelete: "set null",
-      },
-    ),
     /** As written, because old events have no exact date: "1846", "c. 1670", "Late 17th century". */
     year: text().notNull(),
     /** The place in the timeline, set by dragging in the admin (0 is first). */
@@ -163,6 +157,50 @@ export const timelineEventsTable = pgTable(
     /** A draft is visible to admins only. */
     isDraft: boolean("is_draft").notNull().default(false),
   },
+)
+
+/** The games an event is about, in the order the admin listed them. */
+export const timelineEventGamesTable = pgTable(
+  "timeline_event_games",
+  {
+    eventId: integer("event_id")
+      .notNull()
+      .references(() => timelineEventsTable.id, {
+        onDelete: "cascade",
+      }),
+    gameId: integer("game_id")
+      .notNull()
+      .references(() => gamesTable.id, {
+        onDelete: "cascade",
+      }),
+    position: integer().notNull().default(0),
+  },
+  (table) => [
+    primaryKey({ columns: [table.eventId, table.gameId] }),
+  ],
+)
+
+/** The players an event is about, in the order the admin listed them. */
+export const timelineEventPlayersTable = pgTable(
+  "timeline_event_players",
+  {
+    eventId: integer("event_id")
+      .notNull()
+      .references(() => timelineEventsTable.id, {
+        onDelete: "cascade",
+      }),
+    playerId: integer("player_id")
+      .notNull()
+      .references(() => playersTable.id, {
+        onDelete: "cascade",
+      }),
+    position: integer().notNull().default(0),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.eventId, table.playerId],
+    }),
+  ],
 )
 
 export const criteriaTable = pgTable("criteria", {

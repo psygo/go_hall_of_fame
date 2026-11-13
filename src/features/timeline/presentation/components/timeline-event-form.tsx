@@ -7,14 +7,17 @@ import {
   FormActions,
   MARKDOWN_HINT,
   FormMessage,
-  SelectField,
   TextAreaField,
   TextField,
 } from "@/shared/ui/presentation/admin-fields"
+import { LinkedSelectFields } from "@/shared/ui/presentation/linked-select-fields"
 import { ADMIN_PATHS } from "@/shared/ui/presentation/admin-paths"
 import { idleAdminForm } from "@/core/admin-form-state"
 
-import type { TimelineGameReference } from "../../domain/entities/timeline-event"
+import type {
+  TimelineGameReference,
+  TimelinePlayerReference,
+} from "../../domain/entities/timeline-event"
 import { TIMELINE_LIMITS } from "../../domain/entities/timeline-event-draft"
 import { saveTimelineEventAction } from "../state/timeline-admin-actions"
 import type { TimelineFormState } from "../state/timeline-admin-state"
@@ -26,16 +29,19 @@ type TimelineEventFormProps = {
     readonly year: string
     readonly title: string
     readonly text: string
-    readonly gameSlug: string
+    readonly gameSlugs: readonly string[]
+    readonly playerSlugs: readonly string[]
     readonly isDraft: boolean
   }
   readonly gameOptions: readonly TimelineGameReference[]
+  readonly playerOptions: readonly TimelinePlayerReference[]
 }
 
 export function TimelineEventForm({
   idParam,
   initial,
   gameOptions,
+  playerOptions,
 }: TimelineEventFormProps) {
   const [state, formAction, isPending] = useActionState<
     TimelineFormState,
@@ -79,19 +85,28 @@ export function TimelineEventForm({
         error={errors.text}
         hint={MARKDOWN_HINT}
       />
-      <SelectField
+      <LinkedSelectFields
         name="gameSlug"
-        label="Links to the game"
-        defaultValue={values.gameSlug}
-        options={[
-          { value: "", label: "No game" },
-          ...gameOptions.map((game) => ({
-            value: game.slug,
-            label: game.name,
-          })),
-        ]}
-        error={errors.gameSlug}
-        hint="Optional: the event on the timeline links to this game's page."
+        legend="Linked games"
+        addLabel="Add another linked game"
+        options={gameOptions.map((game) => ({
+          value: game.slug,
+          label: game.name,
+        }))}
+        initial={values.gameSlugs}
+        error={errors.gameSlugs}
+        hint="Optional. A single linked game makes the whole event a link to that game."
+      />
+      <LinkedSelectFields
+        name="playerSlug"
+        legend="Linked players"
+        addLabel="Add another linked player"
+        options={playerOptions.map((player) => ({
+          value: player.slug,
+          label: player.name,
+        }))}
+        initial={values.playerSlugs}
+        error={errors.playerSlugs}
       />
       <CheckboxField
         name="isDraft"

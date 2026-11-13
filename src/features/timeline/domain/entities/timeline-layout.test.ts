@@ -11,7 +11,8 @@ const eventIn = (year: number) => ({
   year: String(year),
   title: `T${year}`,
   text: "x",
-  game: null,
+  games: [],
+  players: [],
   isDraft: false,
 })
 

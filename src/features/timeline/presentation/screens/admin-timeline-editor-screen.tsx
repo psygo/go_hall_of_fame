@@ -12,10 +12,12 @@ export async function AdminTimelineEditorScreen({
   params,
 }: AdminTimelineEditorScreenProps) {
   const { id } = await params
-  const [event, gameOptions] = await Promise.all([
-    timelineAdminState.loadEditor(id),
-    timelineAdminState.loadGameOptions(),
-  ])
+  const [event, gameOptions, playerOptions] =
+    await Promise.all([
+      timelineAdminState.loadEditor(id),
+      timelineAdminState.loadGameOptions(),
+      timelineAdminState.loadPlayerOptions(),
+    ])
 
   return (
     <>
@@ -30,10 +32,16 @@ export async function AdminTimelineEditorScreen({
             year: event === null ? "" : String(event.year),
             title: event?.title ?? "",
             text: event?.text ?? "",
-            gameSlug: event?.game?.slug ?? "",
+            gameSlugs: (event?.games ?? []).map(
+              (game) => game.slug,
+            ),
+            playerSlugs: (event?.players ?? []).map(
+              (player) => player.slug,
+            ),
             isDraft: event?.isDraft ?? false,
           }}
           gameOptions={gameOptions}
+          playerOptions={playerOptions}
         />
       </AdminSection>
     </>

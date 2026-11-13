@@ -29,6 +29,7 @@ import type { SaveResult } from "@/core/validation"
 import type {
   TimelineEvent,
   TimelineGameReference,
+  TimelinePlayerReference,
 } from "../../domain/entities/timeline-event"
 import type { TimelineEventErrors } from "../../domain/entities/timeline-event-draft"
 import {
@@ -41,7 +42,8 @@ const event: TimelineEvent = {
   year: "1612",
   title: "Founded",
   text: "Text",
-  game: null,
+  games: [],
+  players: [],
   isDraft: false,
 }
 
@@ -59,8 +61,9 @@ const fields = {
   year: "1612",
   title: "Founded",
   text: "Text",
-  gameSlug: "",
 }
+
+const noLinks = { gameSlugs: [], playerSlugs: [] }
 
 function buildState({
   requireAdmin = vi.fn(async () => undefined),
@@ -69,6 +72,9 @@ function buildState({
   listResult = succeed<readonly TimelineEvent[]>([event]),
   deleteResult = succeed(undefined),
   reorderResult = succeed(undefined),
+  playerOptionsResult = succeed<
+    readonly TimelinePlayerReference[]
+  >([{ slug: "shusaku", name: "Shusaku" }]),
   gameOptionsResult = succeed<
     readonly TimelineGameReference[]
   >([{ slug: "alphago-game-4", name: "AlphaGo" }]),
@@ -87,6 +93,11 @@ function buildState({
   deleteResult?:
     | ReturnType<typeof succeed<void>>
     | ReturnType<typeof fail>
+  playerOptionsResult?:
+    | ReturnType<
+        typeof succeed<readonly TimelinePlayerReference[]>
+      >
+    | ReturnType<typeof fail>
   gameOptionsResult?:
     | ReturnType<
         typeof succeed<readonly TimelineGameReference[]>
@@ -100,6 +111,7 @@ function buildState({
     remove: vi.fn(async () => deleteResult),
     reorderEvents: vi.fn(async () => reorderResult),
     gameOptions: vi.fn(async () => gameOptionsResult),
+    playerOptions: vi.fn(async () => playerOptionsResult),
   }
   const dependencies: TimelineAdminDependencies = {
     requireAdmin,
@@ -109,6 +121,7 @@ function buildState({
     deleteTimelineEvent: { call: useCases.remove },
     reorderTimelineEvents: { call: useCases.reorderEvents },
     listGameOptions: { call: useCases.gameOptions },
+    listPlayerOptions: { call: useCases.playerOptions },
   }
   return {
     state: createTimelineAdminState(dependencies),
@@ -235,7 +248,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: { ...fields, isDraft: false },
+      form: { ...fields, ...noLinks, isDraft: false },
     })
   })
 
@@ -248,7 +261,7 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: 3,
-      form: { ...fields, isDraft: false },
+      form: { ...fields, ...noLinks, isDraft: false },
     })
   })
 
@@ -258,13 +271,16 @@ describe("saveFromForm", () => {
     await expect(
       state.saveFromForm(
         "new",
-        buildFormData({ ...fields, isDraft: "on" }),
+        buildFormData({
+          ...fields,
+          isDraft: "on",
+        }),
       ),
     ).rejects.toThrow()
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: { ...fields, isDraft: true },
+      form: { ...fields, ...noLinks, isDraft: true },
     })
   })
 
@@ -281,7 +297,8 @@ describe("saveFromForm", () => {
         year: "",
         title: "",
         text: "",
-        gameSlug: "",
+        gameSlugs: [],
+        playerSlugs: [],
         isDraft: false,
       },
     })
@@ -316,7 +333,12 @@ describe("saveFromForm", () => {
     ).toEqual({
       status: "invalid",
       errors,
-      values: { ...fields, isDraft: false, year: "0" },
+      values: {
+        ...fields,
+        ...noLinks,
+        isDraft: false,
+        year: "0",
+      },
     })
     expect(revalidatePath).not.toHaveBeenCalled()
     expect(redirect).not.toHaveBeenCalled()
@@ -342,7 +364,7 @@ describe("saveFromForm", () => {
       status: "failed",
       message:
         "The event could not be saved. Try again in a moment.",
-      values: { ...fields, isDraft: false },
+      values: { ...fields, ...noLinks, isDraft: false },
     })
     expect(logged).toHaveBeenCalledWith(
       "Could not save the timeline event:",
@@ -489,25 +511,64 @@ describe("loadGameOptions", () => {
   })
 })
 
-describe("saveFromForm game link", () => {
-  it("passes the gameSlug field", async () => {
+describe("loadPlayerOptions", () => {
+  it("returns the options after checking the admin", async () => {
+    const { state, requireAdmin, playerOptions } =
+      buildState()
+
+    expect(await state.loadPlayerOptions()).toEqual([
+      { slug: "shusaku", name: "Shusaku" },
+    ])
+    expect(
+      requireAdmin.mock.invocationCallOrder[0],
+    ).toBeLessThan(
+      playerOptions.mock.invocationCallOrder[0],
+    )
+  })
+
+  it("does not list anything when the admin check rejects", async () => {
+    const { state, playerOptions } = buildState({
+      requireAdmin: rejectingAdmin(),
+    })
+
+    await expect(state.loadPlayerOptions()).rejects.toThrow(
+      "NEXT_REDIRECT:/admin/sign-in",
+    )
+    expect(playerOptions).not.toHaveBeenCalled()
+  })
+
+  it("throws the original error when the use case fails", async () => {
+    const cause = new Error("db down")
+    const { state } = buildState({
+      playerOptionsResult: fail(cause),
+    })
+
+    await expect(state.loadPlayerOptions()).rejects.toBe(
+      cause,
+    )
+  })
+})
+
+describe("saveFromForm links", () => {
+  it("reads the repeated gameSlug and playerSlug fields in order, blanks included", async () => {
     const { state, save } = buildState()
+    const formData = buildFormData(fields)
+    formData.append("gameSlug", "alphago-game-4")
+    formData.append("gameSlug", "")
+    formData.append("gameSlug", "ear-reddening")
+    formData.append("playerSlug", "shusaku")
+    formData.append("playerSlug", "lee-sedol")
 
     await expect(
-      state.saveFromForm(
-        "new",
-        buildFormData({
-          ...fields,
-          gameSlug: "alphago-game-4",
-        }),
-      ),
+      state.saveFromForm("new", formData),
     ).rejects.toThrow()
 
     expect(save).toHaveBeenCalledWith({
       id: null,
       form: {
         ...fields,
-        gameSlug: "alphago-game-4",
+        gameSlugs: ["alphago-game-4", "", "ear-reddening"],
+        playerSlugs: ["shusaku", "lee-sedol"],
         isDraft: false,
       },
     })

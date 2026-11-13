@@ -25,6 +25,21 @@ export function TimelineItem({
 }) {
   const { event, side, index } = placement
   const stoneClass = index % 2 === 0 ? "bg-ink" : "bg-stone"
+  // One linked game makes the whole event a link to it; every other link is listed below the text.
+  const mainGame =
+    event.games.length === 1 ? event.games[0] : undefined
+  const links = [
+    ...(mainGame === undefined ? event.games : []).map(
+      (game) => ({
+        href: `/games/${game.slug}`,
+        label: game.name,
+      }),
+    ),
+    ...event.players.map((player) => ({
+      href: `/players/${player.slug}`,
+      label: player.name,
+    })),
+  ]
 
   return (
     <li
@@ -38,14 +53,14 @@ export function TimelineItem({
         </div>
         <DraftBadge isDraft={event.isDraft} />
         <div className="text-[22px] leading-[1.15] font-bold">
-          {event.game === null ? (
+          {mainGame === undefined ? (
             event.title
           ) : (
-            // The title's link stretches over the whole event; links inside the text stay above it.
+            // The title's link stretches over the whole event; the links below stay above it.
             <Link
-              href={`/games/${event.game.slug}`}
+              href={`/games/${mainGame.slug}`}
               className="text-ink hover:text-accent no-underline after:absolute after:-inset-2 after:content-['']"
-              aria-label={`${event.title}: ${event.game.name}`}
+              aria-label={`${event.title}: ${mainGame.name}`}
             >
               {event.title}
             </Link>
@@ -54,6 +69,23 @@ export function TimelineItem({
         <div className="[&_a]:relative [&_a]:z-10">
           <Markdown>{event.text}</Markdown>
         </div>
+        {links.length > 0 && (
+          <ul
+            aria-label="Related"
+            className={`relative z-10 m-0 flex list-none flex-wrap gap-1.5 p-0 ${side === "left" ? "min-[720px]:justify-end" : ""}`}
+          >
+            {links.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="border-divider hover:text-accent hover:border-accent inline-block border px-2 py-0.5 text-sm font-bold no-underline"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div
         aria-hidden

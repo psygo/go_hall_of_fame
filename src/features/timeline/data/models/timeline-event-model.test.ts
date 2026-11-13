@@ -9,6 +9,8 @@ const validRaw = {
   year: "c. 1612",
   title: "Founded",
   text: "Text",
+  games: [],
+  players: [],
   isDraft: false,
 }
 
@@ -28,7 +30,7 @@ describe("TimelineEventModel", () => {
       extra: "x",
     }).toEntity()
 
-    expect(entity).toEqual({ ...validRaw, game: null })
+    expect(entity).toEqual(validRaw)
   })
 
   it("throws when the id is not an integer", () => {
@@ -92,42 +94,64 @@ describe("TimelineEventModel", () => {
     const entity =
       TimelineEventModel.fromRawData(validRaw).toEntity()
 
-    expect(entity).toEqual({ ...validRaw, game: null })
+    expect(entity).toEqual(validRaw)
     expect(Object.getPrototypeOf(entity)).toBe(
       Object.prototype,
     )
   })
-  it("has no game when gameSlug is null or missing", () => {
-    expect(
-      TimelineEventModel.fromRawData(validRaw).game,
-    ).toBeNull()
-    expect(
-      TimelineEventModel.fromRawData({
-        ...validRaw,
-        gameSlug: null,
-        gameName: null,
-      }).game,
-    ).toBeNull()
+  it("reads the linked games and players in order", () => {
+    const games = [
+      { slug: "ear-reddening", name: "Ear-Reddening" },
+      { slug: "move-78", name: "Move 78" },
+    ]
+    const players = [{ slug: "shusaku", name: "Shusaku" }]
+
+    const entity = TimelineEventModel.fromRawData({
+      ...validRaw,
+      games: [{ ...games[0], extra: 1 }, games[1]],
+      players,
+    }).toEntity()
+
+    expect(entity.games).toEqual(games)
+    expect(entity.players).toEqual(players)
   })
 
-  it("reads the linked game", () => {
-    expect(
-      TimelineEventModel.fromRawData({
+  it.each(["games", "players"])(
+    "throws when %s is missing or not an array",
+    (key) => {
+      const missing: Record<string, unknown> = {
         ...validRaw,
-        gameSlug: "ear-reddening",
-        gameName: "Ear-Reddening",
-      }).toEntity().game,
-    ).toEqual({
-      slug: "ear-reddening",
-      name: "Ear-Reddening",
-    })
-  })
+      }
+      delete missing[key]
 
-  it("throws when a game slug comes without a name", () => {
+      expect(() =>
+        TimelineEventModel.fromRawData(missing),
+      ).toThrow(InvalidRawDataError)
+      expect(() =>
+        TimelineEventModel.fromRawData({
+          ...validRaw,
+          [key]: "x",
+        }),
+      ).toThrow(InvalidRawDataError)
+    },
+  )
+
+  it.each([
+    ["not an object", "x"],
+    ["without a name", { slug: "a" }],
+    ["without a slug", { name: "A" }],
+    ["with a numeric slug", { slug: 1, name: "A" }],
+  ])("throws when a linked item is %s", (_label, item) => {
     expect(() =>
       TimelineEventModel.fromRawData({
         ...validRaw,
-        gameSlug: "ear-reddening",
+        games: [item],
+      }),
+    ).toThrow(InvalidRawDataError)
+    expect(() =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        players: [item],
       }),
     ).toThrow(InvalidRawDataError)
   })

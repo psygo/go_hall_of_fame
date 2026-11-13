@@ -1,14 +1,15 @@
 import {
   asRecord,
+  readArray,
   readInteger,
   readBoolean,
-  readNullableString,
   readString,
 } from "@/core/raw-data"
 
 import type {
   TimelineEvent,
   TimelineGameReference,
+  TimelinePlayerReference,
 } from "../../domain/entities/timeline-event"
 
 export class TimelineEventModel implements TimelineEvent {
@@ -16,7 +17,8 @@ export class TimelineEventModel implements TimelineEvent {
   declare readonly year: string
   declare readonly title: string
   declare readonly text: string
-  declare readonly game: TimelineGameReference | null
+  declare readonly games: readonly TimelineGameReference[]
+  declare readonly players: readonly TimelinePlayerReference[]
   declare readonly isDraft: boolean
 
   private constructor(fields: TimelineEvent) {
@@ -30,7 +32,10 @@ export class TimelineEventModel implements TimelineEvent {
       year: readString(record, "year"),
       title: readString(record, "title"),
       text: readString(record, "text"),
-      game: parseGame(record),
+      games: readArray(record, "games").map(parseReference),
+      players: readArray(record, "players").map(
+        parseReference,
+      ),
       isDraft: readBoolean(record, "isDraft"),
     })
   }
@@ -40,10 +45,12 @@ export class TimelineEventModel implements TimelineEvent {
   }
 }
 
-function parseGame(
-  record: Record<string, unknown>,
-): TimelineGameReference | null {
-  const slug = readNullableString(record, "gameSlug")
-  if (slug === null) return null
-  return { slug, name: readString(record, "gameName") }
+function parseReference(
+  raw: unknown,
+): TimelineGameReference & TimelinePlayerReference {
+  const record = asRecord(raw, "linked item")
+  return {
+    slug: readString(record, "slug"),
+    name: readString(record, "name"),
+  }
 }

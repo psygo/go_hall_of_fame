@@ -4,14 +4,18 @@ import {
   type Validation,
 } from "@/core/validation"
 
-import type { TimelineGameReference } from "./timeline-event"
+import type {
+  TimelineGameReference,
+  TimelinePlayerReference,
+} from "./timeline-event"
 
 export type TimelineEventForm = {
   readonly year: string
   readonly title: string
   readonly text: string
-  /** The slug of the game the event links to, or "" for none. */
-  readonly gameSlug: string
+  /** The slugs of the linked games and players, as chosen (blank rows included). */
+  readonly gameSlugs: readonly string[]
+  readonly playerSlugs: readonly string[]
   readonly isDraft: boolean
 }
 
@@ -19,7 +23,9 @@ export type TimelineEventDraft = {
   readonly year: string
   readonly title: string
   readonly text: string
-  readonly gameSlug: string | null
+  /** Without blanks or repeats, in the chosen order. */
+  readonly gameSlugs: readonly string[]
+  readonly playerSlugs: readonly string[]
   readonly isDraft: boolean
 }
 
@@ -29,16 +35,25 @@ export const TIMELINE_LIMITS = {
   year: 40,
   title: 120,
   text: 600,
+  /** Linked games, and linked players, per event. */
+  maxLinks: 12,
 } as const
+
+/** What an event can be linked to: the games and the players of the Hall. */
+export type TimelineLinkOptions = {
+  readonly games: readonly TimelineGameReference[]
+  readonly players: readonly TimelinePlayerReference[]
+}
 
 export function validateTimelineEventForm(
   form: TimelineEventForm,
-  gameOptions: readonly TimelineGameReference[],
+  options: TimelineLinkOptions,
 ): Validation<TimelineEventDraft, TimelineEventErrors> {
   const year = form.year.trim()
   const title = form.title.trim()
   const text = form.text.trim()
-  const gameSlug = form.gameSlug.trim()
+  const gameSlugs = distinctSlugs(form.gameSlugs)
+  const playerSlugs = distinctSlugs(form.playerSlugs)
   const errors = collectErrors({
     year: requiredError(
       year,
@@ -55,11 +70,16 @@ export function validateTimelineEventForm(
       TIMELINE_LIMITS.text,
       "a description",
     ),
-    gameSlug:
-      gameSlug === "" ||
-      gameOptions.some((game) => game.slug === gameSlug)
-        ? undefined
-        : "Choose a game that is in the Hall.",
+    gameSlugs: linkError(
+      gameSlugs,
+      options.games,
+      "a game that is in the Hall",
+    ),
+    playerSlugs: linkError(
+      playerSlugs,
+      options.players,
+      "a player who is in the Hall",
+    ),
   })
   if (Object.keys(errors).length > 0) {
     return { valid: false, errors }
@@ -70,10 +90,38 @@ export function validateTimelineEventForm(
       year,
       title,
       text,
-      gameSlug: gameSlug || null,
+      gameSlugs,
+      playerSlugs,
       isDraft: form.isDraft,
     },
   }
+}
+
+/** The chosen slugs without blank rows or repeats, keeping the first of each. */
+function distinctSlugs(
+  slugs: readonly string[],
+): readonly string[] {
+  return [
+    ...new Set(
+      slugs.map((slug) => slug.trim()).filter(Boolean),
+    ),
+  ]
+}
+
+function linkError(
+  slugs: readonly string[],
+  options: readonly { readonly slug: string }[],
+  what: string,
+): string | undefined {
+  if (slugs.length > TIMELINE_LIMITS.maxLinks) {
+    return `Link at most ${TIMELINE_LIMITS.maxLinks}.`
+  }
+  const known = new Set(
+    options.map((option) => option.slug),
+  )
+  return slugs.every((slug) => known.has(slug))
+    ? undefined
+    : `Choose ${what}.`
 }
 
 function requiredError(

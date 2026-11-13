@@ -6,9 +6,16 @@ import {
   type TimelineEventForm,
 } from "./timeline-event-draft"
 
-const gameOptions = [
-  { slug: "alphago-game-4", name: "AlphaGo Game 4" },
-]
+const options = {
+  games: [
+    { slug: "alphago-game-4", name: "AlphaGo Game 4" },
+    { slug: "ear-reddening", name: "Ear-reddening" },
+  ],
+  players: [
+    { slug: "shusaku", name: "Shusaku" },
+    { slug: "lee-sedol", name: "Lee Sedol" },
+  ],
+}
 
 function buildForm(
   overrides: Partial<TimelineEventForm> = {},
@@ -17,14 +24,15 @@ function buildForm(
     year: "1612",
     title: "Founded",
     text: "The academy opens.",
-    gameSlug: "",
+    gameSlugs: [],
+    playerSlugs: [],
     isDraft: false,
     ...overrides,
   }
 }
 
 function validate(form: TimelineEventForm) {
-  return validateTimelineEventForm(form, gameOptions)
+  return validateTimelineEventForm(form, options)
 }
 
 function errorsOf(form: TimelineEventForm) {
@@ -41,7 +49,8 @@ describe("validateTimelineEventForm", () => {
         year: "1612",
         title: "Founded",
         text: "The academy opens.",
-        gameSlug: null,
+        gameSlugs: [],
+        playerSlugs: [],
         isDraft: false,
       },
     })
@@ -62,7 +71,8 @@ describe("validateTimelineEventForm", () => {
         year: "1612",
         title: "Founded",
         text: "Text",
-        gameSlug: null,
+        gameSlugs: [],
+        playerSlugs: [],
         isDraft: false,
       },
     })
@@ -179,32 +189,127 @@ describe("validateTimelineEventForm", () => {
           year: "",
           title: "",
           text: "",
-          gameSlug: "ghost",
+          gameSlugs: ["ghost"],
+          playerSlugs: ["ghost"],
           isDraft: false,
         }),
       ),
-    ).toEqual(["year", "title", "text", "gameSlug"])
+    ).toEqual([
+      "year",
+      "title",
+      "text",
+      "gameSlugs",
+      "playerSlugs",
+    ])
   })
-  describe("gameSlug", () => {
-    it("links a known game, trimmed", () => {
+
+  describe("links", () => {
+    function draftOf(
+      overrides: Partial<TimelineEventForm>,
+    ) {
+      const result = validate(buildForm(overrides))
+      if (!result.valid) throw new Error("expected valid")
+      return result.draft
+    }
+
+    it("keeps known games and players, trimmed, in order", () => {
+      const draft = draftOf({
+        gameSlugs: [" ear-reddening ", "alphago-game-4"],
+        playerSlugs: [" lee-sedol", "shusaku "],
+      })
+
+      expect(draft.gameSlugs).toEqual([
+        "ear-reddening",
+        "alphago-game-4",
+      ])
+      expect(draft.playerSlugs).toEqual([
+        "lee-sedol",
+        "shusaku",
+      ])
+    })
+
+    it("drops blank rows and repeats, keeping the first", () => {
+      const draft = draftOf({
+        gameSlugs: [
+          "",
+          "ear-reddening",
+          "  ",
+          "ear-reddening",
+        ],
+        playerSlugs: ["shusaku", "lee-sedol", " shusaku"],
+      })
+
+      expect(draft.gameSlugs).toEqual(["ear-reddening"])
+      expect(draft.playerSlugs).toEqual([
+        "shusaku",
+        "lee-sedol",
+      ])
+    })
+
+    it("rejects an unknown game or player", () => {
       expect(
-        validate(
-          buildForm({ gameSlug: " alphago-game-4 " }),
-        ),
+        errorsOf(buildForm({ gameSlugs: ["ghost"] })),
       ).toEqual({
-        valid: true,
-        draft: expect.objectContaining({
-          gameSlug: "alphago-game-4",
-        }),
+        gameSlugs: "Choose a game that is in the Hall.",
+      })
+      expect(
+        errorsOf(buildForm({ playerSlugs: ["ghost"] })),
+      ).toEqual({
+        playerSlugs: "Choose a player who is in the Hall.",
       })
     })
 
-    it("rejects a game that is not in the Hall", () => {
+    it("does not accept a player slug as a game", () => {
       expect(
-        errorsOf(buildForm({ gameSlug: "ghost" })),
-      ).toEqual({
-        gameSlug: "Choose a game that is in the Hall.",
+        errorsOf(buildForm({ gameSlugs: ["shusaku"] })),
+      ).toHaveProperty("gameSlugs")
+    })
+
+    it("accepts the maximum links and rejects one more", () => {
+      const many = (count: number) =>
+        Array.from({ length: count }, (_, i) => `g${i}`)
+      const big = {
+        games: many(TIMELINE_LIMITS.maxLinks + 1).map(
+          (slug) => ({ slug, name: slug }),
+        ),
+        players: many(TIMELINE_LIMITS.maxLinks + 1).map(
+          (slug) => ({ slug, name: slug }),
+        ),
+      }
+      const check = (count: number) =>
+        validateTimelineEventForm(
+          buildForm({
+            gameSlugs: many(count),
+            playerSlugs: many(count),
+          }),
+          big,
+        )
+
+      expect(check(TIMELINE_LIMITS.maxLinks).valid).toBe(
+        true,
+      )
+      expect(check(TIMELINE_LIMITS.maxLinks + 1)).toEqual({
+        valid: false,
+        errors: {
+          gameSlugs: `Link at most ${TIMELINE_LIMITS.maxLinks}.`,
+          playerSlugs: `Link at most ${TIMELINE_LIMITS.maxLinks}.`,
+        },
       })
+    })
+
+    it("counts the maximum after removing repeats and blanks", () => {
+      const slugs = [
+        ...Array.from(
+          { length: TIMELINE_LIMITS.maxLinks },
+          () => "ear-reddening",
+        ),
+        "",
+        "alphago-game-4",
+      ]
+
+      expect(
+        validate(buildForm({ gameSlugs: slugs })).valid,
+      ).toBe(true)
     })
   })
 })

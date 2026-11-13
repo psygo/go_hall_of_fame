@@ -18,7 +18,8 @@ describe("GetTimelineEvent", () => {
       year: "1612",
       title: "T",
       text: "x",
-      game: null,
+      games: [],
+      players: [],
       isDraft: false,
     }
     const findById = vi.fn(async () => succeed(data))
