@@ -27,7 +27,7 @@ const MOVES = [
     target: () => 0,
   },
   {
-    label: "↑10",
+    label: "↑ 10",
     description: "Move up 10:",
     target: (index: number, length: number) =>
       clamp(index - 10, length),
@@ -45,7 +45,7 @@ const MOVES = [
       clamp(index + 1, length),
   },
   {
-    label: "↓10",
+    label: "↓ 10",
     description: "Move down 10:",
     target: (index: number, length: number) =>
       clamp(index + 10, length),
@@ -152,7 +152,7 @@ export function SortableTimelineList({
                   <button
                     key={move.label}
                     type="button"
-                    className="btn btn-secondary px-2.5"
+                    className="btn btn-secondary px-2.5 whitespace-nowrap"
                     aria-label={`${move.description} “${event.title}”`}
                     title={move.description}
                     disabled={target === index}
