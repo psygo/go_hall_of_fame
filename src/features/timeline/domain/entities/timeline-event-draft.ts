@@ -18,6 +18,7 @@ export type TimelineEventForm = {
   readonly gameSlugs: readonly string[]
   readonly playerSlugs: readonly string[]
   readonly contributorSlugs: readonly string[]
+  readonly showGameTitles: boolean
   readonly isDraft: boolean
 }
 
@@ -29,6 +30,7 @@ export type TimelineEventDraft = {
   readonly gameSlugs: readonly string[]
   readonly playerSlugs: readonly string[]
   readonly contributorSlugs: readonly string[]
+  readonly showGameTitles: boolean
   readonly isDraft: boolean
 }
 
@@ -105,6 +107,7 @@ export function validateTimelineEventForm(
       gameSlugs,
       playerSlugs,
       contributorSlugs,
+      showGameTitles: form.showGameTitles,
       isDraft: form.isDraft,
     },
   }

@@ -14,6 +14,7 @@ const rawEvent = {
   players: [],
   contributors: [],
   isDraft: false,
+  showGameTitles: false,
 }
 
 const draft: TimelineEventDraft = {
@@ -24,6 +25,7 @@ const draft: TimelineEventDraft = {
   playerSlugs: [],
   contributorSlugs: [],
   isDraft: false,
+  showGameTitles: false,
 }
 
 function buildRepository(

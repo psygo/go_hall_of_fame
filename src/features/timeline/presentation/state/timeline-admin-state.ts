@@ -155,6 +155,10 @@ export function createTimelineAdminState(
         formData,
         "contributorSlug",
       ),
+      showGameTitles: readFormFlag(
+        formData,
+        "showGameTitles",
+      ),
       isDraft: readFormFlag(formData, "isDraft"),
     }
     const id =

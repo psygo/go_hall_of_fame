@@ -15,6 +15,7 @@ const eventIn = (year: number) => ({
   players: [],
   contributors: [],
   isDraft: false,
+  showGameTitles: false,
 })
 
 const layoutOf = (years: readonly number[]) =>

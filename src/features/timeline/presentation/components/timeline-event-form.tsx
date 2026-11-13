@@ -33,6 +33,7 @@ type TimelineEventFormProps = {
     readonly gameSlugs: readonly string[]
     readonly playerSlugs: readonly string[]
     readonly contributorSlugs: readonly string[]
+    readonly showGameTitles: boolean
     readonly isDraft: boolean
   }
   readonly gameOptions: readonly TimelineGameReference[]
@@ -122,6 +123,12 @@ export function TimelineEventForm({
         }))}
         initial={values.contributorSlugs}
         error={errors.contributorSlugs}
+      />
+      <CheckboxField
+        name="showGameTitles"
+        label="Show the game titles"
+        defaultChecked={values.showGameTitles}
+        hint="Whether the linked games' boards carry the game's title."
       />
       <CheckboxField
         name="isDraft"

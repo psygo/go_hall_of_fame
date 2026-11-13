@@ -13,6 +13,7 @@ const form = {
   playerSlugs: [],
   contributorSlugs: [],
   isDraft: false,
+  showGameTitles: false,
 }
 
 function buildRepository(
@@ -57,6 +58,7 @@ describe("SaveTimelineEvent", () => {
         playerSlugs: [],
         contributorSlugs: [],
         isDraft: false,
+        showGameTitles: false,
       },
       4,
     )

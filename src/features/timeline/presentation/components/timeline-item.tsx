@@ -89,9 +89,13 @@ export function TimelineItem({
           >
             <Link
               href={`/games/${game.slug}`}
-              className="text-ink hover:text-accent text-sm font-bold no-underline after:absolute after:inset-0 after:content-['']"
+              className="text-ink hover:text-accent text-center text-sm font-bold no-underline after:absolute after:inset-0 after:content-['']"
             >
-              {game.name}
+              {event.showGameTitles ? (
+                game.name
+              ) : (
+                <span className="sr-only">{game.name}</span>
+              )}
             </Link>
             {game.sgf !== null && (
               <GamePreviewBoard

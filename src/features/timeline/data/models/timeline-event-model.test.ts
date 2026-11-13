@@ -13,6 +13,7 @@ const validRaw = {
   players: [],
   contributors: [],
   isDraft: false,
+  showGameTitles: false,
 }
 
 describe("TimelineEventModel", () => {
@@ -82,6 +83,31 @@ describe("TimelineEventModel", () => {
         ...validRaw,
         isDraft: true,
       }).isDraft,
+    ).toBe(true)
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "true"],
+    ["null", null],
+  ])(
+    "throws when showGameTitles is %s",
+    (_label, showGameTitles) => {
+      expect(() =>
+        TimelineEventModel.fromRawData({
+          ...validRaw,
+          showGameTitles,
+        }),
+      ).toThrow('"showGameTitles" must be a boolean')
+    },
+  )
+
+  it("keeps showGameTitles true", () => {
+    expect(
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        showGameTitles: true,
+      }).showGameTitles,
     ).toBe(true)
   })
 

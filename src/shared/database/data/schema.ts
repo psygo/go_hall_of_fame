@@ -184,6 +184,10 @@ export const timelineEventsTable = pgTable(
     position: integer().notNull().default(0),
     title: text().notNull(),
     text: text().notNull(),
+    /** Whether the small boards of the linked games carry the game's title. */
+    showGameTitles: boolean("show_game_titles")
+      .notNull()
+      .default(true),
     /** A draft is visible to admins only. */
     isDraft: boolean("is_draft").notNull().default(false),
   },

@@ -36,6 +36,8 @@ export type TimelineEvent = {
   readonly players: readonly TimelinePlayerReference[]
   /** The contributors the event is about, in the admin's order. */
   readonly contributors: readonly TimelineContributorReference[]
+  /** Whether the linked games' boards show the game's title. */
+  readonly showGameTitles: boolean
   /** Only admins see a draft. */
   readonly isDraft: boolean
 }

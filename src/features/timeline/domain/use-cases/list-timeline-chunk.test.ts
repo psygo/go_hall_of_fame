@@ -16,6 +16,7 @@ const eventIn = (year: number): TimelineEvent => ({
   players: [],
   contributors: [],
   isDraft: false,
+  showGameTitles: false,
 })
 
 function buildRepository(

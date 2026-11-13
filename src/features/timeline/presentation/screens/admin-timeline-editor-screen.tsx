@@ -46,6 +46,7 @@ export async function AdminTimelineEditorScreen({
             contributorSlugs: (
               event?.contributors ?? []
             ).map((contributor) => contributor.slug),
+            showGameTitles: event?.showGameTitles ?? true,
             isDraft: event?.isDraft ?? false,
           }}
           gameOptions={gameOptions}

@@ -32,6 +32,7 @@ function buildForm(
     playerSlugs: [],
     contributorSlugs: [],
     isDraft: false,
+    showGameTitles: false,
     ...overrides,
   }
 }
@@ -58,6 +59,7 @@ describe("validateTimelineEventForm", () => {
         playerSlugs: [],
         contributorSlugs: [],
         isDraft: false,
+        showGameTitles: false,
       },
     })
   })
@@ -81,6 +83,7 @@ describe("validateTimelineEventForm", () => {
         playerSlugs: [],
         contributorSlugs: [],
         isDraft: false,
+        showGameTitles: false,
       },
     })
   })
@@ -189,6 +192,17 @@ describe("validateTimelineEventForm", () => {
     })
   })
 
+  it("passes the showGameTitles flag through", () => {
+    for (const showGameTitles of [true, false]) {
+      expect(
+        validate(buildForm({ showGameTitles })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({ showGameTitles }),
+      })
+    }
+  })
+
   it("reports every error at once", () => {
     expect(
       Object.keys(
@@ -200,6 +214,7 @@ describe("validateTimelineEventForm", () => {
           playerSlugs: ["ghost"],
           contributorSlugs: ["ghost"],
           isDraft: false,
+          showGameTitles: false,
         }),
       ),
     ).toEqual([

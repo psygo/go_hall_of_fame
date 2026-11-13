@@ -18,6 +18,7 @@ describe("ListTimelineEvents", () => {
         players: [],
         contributors: [],
         isDraft: false,
+        showGameTitles: false,
       },
     ]
     const repository: TimelineRepository = {

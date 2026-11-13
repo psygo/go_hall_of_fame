@@ -18,6 +18,7 @@ const eventWithId = (id: number): TimelineEvent => ({
   players: [],
   contributors: [],
   isDraft: false,
+  showGameTitles: false,
 })
 
 function build(

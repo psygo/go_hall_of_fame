@@ -1,0 +1,1 @@
+ALTER TABLE "timeline_events" ADD COLUMN "show_game_titles" boolean DEFAULT true NOT NULL;

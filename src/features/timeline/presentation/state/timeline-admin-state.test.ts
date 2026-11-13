@@ -47,6 +47,7 @@ const event: TimelineEvent = {
   players: [],
   contributors: [],
   isDraft: false,
+  showGameTitles: false,
 }
 
 function buildFormData(
@@ -270,7 +271,12 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: { ...fields, ...noLinks, isDraft: false },
+      form: {
+        ...fields,
+        ...noLinks,
+        isDraft: false,
+        showGameTitles: false,
+      },
     })
   })
 
@@ -283,7 +289,12 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: 3,
-      form: { ...fields, ...noLinks, isDraft: false },
+      form: {
+        ...fields,
+        ...noLinks,
+        isDraft: false,
+        showGameTitles: false,
+      },
     })
   })
 
@@ -302,8 +313,44 @@ describe("saveFromForm", () => {
 
     expect(save).toHaveBeenCalledWith({
       id: null,
-      form: { ...fields, ...noLinks, isDraft: true },
+      form: {
+        ...fields,
+        ...noLinks,
+        isDraft: true,
+        showGameTitles: false,
+      },
     })
+  })
+
+  it("maps the showGameTitles flag: 'on' is true, unchecked or missing is false", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        buildFormData({ ...fields, showGameTitles: "on" }),
+      ),
+    ).rejects.toThrow()
+    await expect(
+      state.saveFromForm("new", buildFormData(fields)),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        form: expect.objectContaining({
+          showGameTitles: true,
+        }),
+      }),
+    )
+    expect(save).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        form: expect.objectContaining({
+          showGameTitles: false,
+        }),
+      }),
+    )
   })
 
   it("turns missing fields into empty strings", async () => {
@@ -323,6 +370,7 @@ describe("saveFromForm", () => {
         playerSlugs: [],
         contributorSlugs: [],
         isDraft: false,
+        showGameTitles: false,
       },
     })
   })
@@ -360,6 +408,7 @@ describe("saveFromForm", () => {
         ...fields,
         ...noLinks,
         isDraft: false,
+        showGameTitles: false,
         year: "0",
       },
     })
@@ -387,7 +436,12 @@ describe("saveFromForm", () => {
       status: "failed",
       message:
         "The event could not be saved. Try again in a moment.",
-      values: { ...fields, ...noLinks, isDraft: false },
+      values: {
+        ...fields,
+        ...noLinks,
+        isDraft: false,
+        showGameTitles: false,
+      },
     })
     expect(logged).toHaveBeenCalledWith(
       "Could not save the timeline event:",
@@ -634,6 +688,7 @@ describe("saveFromForm links", () => {
         playerSlugs: ["shusaku", "lee-sedol"],
         contributorSlugs: ["kgs", ""],
         isDraft: false,
+        showGameTitles: false,
       },
     })
   })

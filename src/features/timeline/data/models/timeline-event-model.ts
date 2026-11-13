@@ -24,6 +24,7 @@ export class TimelineEventModel implements TimelineEvent {
   declare readonly games: readonly TimelineLinkedGame[]
   declare readonly players: readonly TimelinePlayerReference[]
   declare readonly contributors: readonly TimelineContributorReference[]
+  declare readonly showGameTitles: boolean
   declare readonly isDraft: boolean
 
   private constructor(fields: TimelineEvent) {
@@ -46,6 +47,7 @@ export class TimelineEventModel implements TimelineEvent {
       contributors: readArray(record, "contributors").map(
         parseReference,
       ),
+      showGameTitles: readBoolean(record, "showGameTitles"),
       isDraft: readBoolean(record, "isDraft"),
     })
   }
