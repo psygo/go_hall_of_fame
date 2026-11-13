@@ -1,0 +1,233 @@
+import {
+  collectErrors,
+  type FieldErrors,
+  type Validation,
+} from "@/core/validation"
+
+export const PAGE_IDS = [
+  "home",
+  "players",
+  "games",
+  "timeline",
+  "induction",
+] as const
+
+export type PageId = (typeof PAGE_IDS)[number]
+
+export type PageTextDefinition = {
+  /** "page.name", also the name of the form field. */
+  readonly key: string
+  readonly page: PageId
+  readonly label: string
+  readonly defaultValue: string
+  readonly maxLength: number
+  readonly multiline: boolean
+  readonly hint?: string
+}
+
+export const PAGE_TEXT_DEFINITIONS: readonly PageTextDefinition[] =
+  [
+    {
+      key: "home.title",
+      page: "home",
+      label: "Hero heading",
+      defaultValue:
+        "The finest hands in the history of Go.",
+      maxLength: 120,
+      multiline: false,
+    },
+    {
+      key: "home.intro",
+      page: "home",
+      label: "Hero introduction",
+      defaultValue:
+        "{playerCount} players and {gameCount} games that changed how the board is read, from the Edo castle matches to a wedge on move 78 in Seoul.",
+      maxLength: 300,
+      multiline: true,
+      hint: "{playerCount} and {gameCount} are replaced by the live counts.",
+    },
+    {
+      key: "home.playersCardText",
+      page: "home",
+      label: "Players card text",
+      defaultValue:
+        "From Dosaku to Shin Jinseo, across Japan, China and Korea.",
+      maxLength: 120,
+      multiline: false,
+    },
+    {
+      key: "home.gamesCardText",
+      page: "home",
+      label: "Games card text",
+      defaultValue:
+        "The moves that stopped the room and rewrote theory.",
+      maxLength: 120,
+      multiline: false,
+    },
+    {
+      key: "home.timelineCardText",
+      page: "home",
+      label: "Timeline card text",
+      defaultValue:
+        "A timeline from the Edo academy to the age of AI.",
+      maxLength: 120,
+      multiline: false,
+    },
+    {
+      key: "players.eyebrow",
+      page: "players",
+      label: "Eyebrow",
+      defaultValue: "Inductees",
+      maxLength: 40,
+      multiline: false,
+    },
+    {
+      key: "players.title",
+      page: "players",
+      label: "Heading",
+      defaultValue: "Legendary players",
+      maxLength: 80,
+      multiline: false,
+    },
+    {
+      key: "games.eyebrow",
+      page: "games",
+      label: "Eyebrow",
+      defaultValue: "The record",
+      maxLength: 40,
+      multiline: false,
+    },
+    {
+      key: "games.title",
+      page: "games",
+      label: "Heading",
+      defaultValue: "Legendary games",
+      maxLength: 80,
+      multiline: false,
+    },
+    {
+      key: "timeline.eyebrow",
+      page: "timeline",
+      label: "Eyebrow",
+      defaultValue: "Four centuries",
+      maxLength: 40,
+      multiline: false,
+    },
+    {
+      key: "timeline.title",
+      page: "timeline",
+      label: "Heading",
+      defaultValue: "Timeline",
+      maxLength: 80,
+      multiline: false,
+    },
+    {
+      key: "induction.eyebrow",
+      page: "induction",
+      label: "Eyebrow",
+      defaultValue: "Induction",
+      maxLength: 40,
+      multiline: false,
+    },
+    {
+      key: "induction.title",
+      page: "induction",
+      label: "Heading",
+      defaultValue: "How a name enters the Hall",
+      maxLength: 80,
+      multiline: false,
+    },
+    {
+      key: "induction.formTitle",
+      page: "induction",
+      label: "Form heading",
+      defaultValue: "Nominate a player or a game",
+      maxLength: 80,
+      multiline: false,
+    },
+  ]
+
+/** Page texts by key, such as { "home.title": "..." }. */
+export type PageTexts = Readonly<Record<string, string>>
+
+/** The texts of a page: the saved value where there is one, the default otherwise. */
+export function resolvePageTexts(
+  page: PageId,
+  overrides: Readonly<Record<string, string>>,
+): PageTexts {
+  return Object.fromEntries(
+    PAGE_TEXT_DEFINITIONS.filter(
+      (definition) => definition.page === page,
+    ).map((definition) => [
+      definition.key,
+      overrides[definition.key] ?? definition.defaultValue,
+    ]),
+  )
+}
+
+export type EditableText = {
+  readonly definition: PageTextDefinition
+  /** The saved value, or the default when nothing is saved. */
+  readonly value: string
+}
+
+export function toEditableTexts(
+  overrides: Readonly<Record<string, string>>,
+): readonly EditableText[] {
+  return PAGE_TEXT_DEFINITIONS.map((definition) => ({
+    definition,
+    value:
+      overrides[definition.key] ?? definition.defaultValue,
+  }))
+}
+
+export type SiteTextChanges = {
+  readonly set: Readonly<Record<string, string>>
+  /** Keys whose saved value is removed, so they show their default again. */
+  readonly clear: readonly string[]
+}
+
+/** A blank value, or one equal to the default, removes the saved value. */
+export function validateSiteTextsForm(
+  form: Readonly<Record<string, string>>,
+): Validation<SiteTextChanges, FieldErrors> {
+  const trimmed = PAGE_TEXT_DEFINITIONS.map(
+    (definition) => ({
+      definition,
+      value: (form[definition.key] ?? "").trim(),
+    }),
+  )
+  const errors = collectErrors(
+    Object.fromEntries(
+      trimmed.map(({ definition, value }) => [
+        definition.key,
+        value.length > definition.maxLength
+          ? `Use at most ${definition.maxLength} characters.`
+          : undefined,
+      ]),
+    ),
+  )
+  if (Object.keys(errors).length > 0)
+    return { valid: false, errors }
+  const isDefault = ({
+    definition,
+    value,
+  }: (typeof trimmed)[number]) =>
+    value === "" || value === definition.defaultValue
+  return {
+    valid: true,
+    draft: {
+      set: Object.fromEntries(
+        trimmed
+          .filter((entry) => !isDefault(entry))
+          .map(({ definition, value }) => [
+            definition.key,
+            value,
+          ]),
+      ),
+      clear: trimmed
+        .filter(isDefault)
+        .map(({ definition }) => definition.key),
+    },
+  }
+}

@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import localFont from "next/font/local"
 import type { ReactNode } from "react"
 
-import { AppShell } from "@/shared/ui/presentation/app-shell"
+import { AppShellScreen } from "@/features/auth/presentation/screens/app-shell-screen"
 
 import "@/styles/globals.css"
 
@@ -50,7 +50,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <AppShell>{children}</AppShell>
+        <AppShellScreen>{children}</AppShellScreen>
       </body>
     </html>
   )

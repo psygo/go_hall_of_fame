@@ -4,7 +4,9 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 
+import { EditPageButton } from "./edit-page-button"
 import { ThemeToggle } from "./theme-toggle"
+import { UserMenu, type NavAdmin } from "./user-menu"
 
 const NAV_ITEMS = [
   { href: "/players", label: "Players" },
@@ -16,7 +18,12 @@ const NAV_ITEMS = [
 const linkClass =
   "text-sm text-ink no-underline hover:text-accent aria-[current=page]:text-accent"
 
-export function SiteNav() {
+type SiteNavProps = {
+  readonly admin: NavAdmin | null
+  readonly signOut: () => Promise<void>
+}
+
+export function SiteNav({ admin, signOut }: SiteNavProps) {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -56,6 +63,7 @@ export function SiteNav() {
             Nominate
           </Link>
         </div>
+        {admin !== null && <EditPageButton />}
         <ThemeToggle />
         <button
           type="button"
@@ -65,6 +73,9 @@ export function SiteNav() {
         >
           {isMenuOpen ? "Close" : "Menu"}
         </button>
+        {admin !== null && (
+          <UserMenu admin={admin} signOut={signOut} />
+        )}
       </nav>
       {isMenuOpen && (
         <div className="border-divider flex flex-col border-b min-[720px]:hidden">
