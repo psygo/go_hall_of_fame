@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm"
+import { and, asc, eq, isNull, type SQL } from "drizzle-orm"
 
 import type { ResourceLink } from "@/core/resources"
 
@@ -10,15 +10,29 @@ type Executor = Pick<
   "select" | "insert" | "delete"
 >
 
-export type ResourceOwner = {
-  readonly kind: "game" | "player"
-  readonly id: number
-}
+/** A game, a player, or the site itself (the Resources page, which has no owner row). */
+export type ResourceOwner =
+  | {
+      readonly kind: "game" | "player"
+      readonly id: number
+    }
+  | { readonly kind: "site" }
 
-function ownerColumn(owner: ResourceOwner) {
-  return owner.kind === "game"
-    ? resourcesTable.gameId
-    : resourcesTable.playerId
+function ownerCondition(
+  owner: ResourceOwner,
+): SQL | undefined {
+  if (owner.kind === "site") {
+    return and(
+      isNull(resourcesTable.gameId),
+      isNull(resourcesTable.playerId),
+    )
+  }
+  return eq(
+    owner.kind === "game"
+      ? resourcesTable.gameId
+      : resourcesTable.playerId,
+    owner.id,
+  )
 }
 
 /** The resources of one game or player, in the order the admin arranged them. */
@@ -32,7 +46,7 @@ export function selectResources(
       description: resourcesTable.description,
     })
     .from(resourcesTable)
-    .where(eq(ownerColumn(owner), owner.id))
+    .where(ownerCondition(owner))
     .orderBy(
       asc(resourcesTable.position),
       asc(resourcesTable.id),
@@ -47,7 +61,7 @@ export async function replaceResources(
 ): Promise<void> {
   await executor
     .delete(resourcesTable)
-    .where(eq(ownerColumn(owner), owner.id))
+    .where(ownerCondition(owner))
   if (links.length === 0) return
   await executor.insert(resourcesTable).values(
     links.map((link, position) => ({

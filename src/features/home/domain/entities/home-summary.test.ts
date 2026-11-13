@@ -49,7 +49,7 @@ describe("summarizeHome", () => {
       year: 1846,
       black: "B",
       white: "W",
-      hook: "Hook",
+      description: "Hook",
     },
     featuredPlayer: null,
   }

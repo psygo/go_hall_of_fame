@@ -6,4 +6,5 @@ export const ADMIN_PATHS = {
   criteria: "/admin/criteria",
   nominations: "/admin/nominations",
   pages: "/admin/pages",
+  resources: "/admin/resources",
 } as const

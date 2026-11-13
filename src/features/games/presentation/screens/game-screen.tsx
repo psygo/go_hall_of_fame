@@ -1,5 +1,3 @@
-import Link from "next/link"
-
 import { gamesLoaders } from "@/config/di"
 import { GoBoardPlayer } from "@/shared/go-board/presentation/go-board-player"
 import { BackLink } from "@/shared/ui/presentation/back-link"
@@ -57,23 +55,9 @@ export async function GameScreen({
             {detail.setting}
           </LabelledFact>
         </div>
-        <Markdown className="max-w-[56ch] text-xl">
-          {detail.hook}
+        <Markdown className="max-w-[56ch] text-lg">
+          {detail.description}
         </Markdown>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-6">
-          <div className="flex flex-col gap-1.5">
-            <SectionLabel>The moment</SectionLabel>
-            <Markdown className="max-w-[56ch]">
-              {detail.moment}
-            </Markdown>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <SectionLabel>Why it endures</SectionLabel>
-            <Markdown className="max-w-[56ch]">
-              {detail.legacy}
-            </Markdown>
-          </div>
-        </div>
         {sgf !== null && (
           <div className="flex flex-col gap-1.5">
             <SectionLabel>The record</SectionLabel>
@@ -84,22 +68,6 @@ export async function GameScreen({
           </div>
         )}
         <ResourceList resources={detail.resources} />
-        {detail.players.length > 0 && (
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="font-mono text-[11px] font-bold tracking-[0.1em] uppercase">
-              In the Hall
-            </span>
-            {detail.players.map((player) => (
-              <Link
-                key={player.slug}
-                href={`/players/${player.slug}`}
-                className="font-bold"
-              >
-                {player.name} →
-              </Link>
-            ))}
-          </div>
-        )}
       </article>
       <NeighborBar
         previous={{

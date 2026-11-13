@@ -12,10 +12,16 @@ import {
 export type GoBoardPlayerProps = {
   readonly sgf: string
   readonly theme?: string
-  /** The move (1-based) to draw in the accent color once the game reaches it. */
+  /**
+   * The move (1-based) the board opens on and draws in the accent color. Later moves are one click
+   * away, earlier ones too.
+   */
   readonly highlightMove?: number
 }
 
+const BOARD_WIDTH = 560
+
+/** A board with its controls and, below them, the players. Centered on the page. */
 export function GoBoardPlayerClient({
   sgf,
   theme = "washi",
@@ -32,16 +38,26 @@ export function GoBoardPlayerClient({
   }, [highlightMove])
 
   return (
-    <GoBoardContainer style={{ maxWidth: "100%" }}>
-      <GoMetadataContainer />
+    <GoBoardContainer
+      style={{
+        width: BOARD_WIDTH,
+        maxWidth: "100%",
+        marginInline: "auto",
+      }}
+    >
       <GoBoard
         ref={board}
         sgf={sgf}
         theme={theme}
-        width={560}
         style={{ maxWidth: "100%" }}
+        onSgfLoaded={() => {
+          if (highlightMove !== undefined) {
+            board.current?.goToMove(highlightMove)
+          }
+        }}
       />
       <GoBoardControls />
+      <GoMetadataContainer />
     </GoBoardContainer>
   )
 }

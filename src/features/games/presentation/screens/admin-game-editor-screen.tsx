@@ -34,9 +34,7 @@ export async function AdminGameEditorScreen({
             white: game?.white ?? "",
             result: game?.result ?? "",
             setting: game?.setting ?? "",
-            hook: game?.hook ?? "",
-            moment: game?.moment ?? "",
-            legacy: game?.legacy ?? "",
+            description: game?.description ?? "",
             sgfUrl: game?.sgfUrl ?? "",
             sequence: String(game?.sequence ?? 0),
             highlightMove:

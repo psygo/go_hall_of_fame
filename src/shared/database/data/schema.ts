@@ -15,6 +15,7 @@ export const countryEnum = pgEnum("country", [
   "Japan",
   "China",
   "Korea",
+  "Others",
 ])
 
 export const nominationCategoryEnum = pgEnum(
@@ -68,9 +69,8 @@ export const gamesTable = pgTable("games", {
   ),
   result: text().notNull(),
   setting: text().notNull(),
-  hook: text().notNull(),
-  moment: text().notNull(),
-  legacy: text().notNull(),
+  /** What the game is about, in Markdown: one field that replaced hook, moment and legacy. */
+  description: text().notNull().default(""),
   /** URL of an SGF record, rendered by goban-web when present. */
   sgfUrl: text("sgf_url"),
   /** The text of an uploaded SGF file. It wins over `sgfUrl` and is served at /games/{slug}/sgf. */
@@ -102,7 +102,10 @@ export const gamePlayersTable = pgTable(
   ],
 )
 
-/** A link with an optional description, listed on a game's or a player's page. Exactly one owner. */
+/**
+ * A link with an optional description, listed on a game's or a player's page, or (with no owner) on
+ * the Resources page.
+ */
 export const resourcesTable = pgTable(
   "resources",
   {
@@ -121,8 +124,8 @@ export const resourcesTable = pgTable(
   },
   (table) => [
     check(
-      "resources_one_owner",
-      sql`(${table.gameId} is null) <> (${table.playerId} is null)`,
+      "resources_at_most_one_owner",
+      sql`(${table.gameId} is null) or (${table.playerId} is null)`,
     ),
   ],
 )

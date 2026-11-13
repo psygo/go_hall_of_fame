@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { contentLoaders, gamesLoaders } from "@/config/di"
-import { stripMarkdown } from "@/core/markdown"
+import { excerpt } from "@/core/markdown"
 import { GamePreviewBoard } from "@/shared/go-board/presentation/game-preview-board"
 import { ListControls } from "@/shared/ui/presentation/list-controls"
 import { PageHeader } from "@/shared/ui/presentation/page-header"
@@ -56,8 +56,8 @@ export async function GamesScreen({
         {games.items.map((game) => {
           const sgf = sgfSourceOf(game)
           return (
-            // The title's link stretches over the whole card; the player links and the board sit
-            // above it (relative z-10), so they keep working.
+            // The title's link stretches over the whole card (the board included); the player links
+            // sit above it (relative z-10), so they keep working.
             <article
               key={game.slug}
               className="border-divider hover:bg-accent-100 has-[a:focus-visible]:outline-accent relative grid grid-cols-1 border-b has-[a:focus-visible]:outline-2 has-[a:focus-visible]:-outline-offset-2 min-[720px]:grid-cols-[160px_minmax(0,1fr)_280px]"
@@ -91,11 +91,11 @@ export async function GamesScreen({
                   · {game.result}
                 </div>
                 <div className="max-w-[62ch]">
-                  {stripMarkdown(game.hook)}
+                  {excerpt(game.description)}
                 </div>
               </div>
               {sgf !== null && (
-                <div className="relative z-10 px-4 pb-6 min-[720px]:self-center min-[720px]:py-6 min-[720px]:pl-0">
+                <div className="px-4 pb-6 min-[720px]:self-center min-[720px]:py-6 min-[720px]:pl-0">
                   <GamePreviewBoard
                     sgf={sgf}
                     targetMove={highlightMoveOf(game)}

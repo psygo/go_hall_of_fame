@@ -17,10 +17,12 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   introduction and card texts). A blank field restores the original text, which lives in
   `src/features/content/domain/entities/page-text.ts`. The home introduction accepts the placeholders
   `{playerCount}` and `{gameCount}`.
-+ **Players** (`/admin/players`): create, edit, delete. Fields: name, native name, country, years,
++ **Players** (`/admin/players`): create, edit, delete. Fields: name, native name, country (Japan,
+  China, Korea or Others), years,
   distinction, biography, slug, induction number, photo path and crop, and "featured on the home
   page" (only one player is featured at a time).
-+ **Games** (`/admin/games`): create, edit, delete. Also the Black/White player links, the SGF, resources, the order within the
++ **Games** (`/admin/games`): create, edit, delete. A game has one Markdown description (it replaced
+  the separate hook, moment and why-it-endures fields). Also the Black/White player links, the SGF, resources, the order within the
   year, and "featured".
 + **Black and White links.** The game form has a "Black links to" and a "White links to" choice of
   Hall players. A linked name is a link to that player's page on the games list and the game page.
@@ -30,7 +32,7 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + **Highlighted move.** An optional move number on the game form. The games-list preview plays up to
   that move and draws it in the accent color (orange-red, like the diagram on the home page); the
   game page draws the same stone once the game reaches it. Blank means move 50.
-+ **Markdown.** The long-text fields (a player's biography, a game's hook, moment and why it endures,
++ **Markdown.** The long-text fields (a player's biography, a game's description,
   a timeline event's description) accept Markdown: `**bold**`, `*italic*`, `[a link](https://…)`,
   lists and `> quotes`. Raw HTML and images are ignored. Lists and link previews show the plain text.
 + **Resources.** Games and players have a Resources list: a link and an optional description each,
@@ -38,6 +40,8 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + **Timeline** (`/admin/timeline`): events with a year, title and text, and optionally a game: the
   event then links to that game's page. The side an event appears on
   is computed: events alternate, and events within five years of the previous one stay on its side.
++ **Resources** (`/admin/resources`): the links of the public Resources page (`/resources`): a link and
+  an optional description each, as a bulleted list. Its heading and eyebrow are editable under Pages.
 + **Criteria** (`/admin/criteria`): the induction criteria.
 + **Nominations** (`/admin/nominations`): what visitors submitted. Mark each accepted or declined, or
   delete it. Accepting a nomination does not create the player or game: add it yourself.
@@ -51,9 +55,11 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   (`?q=lee&sort=name&page=2`), so a result can be shared. The admin lists are paginated (15 a page).
 + Players (12 a page), games (6) and criteria (4) are paginated. The timeline loads 6 events at a time
   as you scroll, with skeleton placeholders while the next chunk loads.
-+ Each games-list card with an SGF shows an interactive board that plays the game from move 1 to
-  move 50, one move every 700 ms, when it scrolls into view (people who prefer reduced motion get
-  move 50 straight away).
++ Each games-list card with an SGF shows a board that cannot be played on. It rests on the
+  highlighted move (move 50 by default, drawn in orange). While the pointer is on the card (or focus
+  is inside it) the game replays from move 1, one move every 700 ms, and the board returns to the
+  highlighted move when the pointer leaves. Reduced-motion users get no replay. The whole card opens
+  the game.
 
 ## Forgot your password
 

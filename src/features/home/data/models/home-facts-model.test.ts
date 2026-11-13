@@ -10,7 +10,7 @@ const featuredGame = {
   year: 1846,
   black: "Shusaku",
   white: "Inseki",
-  hook: "Hook",
+  description: "Hook",
 }
 
 const featuredPlayer = {
@@ -143,7 +143,7 @@ describe("HomeFactsModel", () => {
     "year",
     "black",
     "white",
-    "hook",
+    "description",
   ])("throws when the featured game lacks %s", (key) => {
     const game: Record<string, unknown> = {
       ...featuredGame,

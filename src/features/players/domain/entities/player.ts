@@ -6,6 +6,7 @@ export const COUNTRIES = [
   "Japan",
   "China",
   "Korea",
+  "Others",
 ] as const
 
 export type Country = (typeof COUNTRIES)[number]

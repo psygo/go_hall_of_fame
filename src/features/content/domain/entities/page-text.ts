@@ -10,6 +10,7 @@ export const PAGE_IDS = [
   "games",
   "timeline",
   "induction",
+  "resources",
 ] as const
 
 export type PageId = (typeof PAGE_IDS)[number]
@@ -118,6 +119,22 @@ export const PAGE_TEXT_DEFINITIONS: readonly PageTextDefinition[] =
       page: "timeline",
       label: "Heading",
       defaultValue: "Timeline",
+      maxLength: 80,
+      multiline: false,
+    },
+    {
+      key: "resources.eyebrow",
+      page: "resources",
+      label: "Eyebrow",
+      defaultValue: "Further reading",
+      maxLength: 40,
+      multiline: false,
+    },
+    {
+      key: "resources.title",
+      page: "resources",
+      label: "Heading",
+      defaultValue: "Resources",
       maxLength: 80,
       multiline: false,
     },

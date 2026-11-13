@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { stripMarkdown } from "./markdown"
+import { excerpt, stripMarkdown } from "./markdown"
 
 describe("stripMarkdown", () => {
   it("keeps the text of links and images", () => {
@@ -43,5 +43,40 @@ describe("stripMarkdown", () => {
     expect(stripMarkdown("Plain text, 3 - 2.")).toBe(
       "Plain text, 3 - 2.",
     )
+  })
+})
+
+describe("excerpt", () => {
+  it("returns short text unchanged, stripped of Markdown", () => {
+    expect(excerpt("**Short** [text](/a)")).toBe(
+      "Short text",
+    )
+  })
+
+  it("returns text exactly at the limit unchanged", () => {
+    expect(excerpt("a".repeat(20), 20)).toBe("a".repeat(20))
+  })
+
+  it("cuts at a word boundary and adds an ellipsis", () => {
+    const result = excerpt(
+      "one two three four five six",
+      15,
+    )
+
+    expect(result).toBe("one two three…")
+    expect(result.length).toBeLessThanOrEqual(15)
+  })
+
+  it("cuts mid-word when there is no usable space", () => {
+    const result = excerpt("a".repeat(50), 10)
+
+    expect(result).toBe(`${"a".repeat(9)}…`)
+  })
+
+  it("never exceeds the limit", () => {
+    const text = "word ".repeat(100)
+
+    expect(excerpt(text, 40).length).toBeLessThanOrEqual(40)
+    expect(excerpt(text).length).toBeLessThanOrEqual(200)
   })
 })

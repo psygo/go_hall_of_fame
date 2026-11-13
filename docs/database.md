@@ -23,15 +23,15 @@ generated into `drizzle/` and tracked in git.
 
 + `players`: one row per inductee.
   + `slug` (unique, used in `/players/[slug]`), `induction_number` (unique, the "No. 01" of the
-    Hall), `name`, `native_name`, `country` (enum `Japan | China | Korea`), `years` (free text such
+    Hall), `name`, `native_name`, `country` (enum `Japan | China | Korea | Others`), `years` (free text such
     as `1645–1702` or `b. 1983`), `distinction`, `bio`.
   + `photo_url` (null falls back to the placeholder portrait; use a path under `public/`, since
     an absolute URL needs its host added to `images.remotePatterns` in `next.config.ts` first) and `photo_position` (CSS
     `object-position`, so one photo can be cropped per player).
   + `featured` (the home page shows the featured player, or the first by induction number).
 + `games`: one row per legendary game.
-  + `slug` (unique), `year`, `name`, `black`, `white`, `result`, `setting`, `hook`, `moment`,
-    `legacy`.
+  + `slug` (unique), `year`, `name`, `black`, `white`, `result`, `setting`, `description` (Markdown;
+    it replaced `hook`, `moment` and `legacy`, which migration 0005 merged and 0006 dropped).
   + `black_player_id`, `white_player_id` (nullable, `set null` on delete): the Hall player behind the
     Black / White name. The name then links to that player's page, and the two players are the
     ones listed in `game_players`.
@@ -45,7 +45,7 @@ generated into `drizzle/` and tracked in git.
   a game to the inducted players who played it. Not every side is a player in the Hall (AlphaGo,
   Akaboshi Intetsu), which is why `black` and `white` are plain text on `games`.
 + `resources`: a link with an optional `description`, on one game (`game_id`) or one player
-  (`player_id`): a check constraint requires exactly one of the two. `position` keeps the order.
+  (`player_id`): a check constraint forbids both. With neither set, the row belongs to the public Resources page. `position` keeps the order.
 + `password_resets`: one-time reset links (`admin_id` cascade, `token_hash` unique, `expires_at`,
   `used_at`). Only the token's SHA-256 is stored.
 + `timeline_events`: `game_id` (nullable, `set null` on delete) links an event to a game. Also `year`, `title`, `text`.

@@ -77,7 +77,7 @@ beforeEach(() => {
 })
 
 describe("loadPlayersPage", () => {
-  it.each(["Japan", "China", "Korea"])(
+  it.each(["Japan", "China", "Korea", "Others"])(
     "filters by the valid country %s",
     async (country) => {
       const { loaders, searchPlayers } = buildLoaders()
@@ -138,7 +138,7 @@ describe("loadPlayersPage", () => {
     expect(state).toEqual({
       players: emptyPage,
       country: null,
-      countries: ["Japan", "China", "Korea"],
+      countries: ["Japan", "China", "Korea", "Others"],
       query: "gu",
       sort: "name",
     })

@@ -15,11 +15,8 @@ export const gameSeeds: readonly GameSeed[] = [
     white: "Honinbo Jowa",
     result: "Black by 2",
     setting: "Edo, Japan",
-    hook: "The young Intetsu faced the reigning Honinbo in a match that cost him his health and, within months, his life.",
-    moment:
-      "Intetsu’s unexpected moves were said to be placed by ghosts, and they turned a game Jowa was winning. Intetsu coughed blood during play and finished the game.",
-    legacy:
-      "Intetsu won, then died of illness within about two months. The game became the founding legend of sacrifice in Go.",
+    description:
+      "The young Intetsu faced the reigning Honinbo in a match that cost him his health and, within months, his life.\n\nIntetsu’s unexpected moves were said to be placed by ghosts, and they turned a game Jowa was winning. Intetsu coughed blood during play and finished the game.\n\nIntetsu won, then died of illness within about two months. The game became the founding legend of sacrifice in Go.",
     playerSlugs: [],
   },
   {
@@ -30,11 +27,8 @@ export const gameSeeds: readonly GameSeed[] = [
     white: "Gennan Inseki",
     result: "Black by 2",
     setting: "Edo castle games",
-    hook: "A teenage Shusaku beat the powerful Inseki with a single move that no master at the table had seen.",
-    moment:
-      "Black’s move 127 stunned the room. A doctor watching the game reportedly saw Inseki’s ears turn red, a sign that he knew the game had slipped away.",
-    legacy:
-      "The move is still taught as an example of a quiet, deep shape that changes the evaluation of the whole board.",
+    description:
+      "A teenage Shusaku beat the powerful Inseki with a single move that no master at the table had seen.\n\nBlack’s move 127 stunned the room. A doctor watching the game reportedly saw Inseki’s ears turn red, a sign that he knew the game had slipped away.\n\nThe move is still taught as an example of a quiet, deep shape that changes the evaluation of the whole board.",
     playerSlugs: ["honinbo-shusaku"],
   },
   {
@@ -45,11 +39,8 @@ export const gameSeeds: readonly GameSeed[] = [
     white: "Honinbo Shusai",
     result: "White by 2",
     setting: "Tokyo, Japan",
-    hook: "The young challenger played the unthinkable against the reigning Honinbo Shusai: he opened in the corner, on the star point, and then on tengen.",
-    moment:
-      "Black’s third move at the centre of the board shocked a tradition that had long prized the corners. The match was suspended and resumed over weeks.",
-    legacy:
-      "Shusai won, but the opening started the New Fuseki revolution that Go Seigen and Kitani Minoru carried forward.",
+    description:
+      "The young challenger played the unthinkable against the reigning Honinbo Shusai: he opened in the corner, on the star point, and then on tengen.\n\nBlack’s third move at the centre of the board shocked a tradition that had long prized the corners. The match was suspended and resumed over weeks.\n\nShusai won, but the opening started the New Fuseki revolution that Go Seigen and Kitani Minoru carried forward.",
     playerSlugs: ["go-seigen"],
   },
   {
@@ -61,11 +52,8 @@ export const gameSeeds: readonly GameSeed[] = [
     white: "Lee Sedol",
     result: "Black by resignation",
     setting: "Seoul, Korea",
-    hook: "In the second game of the Google DeepMind Challenge Match, a program played a move professionals took for a mistake.",
-    moment:
-      "Move 37 was a shoulder hit on the fifth line. Commentators first thought it was an error; Lee Sedol left the room for several minutes.",
-    legacy:
-      "It opened the age of AI in Go and showed that centuries of conventional judgement had blind spots.",
+    description:
+      "In the second game of the Google DeepMind Challenge Match, a program played a move professionals took for a mistake.\n\nMove 37 was a shoulder hit on the fifth line. Commentators first thought it was an error; Lee Sedol left the room for several minutes.\n\nIt opened the age of AI in Go and showed that centuries of conventional judgement had blind spots.",
     playerSlugs: ["lee-sedol"],
   },
   {
@@ -77,11 +65,8 @@ export const gameSeeds: readonly GameSeed[] = [
     white: "Lee Sedol",
     result: "White by resignation",
     setting: "Seoul, Korea",
-    hook: "Down 0–3 in a five-game match, Lee Sedol played the move that no one including the machine had on the board.",
-    moment:
-      "White’s move 78, a wedge in the middle, is known as the God’s Touch. AlphaGo misjudged its value and its play deteriorated.",
-    legacy:
-      "The only game a human has won against AlphaGo in a match. It is still the most celebrated moment in the human game.",
+    description:
+      "Down 0–3 in a five-game match, Lee Sedol played the move that no one including the machine had on the board.\n\nWhite’s move 78, a wedge in the middle, is known as the God’s Touch. AlphaGo misjudged its value and its play deteriorated.\n\nThe only game a human has won against AlphaGo in a match. It is still the most celebrated moment in the human game.",
     featured: true,
     playerSlugs: ["lee-sedol"],
   },

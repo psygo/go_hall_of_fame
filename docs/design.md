@@ -77,5 +77,8 @@ The second version of the handoff changed mostly the timeline and the type:
 + The theme also supports `gridStrokeWidth`, `frameStroke` and `frameStrokeWidth`.
 + The `highlight-move` attribute (a 1-based move) draws that move's stone in `--accent` once the game
   has reached it. The games list and the game page set it from the game's highlighted move.
++ The game page centers the board, puts the controls under it with the move counter right of the
+  arrows (the play button stays under the board's center) and the players below. It opens on the
+  highlighted move. The games list uses a non-interactive board that replays on hover.
 + The panels around the board (players, komi, the controls) read the `--goban-*` variables that
   `globals.css` sets on `:root`, and `--goban-radius: 0` squares their corners.

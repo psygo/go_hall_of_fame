@@ -16,6 +16,10 @@ const STATIC_TARGETS: Readonly<
     href: "/admin/timeline",
     label: "Edit timeline",
   },
+  "/resources": {
+    href: "/admin/resources",
+    label: "Edit resources",
+  },
   "/induction": {
     href: "/admin/criteria",
     label: "Edit criteria",

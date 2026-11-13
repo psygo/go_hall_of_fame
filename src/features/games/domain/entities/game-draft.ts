@@ -23,9 +23,7 @@ export type GameForm = {
   readonly white: string
   readonly result: string
   readonly setting: string
-  readonly hook: string
-  readonly moment: string
-  readonly legacy: string
+  readonly description: string
   readonly sgfUrl: string
   /** The text of an uploaded SGF file, or "" when no file was chosen. */
   readonly sgfFileText: string
@@ -57,9 +55,7 @@ export type GameDraft = {
   readonly white: string
   readonly result: string
   readonly setting: string
-  readonly hook: string
-  readonly moment: string
-  readonly legacy: string
+  readonly description: string
   readonly sgfUrl: string | null
   readonly sequence: number
   readonly highlightMove: number | null
@@ -79,9 +75,7 @@ export const GAME_LIMITS = {
   side: 80,
   result: 80,
   setting: 80,
-  hook: 400,
-  moment: 800,
-  legacy: 800,
+  description: 3000,
   minYear: 1,
   maxYear: 2999,
   maxSequence: 99,
@@ -151,20 +145,10 @@ export function validateGameForm(
       GAME_LIMITS.setting,
       "the setting",
     ),
-    hook: required(
-      form.hook.trim(),
-      GAME_LIMITS.hook,
-      "the hook",
-    ),
-    moment: required(
-      form.moment.trim(),
-      GAME_LIMITS.moment,
-      "the moment",
-    ),
-    legacy: required(
-      form.legacy.trim(),
-      GAME_LIMITS.legacy,
-      "why it endures",
+    description: required(
+      form.description.trim(),
+      GAME_LIMITS.description,
+      "a description",
     ),
     sgfUrl:
       sgfUrl === "" || isSafeAssetUrl(sgfUrl)
@@ -208,9 +192,7 @@ export function validateGameForm(
       white: form.white.trim(),
       result: form.result.trim(),
       setting: form.setting.trim(),
-      hook: form.hook.trim(),
-      moment: form.moment.trim(),
-      legacy: form.legacy.trim(),
+      description: form.description.trim(),
       sgfUrl: sgfUrl === "" ? null : sgfUrl,
       sequence,
       highlightMove,

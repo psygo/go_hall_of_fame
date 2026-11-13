@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: "/games", label: "Games" },
   { href: "/timeline", label: "Timeline" },
   { href: "/induction", label: "Induction" },
+  { href: "/resources", label: "Resources" },
 ] as const
 
 const linkClass =
@@ -65,12 +66,6 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
               {label}
             </Link>
           ))}
-          <Link
-            href="/induction"
-            className="btn btn-primary"
-          >
-            Nominate
-          </Link>
         </div>
         {admin !== null && <EditPageButton />}
         <ThemeToggle />
@@ -88,18 +83,11 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
       </nav>
       {isMenuOpen && (
         <div className="border-divider flex flex-col border-b min-[720px]:hidden">
-          {[
-            ...NAV_ITEMS,
-            { href: "/induction", label: "Nominate" },
-          ].map(({ href, label }) => (
+          {NAV_ITEMS.map(({ href, label }) => (
             <Link
-              key={label}
+              key={href}
               href={href}
-              aria-current={
-                label === "Nominate"
-                  ? undefined
-                  : currentOf(href)
-              }
+              aria-current={currentOf(href)}
               onClick={() => setIsMenuOpen(false)}
               className="border-divider text-ink hover:text-accent aria-[current=page]:text-accent border-t px-4 py-3.5 text-lg font-bold no-underline"
             >

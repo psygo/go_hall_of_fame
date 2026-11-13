@@ -34,7 +34,7 @@ function buildPlayer(
 }
 
 describe("isCountry", () => {
-  it.each(["Japan", "China", "Korea"])(
+  it.each(["Japan", "China", "Korea", "Others"])(
     "accepts %s",
     (value) => {
       expect(isCountry(value)).toBe(true)

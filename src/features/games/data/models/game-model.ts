@@ -26,9 +26,7 @@ export class GameModel implements Game {
   declare readonly whitePlayerSlug: string | null
   declare readonly result: string
   declare readonly setting: string
-  declare readonly hook: string
-  declare readonly moment: string
-  declare readonly legacy: string
+  declare readonly description: string
   declare readonly sgfUrl: string | null
   declare readonly hasUploadedSgf: boolean
   declare readonly highlightMove: number | null
@@ -99,9 +97,7 @@ function parseGameFields(raw: unknown): Game {
     ),
     result: readString(record, "result"),
     setting: readString(record, "setting"),
-    hook: readString(record, "hook"),
-    moment: readString(record, "moment"),
-    legacy: readString(record, "legacy"),
+    description: readString(record, "description"),
     sgfUrl: readNullableString(record, "sgfUrl"),
     hasUploadedSgf: readBoolean(record, "hasUploadedSgf"),
     highlightMove: readNullableInteger(

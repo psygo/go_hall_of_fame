@@ -20,6 +20,10 @@ export {
   playersLoaders,
 } from "./wiring/players"
 export {
+  resourcesAdminState,
+  resourcesLoaders,
+} from "./wiring/resources"
+export {
   timelineAdminState,
   timelineLoaders,
 } from "./wiring/timeline"

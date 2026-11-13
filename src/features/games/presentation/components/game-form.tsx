@@ -134,30 +134,12 @@ export function GameForm({
         />
       </div>
       <TextAreaField
-        name="hook"
-        label="Hook"
-        rows={3}
-        defaultValue={values.hook}
-        maxLength={GAME_LIMITS.hook}
-        error={errors.hook}
-        hint={MARKDOWN_HINT}
-      />
-      <TextAreaField
-        name="moment"
-        label="The moment"
-        rows={4}
-        defaultValue={values.moment}
-        maxLength={GAME_LIMITS.moment}
-        error={errors.moment}
-        hint={MARKDOWN_HINT}
-      />
-      <TextAreaField
-        name="legacy"
-        label="Why it endures"
-        rows={4}
-        defaultValue={values.legacy}
-        maxLength={GAME_LIMITS.legacy}
-        error={errors.legacy}
+        name="description"
+        label="Description"
+        rows={10}
+        defaultValue={values.description}
+        maxLength={GAME_LIMITS.description}
+        error={errors.description}
         hint={MARKDOWN_HINT}
       />
       <TextField

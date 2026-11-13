@@ -8,6 +8,7 @@ describe("adminEditTargetFor", () => {
     ["/players", "/admin/players", "Edit players"],
     ["/games", "/admin/games", "Edit games"],
     ["/timeline", "/admin/timeline", "Edit timeline"],
+    ["/resources", "/admin/resources", "Edit resources"],
     ["/induction", "/admin/criteria", "Edit criteria"],
   ])("sends %s to %s", (path, href, label) => {
     expect(adminEditTargetFor(path)).toEqual({
@@ -41,6 +42,7 @@ describe("adminEditTargetFor", () => {
     ["/players/", "/admin/players"],
     ["/games/", "/admin/games"],
     ["/timeline/", "/admin/timeline"],
+    ["/resources/", "/admin/resources"],
     ["/induction/", "/admin/criteria"],
     ["/players/shusaku/", "/admin/players/shusaku"],
   ])("ignores a trailing slash: %s", (path, href) => {

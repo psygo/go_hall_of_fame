@@ -10,6 +10,7 @@ const ADMIN_LINKS = [
   { href: "/admin/games", label: "Games" },
   { href: "/admin/timeline", label: "Timeline" },
   { href: "/admin/criteria", label: "Criteria" },
+  { href: "/admin/resources", label: "Resources" },
   { href: "/admin/nominations", label: "Nominations" },
 ] as const
 

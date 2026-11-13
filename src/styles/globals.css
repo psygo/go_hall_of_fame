@@ -293,6 +293,29 @@
     font-family: var(--font-mono);
     font-size: 0.9em;
   }
+  /*
+   * The browser's own select arrow sits at a different distance from the edge than the text does
+   * on the left. Draw the arrow instead, as far from the right edge as the text is from the left,
+   * and cut a long label with an ellipsis before it reaches the arrow.
+   */
+  select.input {
+    min-width: 0;
+    max-width: 100%;
+    padding-right: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    appearance: none;
+    background-color: var(--surface);
+    background-image:
+      linear-gradient(45deg, transparent 50%, currentColor 50%),
+      linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position:
+      calc(100% - 15px) 50%,
+      calc(100% - 10px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+  }
   textarea.input {
     min-height: 90px;
     resize: vertical;

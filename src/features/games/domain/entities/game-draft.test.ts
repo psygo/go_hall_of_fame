@@ -17,9 +17,7 @@ function buildGame(slug: string): Game {
     white: "W",
     result: "B+R",
     setting: "S",
-    hook: "H",
-    moment: "M",
-    legacy: "L",
+    description: "H",
     blackPlayerSlug: null,
     whitePlayerSlug: null,
     sgfUrl: null,
@@ -50,9 +48,7 @@ function buildForm(
     white: "AlphaGo",
     result: "W+R",
     setting: "Seoul",
-    hook: "The wedge.",
-    moment: "Move 78.",
-    legacy: "It endures.",
+    description: "The wedge.",
     sgfUrl: "/sgf/game-4.sgf",
     sequence: "1",
     highlightMove: "",
@@ -99,9 +95,7 @@ describe("validateGameForm", () => {
         white: "AlphaGo",
         result: "W+R",
         setting: "Seoul",
-        hook: "The wedge.",
-        moment: "Move 78.",
-        legacy: "It endures.",
+        description: "The wedge.",
         sgfUrl: "/sgf/game-4.sgf",
         sequence: 1,
         highlightMove: null,
@@ -125,9 +119,7 @@ describe("validateGameForm", () => {
         white: " AlphaGo ",
         result: " W+R ",
         setting: " Seoul ",
-        hook: " Hook ",
-        moment: " Moment ",
-        legacy: " Legacy ",
+        description: " Hook ",
         sgfUrl: " /sgf/a.sgf ",
         sequence: " 2 ",
       }),
@@ -143,9 +135,7 @@ describe("validateGameForm", () => {
         white: "AlphaGo",
         result: "W+R",
         setting: "Seoul",
-        hook: "Hook",
-        moment: "Moment",
-        legacy: "Legacy",
+        description: "Hook",
         sgfUrl: "/sgf/a.sgf",
         sequence: 2,
       }),
@@ -247,9 +237,11 @@ describe("validateGameForm", () => {
     ["white", "the White player", GAME_LIMITS.side],
     ["result", "the result", GAME_LIMITS.result],
     ["setting", "the setting", GAME_LIMITS.setting],
-    ["hook", "the hook", GAME_LIMITS.hook],
-    ["moment", "the moment", GAME_LIMITS.moment],
-    ["legacy", "why it endures", GAME_LIMITS.legacy],
+    [
+      "description",
+      "a description",
+      GAME_LIMITS.description,
+    ],
   ] as const)("%s", (field, what, limit) => {
     it("is required", () => {
       expect(
@@ -602,12 +594,17 @@ describe("validateGameForm", () => {
           buildForm({
             name: "",
             year: "x",
-            hook: "",
+            description: "",
             blackPlayerSlug: "ghost",
           }),
         ),
       ).sort(),
-    ).toEqual(["blackPlayerSlug", "hook", "name", "year"])
+    ).toEqual([
+      "blackPlayerSlug",
+      "description",
+      "name",
+      "year",
+    ])
   })
 })
 

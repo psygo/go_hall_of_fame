@@ -24,9 +24,7 @@ function buildGame(
     white: "White",
     result: "B+R",
     setting: "Setting",
-    hook: "Hook",
-    moment: "Moment",
-    legacy: "Legacy",
+    description: "Hook",
     blackPlayerSlug: null,
     whitePlayerSlug: null,
     sgfUrl: null,
@@ -104,6 +102,19 @@ describe("searchGames", () => {
     expect(searchGames(games, "ear")).toEqual([games[0]])
     expect(searchGames(games, "sedol")).toEqual([games[1]])
     expect(searchGames(games, "1846")).toEqual([games[0]])
+  })
+
+  it("matches the description", () => {
+    const described = [
+      buildGame("a", {
+        description: "The ear-reddening move",
+      }),
+      buildGame("b", { description: "A quiet game" }),
+    ]
+
+    expect(searchGames(described, "reddening")).toEqual([
+      described[0],
+    ])
   })
 
   it("needs every word to match", () => {

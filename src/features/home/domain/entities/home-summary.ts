@@ -4,7 +4,7 @@ export type FeaturedGame = {
   readonly year: number
   readonly black: string
   readonly white: string
-  readonly hook: string
+  readonly description: string
 }
 
 export type FeaturedPlayer = {

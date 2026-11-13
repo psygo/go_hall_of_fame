@@ -26,6 +26,7 @@ const PAGE_TITLE: Readonly<
   games: "Games page",
   timeline: "Timeline page",
   induction: "Induction page",
+  resources: "Resources page",
 }
 
 export function SiteTextsForm({

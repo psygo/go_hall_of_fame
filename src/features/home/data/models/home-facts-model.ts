@@ -77,7 +77,7 @@ function parseGame(raw: unknown): FeaturedGame {
     year: readInteger(record, "year"),
     black: readString(record, "black"),
     white: readString(record, "white"),
-    hook: readString(record, "hook"),
+    description: readString(record, "description"),
   }
 }
 

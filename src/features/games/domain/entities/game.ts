@@ -13,9 +13,8 @@ export type Game = {
   readonly whitePlayerSlug: string | null
   readonly result: string
   readonly setting: string
-  readonly hook: string
-  readonly moment: string
-  readonly legacy: string
+  /** What the game is about, in Markdown. */
+  readonly description: string
   /** An SGF kept elsewhere (a site path or an https URL). */
   readonly sgfUrl: string | null
   /** An SGF file was uploaded; its text is served at /games/{slug}/sgf. */
@@ -102,7 +101,7 @@ export function searchGames(
         game.white,
         String(game.year),
         game.setting,
-        game.hook,
+        game.description,
       ],
       query,
     ),

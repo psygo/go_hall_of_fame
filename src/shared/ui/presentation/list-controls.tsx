@@ -98,7 +98,10 @@ export function ListControls({
         </div>
       )}
       {filters.map((filter) => (
-        <div key={filter.name} className="field m-0">
+        <div
+          key={filter.name}
+          className="field m-0 max-w-full min-w-0"
+        >
           <label htmlFor={`list-${filter.name}`}>
             {filter.label}
           </label>
@@ -121,7 +124,7 @@ export function ListControls({
           </select>
         </div>
       ))}
-      <div className="field m-0">
+      <div className="field m-0 max-w-full min-w-0">
         <label htmlFor="list-sort">Sort by</label>
         <select
           id="list-sort"

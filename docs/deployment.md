@@ -51,7 +51,9 @@ retired). The app talks to it with `pg`, so any Postgres works.
 
 + **Migrations since the first deploy.** `0002` adds the resources table, the Black/White player
   links and the stored SGF text; `0003` adds the password-reset links table; `0004` adds the highlighted move and the timeline
-  game link. Run `pnpm db:migrate`
+  game link; `0005` and `0006` merge a game's hook, moment and legacy into one description (copying
+  the text first, then dropping the old columns) and let the Resources page's links have no owner;
+  `0007` adds the `Others` country. Run `pnpm db:migrate`
   against the hosted database before deploying code that needs them.
 
 + **Previews and the database.** If Preview deployments get the same `DATABASE_URL` as Production,

@@ -36,6 +36,27 @@
       "when": 1794578381071,
       "tag": "0004_handy_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794579643514,
+      "tag": "0005_brainy_pete_wisdom",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794579649187,
+      "tag": "0006_brief_spencer_smythe",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794579867399,
+      "tag": "0007_fresh_wolverine",
+      "breakpoints": true
     }
   ]
 }

@@ -1676,7 +1676,8 @@ const y = "data-go-action", P = "data-go-counter", Mt = "data-go-disabled", zt =
   }
   .default-counter {
     grid-column: 3;
-    justify-self: end;
+    justify-self: start;
+    padding-left: 0.75rem;
     font-variant-numeric: tabular-nums;
     color: var(--go-controls-counter);
     font-size: 0.85rem;

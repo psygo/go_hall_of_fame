@@ -6,9 +6,9 @@ import { useEffect, useRef, useState } from "react"
 
 export type GamePreviewBoardProps = {
   readonly sgf: string
-  /** The move the preview stops on. */
+  /** The move the board rests on (and draws in the accent color), and where a replay stops. */
   readonly targetMove?: number
-  /** The pause between two moves while the preview plays. */
+  /** The pause between two moves while the game replays. */
   readonly intervalMs?: number
   readonly theme?: string
 }
@@ -17,8 +17,9 @@ const DEFAULT_TARGET_MOVE = 50
 const DEFAULT_INTERVAL_MS = 700
 
 /**
- * An interactive board that plays the game from the first move to `targetMove`, one move every
- * `intervalMs`, once it scrolls into view. People who prefer reduced motion get the final position.
+ * A board that cannot be played on. It rests on `targetMove`; while the pointer is on its card (or
+ * focus is inside it) the game replays from the first move, one move every `intervalMs`, and the
+ * board returns to `targetMove` when the pointer leaves. Reduced-motion users get no replay.
  */
 export function GamePreviewBoardClient({
   sgf,
@@ -29,43 +30,64 @@ export function GamePreviewBoardClient({
   const frame = useRef<HTMLDivElement>(null)
   const board = useRef<GoBoardElement>(null)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const element = frame.current
-    if (element === null) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true)
-      },
-      { threshold: 0.3 },
-    )
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
 
   useEffect(() => {
     const element = board.current
-    if (!isLoaded || !isVisible || element === null) return
+    if (!isLoaded || element === null) return
     element.setAttribute(
       "highlight-move",
       String(targetMove),
     )
-    const last = Math.min(targetMove, element.moveCount)
-    element.goToMove(0)
-    if (
-      window.matchMedia("(prefers-reduced-motion: reduce)")
-        .matches
-    ) {
-      element.goToMove(last)
-      return
+    element.goToMove(
+      Math.min(targetMove, element.moveCount),
+    )
+  }, [isLoaded, targetMove])
+
+  useEffect(() => {
+    const element = board.current
+    const card = frame.current?.closest("article")
+    if (!isLoaded || element === null || !card) return
+    const lastMove = () =>
+      Math.min(targetMove, element.moveCount)
+    let timer: ReturnType<typeof setInterval> | null = null
+
+    const stop = () => {
+      if (timer !== null) clearInterval(timer)
+      timer = null
     }
-    const timer = setInterval(() => {
-      if (element.moveIndex >= last) clearInterval(timer)
-      else element.nextMove()
-    }, intervalMs)
-    return () => clearInterval(timer)
-  }, [isLoaded, isVisible, targetMove, intervalMs])
+    const replay = (event: Event) => {
+      if (isTouch(event)) return
+      stop()
+      if (prefersReducedMotion()) return
+      element.goToMove(0)
+      timer = setInterval(() => {
+        if (element.moveIndex >= lastMove()) stop()
+        else element.nextMove()
+      }, intervalMs)
+    }
+    const rest = (event: Event) => {
+      if (isTouch(event)) return
+      if (
+        event.type === "pointerleave" &&
+        card.matches(":focus-within")
+      )
+        return
+      stop()
+      element.goToMove(lastMove())
+    }
+
+    card.addEventListener("pointerenter", replay)
+    card.addEventListener("pointerleave", rest)
+    card.addEventListener("focusin", replay)
+    card.addEventListener("focusout", rest)
+    return () => {
+      stop()
+      card.removeEventListener("pointerenter", replay)
+      card.removeEventListener("pointerleave", rest)
+      card.removeEventListener("focusin", replay)
+      card.removeEventListener("focusout", rest)
+    }
+  }, [isLoaded, targetMove, intervalMs])
 
   return (
     <div ref={frame} className="w-full">
@@ -74,9 +96,25 @@ export function GamePreviewBoardClient({
         sgf={sgf}
         theme={theme}
         coordinates="false"
+        interactive={false}
+        keyboardShortcuts={false}
         style={{ maxWidth: "100%" }}
         onSgfLoaded={() => setIsLoaded(true)}
       />
     </div>
+  )
+}
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches
+}
+
+/** A tap fires enter and leave at once, so touch gets no replay. */
+function isTouch(event: Event): boolean {
+  return (
+    event instanceof PointerEvent &&
+    event.pointerType === "touch"
   )
 }

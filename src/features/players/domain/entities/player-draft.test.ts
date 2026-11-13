@@ -254,7 +254,7 @@ describe("validatePlayerForm", () => {
   })
 
   describe("country", () => {
-    it.each(["Japan", "China", "Korea"])(
+    it.each(["Japan", "China", "Korea", "Others"])(
       "accepts %s",
       (country) => {
         expect(validate(buildForm({ country })).valid).toBe(
@@ -267,7 +267,7 @@ describe("validatePlayerForm", () => {
       "rejects %j",
       (country) => {
         expect(errorsOf(buildForm({ country }))).toEqual({
-          country: "Choose Japan, China, Korea.",
+          country: "Choose Japan, China, Korea, Others.",
         })
       },
     )

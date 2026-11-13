@@ -1,0 +1,1 @@
+ALTER TYPE "public"."country" ADD VALUE 'Others';

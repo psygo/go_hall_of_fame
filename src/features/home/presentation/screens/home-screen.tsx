@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 import { contentLoaders, homeLoaders } from "@/config/di"
-import { stripMarkdown } from "@/core/markdown"
+import { excerpt } from "@/core/markdown"
 import { fillPlaceholders } from "@/core/placeholders"
 import { HeroBoard } from "@/shared/go-board/presentation/hero-board"
 import { Portrait } from "@/shared/ui/presentation/portrait"
@@ -54,7 +54,7 @@ export async function HomeScreen() {
           囲碁殿堂
         </div>
         <div className="relative flex flex-col items-center gap-6 px-4 pt-10 pb-8 text-center min-[720px]:px-6 min-[720px]:pt-[72px] min-[720px]:pb-10">
-          <div className="flex items-center gap-3 font-mono text-xs tracking-[0.12em] uppercase">
+          <div className="flex items-center gap-4 font-mono text-base tracking-[0.12em] uppercase min-[720px]:text-2xl">
             <Image
               src="/logo.svg"
               alt=""
@@ -129,7 +129,7 @@ export async function HomeScreen() {
               {featuredGame.white}
             </div>
             <p className="max-w-[50ch]">
-              {stripMarkdown(featuredGame.hook)}
+              {excerpt(featuredGame.description)}
             </p>
             <Link href={`/games/${featuredGame.slug}`}>
               Read the game →
