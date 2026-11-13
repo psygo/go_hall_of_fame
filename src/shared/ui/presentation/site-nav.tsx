@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -40,10 +41,18 @@ export function SiteNav({ admin, signOut }: SiteNavProps) {
       >
         <Link
           href="/"
-          className="text-ink hover:text-ink mr-auto text-lg font-semibold no-underline"
+          className="text-ink hover:text-ink mr-auto flex items-center gap-3 text-lg font-semibold no-underline"
           onClick={() => setIsMenuOpen(false)}
         >
-          Go / Hall of Fame
+          <Image
+            src="/logo.svg"
+            alt=""
+            width={32}
+            height={32}
+            unoptimized
+            className="size-8"
+          />
+          Go | Hall of Fame
         </Link>
         <div className="hidden items-center gap-5 min-[720px]:flex">
           {NAV_ITEMS.map(({ href, label }) => (
