@@ -36,4 +36,4 @@ export function TagList({
 }
 
 const TAG_CLASS =
-  "border-divider text-stone inline-block border px-2 py-0.5 font-mono text-xs tracking-[0.08em] uppercase"
+  "border-divider text-ink inline-block border px-2 py-0.5 font-mono text-xs tracking-[0.08em] uppercase"

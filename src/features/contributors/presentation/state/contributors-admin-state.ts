@@ -145,6 +145,7 @@ function readContributorForm(
     slug: readFormText(formData, "slug"),
     name: readFormText(formData, "name"),
     kind: readFormText(formData, "kind"),
+    birthYear: readFormText(formData, "birthYear"),
     role: readFormText(formData, "role"),
     period: readFormText(formData, "period"),
     bio: readFormText(formData, "bio"),

@@ -61,7 +61,7 @@ export const playersTable = pgTable("players", {
 
 export const contributorKindEnum = pgEnum(
   "contributor_kind",
-  ["person", "organization"],
+  ["person", "organization", "entity"],
 )
 
 /** People and organizations that served the game without being legendary players. */
@@ -70,6 +70,8 @@ export const contributorsTable = pgTable("contributors", {
   slug: text().notNull().unique(),
   name: text().notNull(),
   kind: contributorKindEnum().notNull(),
+  /** The year of birth, or of founding for an organization: contributors are listed chronologically by it. */
+  birthYear: integer("birth_year").notNull(),
   /** What they did for Go, in a line: "Co-founder of DeepMind". */
   role: text().notNull(),
   /** Free text such as "2014–2017" or "since 1990". */

@@ -14,6 +14,7 @@ function buildContributor(slug: string): Contributor {
     name: slug,
     kind: "person",
     role: "Role",
+    birthYear: 1900,
     period: "",
     bio: "Bio",
     photoUrl: null,
@@ -35,6 +36,7 @@ function buildForm(
     name: "Fan Hui",
     kind: "person",
     role: "Played AlphaGo first",
+    birthYear: "1900",
     period: "2015",
     bio: "A European champion.",
     photoUrl: "/portraits/fan-hui.webp",
@@ -72,6 +74,7 @@ describe("validateContributorForm", () => {
         name: "Fan Hui",
         kind: "person",
         role: "Played AlphaGo first",
+        birthYear: 1900,
         period: "2015",
         bio: "A European champion.",
         photoUrl: "/portraits/fan-hui.webp",
@@ -179,7 +182,7 @@ describe("validateContributorForm", () => {
       "rejects %j",
       (kind) => {
         expect(errorsOf(buildForm({ kind })).kind).toBe(
-          "Choose person or organization.",
+          "Choose person, organization or entity.",
         )
       },
     )
@@ -216,6 +219,36 @@ describe("validateContributorForm", () => {
         )[field],
       ).toBe(`Use at most ${limit} characters.`)
     })
+  })
+
+  describe("birthYear", () => {
+    it("is kept as a number, trimmed", () => {
+      expect(
+        validate(buildForm({ birthYear: " 1829 " })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({ birthYear: 1829 }),
+      })
+    })
+
+    it.each(["1", "2999"])(
+      "accepts the boundary %s",
+      (birthYear) => {
+        expect(
+          validate(buildForm({ birthYear })).valid,
+        ).toBe(true)
+      },
+    )
+
+    it.each(["", "0", "3000", "-5", "abc", "18.5"])(
+      "rejects %j",
+      (birthYear) => {
+        expect(errorsOf(buildForm({ birthYear }))).toEqual({
+          birthYear:
+            "Enter the year of birth or founding, between 1 and 2999.",
+        })
+      },
+    )
   })
 
   describe("period", () => {
@@ -319,6 +352,7 @@ describe("validateContributorForm", () => {
           name: "",
           kind: "x",
           role: "",
+          birthYear: "x",
           period: "a".repeat(41),
           bio: "",
           photoUrl: "javascript:x",
@@ -329,6 +363,7 @@ describe("validateContributorForm", () => {
     ).toEqual(
       [
         "bio",
+        "birthYear",
         "kind",
         "name",
         "period",

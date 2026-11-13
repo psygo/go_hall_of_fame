@@ -37,6 +37,11 @@ export async function ContributorsScreen() {
                 <Portrait
                   photoUrl={contributor.photoUrl}
                   position={contributor.photoPosition}
+                  fit={
+                    contributor.kind === "person"
+                      ? "cover"
+                      : "contain"
+                  }
                   sizes="(min-width: 1200px) 300px, (min-width: 720px) 33vw, 100vw"
                   className="border-divider border-b"
                 />

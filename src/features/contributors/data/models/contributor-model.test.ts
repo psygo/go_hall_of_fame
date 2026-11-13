@@ -9,6 +9,7 @@ const validRaw = {
   name: "KGS",
   kind: "organization",
   role: "Server",
+  birthYear: 1900,
   period: "since 1999",
   bio: "Bio",
   photoUrl: "https://example.com/p.jpg",
@@ -66,6 +67,29 @@ describe("ContributorModel", () => {
     expect(() => ContributorModel.fromRawData(raw)).toThrow(
       InvalidRawDataError,
     )
+  })
+
+  it("accepts the entity kind", () => {
+    expect(
+      ContributorModel.fromRawData({
+        ...validRaw,
+        kind: "entity",
+      }).kind,
+    ).toBe("entity")
+  })
+
+  it.each([
+    ["missing", undefined],
+    ["a string", "1900"],
+    ["a decimal", 18.5],
+    ["null", null],
+  ])("throws when birthYear is %s", (_label, birthYear) => {
+    expect(() =>
+      ContributorModel.fromRawData({
+        ...validRaw,
+        birthYear,
+      }),
+    ).toThrow('"birthYear" must be an integer')
   })
 
   it("throws on an unknown kind", () => {

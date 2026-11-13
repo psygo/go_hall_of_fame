@@ -33,6 +33,10 @@ export async function AdminContributorEditorScreen({
             slug: contributor?.slug ?? "",
             name: contributor?.name ?? "",
             kind: contributor?.kind ?? "person",
+            birthYear:
+              contributor === null
+                ? ""
+                : String(contributor.birthYear),
             role: contributor?.role ?? "",
             period: contributor?.period ?? "",
             bio: contributor?.bio ?? "",

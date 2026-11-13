@@ -3,6 +3,7 @@ import {
   collectErrors,
   isReservedSlug,
   isSafeAssetUrl,
+  parseInteger,
   type FieldErrors,
   type Validation,
 } from "@/core/validation"
@@ -19,6 +20,8 @@ export type ContributorForm = {
   readonly slug: string
   readonly name: string
   readonly kind: string
+  /** The year of birth or founding, as typed. */
+  readonly birthYear: string
   readonly role: string
   readonly period: string
   readonly bio: string
@@ -31,6 +34,7 @@ export type ContributorDraft = {
   readonly slug: string
   readonly name: string
   readonly kind: ContributorKind
+  readonly birthYear: number
   readonly role: string
   readonly period: string
   readonly bio: string
@@ -46,6 +50,8 @@ export const CONTRIBUTOR_LIMITS = {
   role: 140,
   period: 40,
   bio: 2000,
+  minBirthYear: 1,
+  maxBirthYear: 2999,
 } as const
 
 export const DEFAULT_PHOTO_POSITION = "50% 50%"
@@ -65,6 +71,7 @@ export function validateContributorForm(
 ): Validation<ContributorDraft, ContributorErrors> {
   const name = form.name.trim()
   const slug = form.slug.trim() || slugify(name)
+  const birthYear = parseInteger(form.birthYear)
   const role = form.role.trim()
   const period = form.period.trim()
   const bio = form.bio.trim()
@@ -85,7 +92,8 @@ export function validateContributorForm(
     slug: slugError(slug, others),
     kind: isContributorKind(form.kind)
       ? undefined
-      : `Choose ${CONTRIBUTOR_KINDS.join(" or ")}.`,
+      : "Choose person, organization or entity.",
+    birthYear: birthYearError(birthYear),
     role: requiredText(
       role,
       CONTRIBUTOR_LIMITS.role,
@@ -112,6 +120,7 @@ export function validateContributorForm(
   })
   if (
     Object.keys(errors).length > 0 ||
+    birthYear === null ||
     !isContributorKind(form.kind)
   ) {
     return { valid: false, errors }
@@ -122,6 +131,7 @@ export function validateContributorForm(
       slug,
       name,
       kind: form.kind,
+      birthYear,
       role,
       period,
       bio,
@@ -141,6 +151,18 @@ function requiredText(
   return value.length > maxLength
     ? `Use at most ${maxLength} characters.`
     : undefined
+}
+
+function birthYearError(
+  year: number | null,
+): string | undefined {
+  const isValid =
+    year !== null &&
+    year >= CONTRIBUTOR_LIMITS.minBirthYear &&
+    year <= CONTRIBUTOR_LIMITS.maxBirthYear
+  return isValid
+    ? undefined
+    : `Enter the year of birth or founding, between ${CONTRIBUTOR_LIMITS.minBirthYear} and ${CONTRIBUTOR_LIMITS.maxBirthYear}.`
 }
 
 function slugError(

@@ -36,6 +36,7 @@ const contributor: Contributor = {
   name: "KGS",
   kind: "organization",
   role: "Server",
+  birthYear: 1900,
   period: "",
   bio: "Bio",
   photoUrl: null,
@@ -48,6 +49,7 @@ const fields = {
   name: "KGS",
   kind: "organization",
   role: "Server",
+  birthYear: "1900",
   period: "since 1999",
   bio: "Bio",
   photoUrl: "",
@@ -236,6 +238,22 @@ describe("saveFromForm", () => {
     })
   })
 
+  it("passes the birthYear field as typed", async () => {
+    const { state, save } = buildState()
+
+    await expect(
+      state.saveFromForm(
+        "new",
+        formDataOf({ ...fields, birthYear: "1829" }),
+      ),
+    ).rejects.toThrow()
+
+    expect(save).toHaveBeenCalledWith({
+      originalSlug: null,
+      form: expect.objectContaining({ birthYear: "1829" }),
+    })
+  })
+
   it("turns missing fields into empty strings", async () => {
     const { state, save } = buildState({
       saveResult: { status: "invalid", errors: {} },
@@ -250,6 +268,7 @@ describe("saveFromForm", () => {
         name: "",
         kind: "",
         role: "",
+        birthYear: "",
         period: "",
         bio: "",
         photoUrl: "",

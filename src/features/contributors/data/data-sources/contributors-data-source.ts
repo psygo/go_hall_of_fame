@@ -18,6 +18,7 @@ export class ContributorsDataSource {
       .from(contributorsTable)
       .where(isVisible(contributorsTable, includeDrafts))
       .orderBy(
+        asc(contributorsTable.birthYear),
         asc(contributorsTable.name),
         asc(contributorsTable.id),
       )

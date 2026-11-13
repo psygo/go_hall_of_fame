@@ -5,6 +5,10 @@
   the site does not host or serve the image files itself.
 + Shin Jinseo has no freely licensed portrait on Commons yet, so he shows the placeholder.
 
++ Game contributors: `prof-nam.jpg` (a photo supplied by the site owner) and `google-deepmind.png`
+  (the DeepMind logo, supplied by the site owner). Organizations and entities show their image whole
+  (`contain`) instead of cropped.
+
 ## Files
 
 + `kitani-minoru.jpg`: [Kitani_Minoru_1955.jpg](https://commons.wikimedia.org/wiki/File:Kitani_Minoru_1955.jpg), 木谷實, Public domain.

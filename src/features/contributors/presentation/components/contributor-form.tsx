@@ -83,6 +83,15 @@ export function ContributorForm({
         />
       </div>
       <TextField
+        name="birthYear"
+        label="Born or founded (year)"
+        type="number"
+        defaultValue={values.birthYear}
+        error={errors.birthYear}
+        hint="The year of birth, or of founding for an organization. Contributors are listed chronologically by it."
+        required
+      />
+      <TextField
         name="role"
         label="What they contributed"
         defaultValue={values.role}

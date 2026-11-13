@@ -29,6 +29,11 @@ export async function ContributorScreen({
           <Portrait
             photoUrl={contributor.photoUrl}
             position={contributor.photoPosition}
+            fit={
+              contributor.kind === "person"
+                ? "cover"
+                : "contain"
+            }
             sizes="(min-width: 1200px) 600px, 100vw"
           />
         </div>
@@ -42,9 +47,10 @@ export async function ContributorScreen({
             {contributor.name}
           </h1>
           <DraftBadge isDraft={contributor.isDraft} />
-          <div
-            className={`border-divider grid border-y ${contributor.period === "" ? "grid-cols-1" : "grid-cols-2"}`}
-          >
+          <div className="border-divider grid grid-cols-2 border-y">
+            <LabelledFact label="Born or founded">
+              {contributor.birthYear}
+            </LabelledFact>
             <LabelledFact label="Contribution">
               {contributor.role}
             </LabelledFact>

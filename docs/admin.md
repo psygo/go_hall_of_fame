@@ -30,7 +30,8 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   year.
 + **Game Contributors** (`/admin/contributors`, public page `/contributors`): the people and organizations that served the game without
   being legendary players (Demis Hassabis, DeepMind, a professor who built a baduk department).
-  Fields: name, kind (person or organization), what they contributed (one line), period (optional),
+  Fields: name, kind (person, organization or entity), year of birth or founding (they are listed
+  chronologically by it), what they contributed (one line), period (optional),
   Markdown biography, slug, photo path and crop, Draft. Public pages: `/contributors` (a grid) and
   `/contributors/<slug>`. Timeline events can link to them (see Timeline).
 + **Black and White links.** The game form has a "Black links to" and a "White links to" choice of

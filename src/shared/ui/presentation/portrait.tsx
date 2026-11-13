@@ -8,6 +8,8 @@ type PortraitProps = {
   readonly position: string
   readonly sizes: string
   readonly className?: string
+  /** "contain" shows a whole logo instead of cropping it. */
+  readonly fit?: "cover" | "contain"
 }
 
 export function Portrait({
@@ -15,6 +17,7 @@ export function Portrait({
   position,
   sizes,
   className = "",
+  fit = "cover",
 }: PortraitProps) {
   return (
     <div
@@ -25,7 +28,11 @@ export function Portrait({
         alt=""
         fill
         sizes={sizes}
-        className="object-cover"
+        className={
+          fit === "cover"
+            ? "object-cover"
+            : "bg-white object-contain p-6"
+        }
         style={{ objectPosition: position }}
       />
     </div>

@@ -30,6 +30,7 @@ const contributor: Contributor = {
   name: "KGS",
   kind: "organization",
   role: "Server",
+  birthYear: 1900,
   period: "",
   bio: "Bio",
   photoUrl: null,

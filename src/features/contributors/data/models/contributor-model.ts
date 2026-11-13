@@ -1,6 +1,7 @@
 import {
   asRecord,
   readBoolean,
+  readInteger,
   readNullableString,
   readOneOf,
   readString,
@@ -15,6 +16,7 @@ export class ContributorModel implements Contributor {
   declare readonly slug: string
   declare readonly name: string
   declare readonly kind: Contributor["kind"]
+  declare readonly birthYear: number
   declare readonly role: string
   declare readonly period: string
   declare readonly bio: string
@@ -32,6 +34,7 @@ export class ContributorModel implements Contributor {
       slug: readString(record, "slug"),
       name: readString(record, "name"),
       kind: readOneOf(record, "kind", CONTRIBUTOR_KINDS),
+      birthYear: readInteger(record, "birthYear"),
       role: readString(record, "role"),
       period: readString(record, "period"),
       bio: readString(record, "bio"),
