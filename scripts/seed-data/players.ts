@@ -161,7 +161,19 @@ const players: readonly Omit<
     years: "b. 2000",
     distinction: "Top Korean of the 2020s",
     bio: "Trained with AI from his early teens and rose to the top of the world rankings, defining the current generation.",
-    photoPosition: "10% 15%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/shin-jinseo.webp",
+    photoPosition: "50% 25%",
+  },
+  {
+    slug: "huang-longshi",
+    name: "Huang Longshi",
+    nativeName: "黃龍士",
+    country: "China",
+    years: "17th century",
+    distinction: "Master of the early Qing",
+    bio: "Regarded as the strongest player of China in the early Qing dynasty. His games were studied for generations, and the masters who followed him built the golden age of Chinese Go on what they learned from them.",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/huang-longshi.jpeg",
+    photoPosition: "50% 20%",
   },
 ]
 
