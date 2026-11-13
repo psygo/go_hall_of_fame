@@ -95,6 +95,12 @@ export async function HomeScreen() {
             <Link href="/games" className="btn btn-primary">
               Legendary Games
             </Link>
+            <Link
+              href="/timeline"
+              className="btn btn-primary"
+            >
+              {messages.timeline}
+            </Link>
           </div>
         </div>
       </section>
