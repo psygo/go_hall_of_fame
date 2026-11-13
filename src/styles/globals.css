@@ -10,7 +10,6 @@
   --stone: #f6f0e0;
   --stone-black: var(--ink);
   --photo-tint: var(--paper);
-  --photo-blend: multiply;
   --accent-600: color-mix(in srgb, var(--accent) 82%, #000);
   --accent-700: color-mix(in srgb, var(--accent) 65%, #000);
   --accent-800: color-mix(in srgb, var(--accent) 45%, #000);
@@ -49,7 +48,6 @@
     );
   --stone-black: var(--paper);
   --photo-tint: var(--surface);
-  --photo-blend: screen;
   color-scheme: dark;
 }
 
@@ -162,11 +160,6 @@
 
 .photo-frame {
   background-color: var(--photo-tint);
-}
-
-.photo-ink {
-  filter: grayscale(1) contrast(1.1);
-  mix-blend-mode: var(--photo-blend);
 }
 
 @layer components {

@@ -25,7 +25,7 @@ export function Portrait({
         alt=""
         fill
         sizes={sizes}
-        className="photo-ink object-cover"
+        className="object-cover"
         style={{ objectPosition: position }}
       />
     </div>

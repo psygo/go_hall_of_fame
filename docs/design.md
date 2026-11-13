@@ -46,8 +46,8 @@ All tokens are CSS variables in `src/styles/globals.css` and are exposed to Tail
 
 ## Photos
 
-Every player uses the one placeholder portrait (`public/images/placeholder-portrait.jpg`), cropped
-per player and shown in grayscale, as in the handoff. Real portraits need a licence (see [portraits.md](./portraits.md)). Set
+A player without a photo uses the one placeholder portrait (`public/images/placeholder-portrait.jpg`),
+cropped per player. Portraits are shown in their own colors (the handoff used grayscale; that was dropped). Real portraits need a licence (see [portraits.md](./portraits.md)). Set
 `players.photo_url` once you have one (a path under `public/`, or a host added to
 `images.remotePatterns`).
 
