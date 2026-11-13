@@ -16,6 +16,47 @@ type SortableEvent = {
   readonly title: string
 }
 
+const clamp = (position: number, length: number) =>
+  Math.min(Math.max(position, 0), length - 1)
+
+/** The buttons of a row: where each one sends the event (clamped to the list). */
+const MOVES = [
+  {
+    label: "⤒",
+    description: "Move to the top:",
+    target: () => 0,
+  },
+  {
+    label: "↑10",
+    description: "Move up 10:",
+    target: (index: number, length: number) =>
+      clamp(index - 10, length),
+  },
+  {
+    label: "↑",
+    description: "Move up:",
+    target: (index: number, length: number) =>
+      clamp(index - 1, length),
+  },
+  {
+    label: "↓",
+    description: "Move down:",
+    target: (index: number, length: number) =>
+      clamp(index + 1, length),
+  },
+  {
+    label: "↓10",
+    description: "Move down 10:",
+    target: (index: number, length: number) =>
+      clamp(index + 10, length),
+  },
+  {
+    label: "⤓",
+    description: "Move to the bottom:",
+    target: (_index: number, length: number) => length - 1,
+  },
+] as const
+
 function moved<T>(
   items: readonly T[],
   from: number,
@@ -39,7 +80,7 @@ export function SortableTimelineList({
   const [dragged, setDragged] = useState<number | null>(
     null,
   )
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
   const [failed, setFailed] = useState(false)
 
   function commit(next: readonly SortableEvent[]) {
@@ -61,10 +102,6 @@ export function SortableTimelineList({
 
   return (
     <>
-      <p className="px-4 pt-4 text-sm opacity-70">
-        Drag an event up or down to reorder the timeline
-        {isPending ? " (saving…)" : ""}.
-      </p>
       {failed && (
         <p
           role="alert"
@@ -106,28 +143,27 @@ export function SortableTimelineList({
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                type="button"
-                className="btn btn-secondary px-2.5"
-                aria-label={`Move “${event.title}” up`}
-                disabled={index === 0}
-                onClick={() =>
-                  commit(moved(order, index, index - 1))
-                }
-              >
-                ↑
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary px-2.5"
-                aria-label={`Move “${event.title}” down`}
-                disabled={index === order.length - 1}
-                onClick={() =>
-                  commit(moved(order, index, index + 1))
-                }
-              >
-                ↓
-              </button>
+              {MOVES.map((move) => {
+                const target = move.target(
+                  index,
+                  order.length,
+                )
+                return (
+                  <button
+                    key={move.label}
+                    type="button"
+                    className="btn btn-secondary px-2.5"
+                    aria-label={`${move.description} “${event.title}”`}
+                    title={move.description}
+                    disabled={target === index}
+                    onClick={() =>
+                      commit(moved(order, index, target))
+                    }
+                  >
+                    {move.label}
+                  </button>
+                )
+              })}
               <Link
                 href={`/admin/timeline/${event.id}`}
                 className="btn btn-secondary"
