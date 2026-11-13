@@ -13,7 +13,7 @@ const CONTRIBUTORS: readonly Contributor[] = [
   {
     name: "Philippe Fanaro",
     role: "roleCreator",
-    picture: "https://github.com/psygo.png?size=160",
+    picture: "/images/contributors/philippe-fanaro.jpg",
     href: "https://github.com/psygo",
   },
 ]

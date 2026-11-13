@@ -38,7 +38,7 @@ export async function ResourcesScreen({
             {resources.items.map((resource, index) => (
               <li key={`${index}-${resource.url}`}>
                 <a
-                  href={resource.title || resource.url}
+                  href={resource.url}
                   className="font-bold"
                   {...(resource.url.startsWith("https://")
                     ? {
@@ -47,7 +47,7 @@ export async function ResourcesScreen({
                       }
                     : {})}
                 >
-                  {resource.url}
+                  {resource.title || resource.url}
                 </a>
                 {resource.description !== null && (
                   <span> — {resource.description}</span>
