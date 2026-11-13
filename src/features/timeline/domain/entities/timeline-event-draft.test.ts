@@ -37,7 +37,7 @@ describe("validateTimelineEventForm", () => {
     expect(validate(buildForm())).toEqual({
       valid: true,
       draft: {
-        year: 1612,
+        year: "1612",
         title: "Founded",
         text: "The academy opens.",
         gameSlug: null,
@@ -57,7 +57,7 @@ describe("validateTimelineEventForm", () => {
     ).toEqual({
       valid: true,
       draft: {
-        year: 1612,
+        year: "1612",
         title: "Founded",
         text: "Text",
         gameSlug: null,
@@ -66,23 +66,37 @@ describe("validateTimelineEventForm", () => {
   })
 
   describe("year", () => {
-    it("accepts the boundaries 1 and 2999", () => {
-      expect(validate(buildForm({ year: "1" })).valid).toBe(
-        true,
-      )
+    it("accepts any label, trimmed", () => {
       expect(
-        validate(buildForm({ year: "2999" })).valid,
-      ).toBe(true)
+        validate(buildForm({ year: " Late 1800s " })),
+      ).toEqual({
+        valid: true,
+        draft: expect.objectContaining({
+          year: "Late 1800s",
+        }),
+      })
     })
 
-    it.each(["0", "3000", "-5", "", "abc", "16.5"])(
-      "rejects %j",
-      (year) => {
-        expect(errorsOf(buildForm({ year }))).toEqual({
-          year: "Enter a year between 1 and 2999.",
-        })
-      },
-    )
+    it.each(["", "   "])("requires a year (%j)", (year) => {
+      expect(errorsOf(buildForm({ year }))).toEqual({
+        year: "Enter a year or period.",
+      })
+    })
+
+    it("accepts the limit and rejects one over", () => {
+      const limit = TIMELINE_LIMITS.year
+      expect(
+        validate(buildForm({ year: "a".repeat(limit) }))
+          .valid,
+      ).toBe(true)
+      expect(
+        errorsOf(
+          buildForm({ year: "a".repeat(limit + 1) }),
+        ),
+      ).toEqual({
+        year: `Use at most ${limit} characters.`,
+      })
+    })
   })
 
   describe("title", () => {
@@ -148,7 +162,7 @@ describe("validateTimelineEventForm", () => {
     expect(
       Object.keys(
         errorsOf({
-          year: "x",
+          year: "",
           title: "",
           text: "",
           gameSlug: "ghost",

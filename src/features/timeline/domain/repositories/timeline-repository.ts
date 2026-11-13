@@ -20,5 +20,7 @@ export interface TimelineRepository {
     draft: TimelineEventDraft,
     id: number | null,
   ): Promise<DataState<void>>
+  /** Gives the events the positions of `ids`: the first id shows first. */
+  reorder(ids: readonly number[]): Promise<DataState<void>>
   delete(id: number): Promise<DataState<void>>
 }

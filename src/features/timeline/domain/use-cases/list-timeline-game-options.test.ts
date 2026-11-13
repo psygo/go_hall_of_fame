@@ -14,6 +14,7 @@ function build(
     listGameOptions,
     save: vi.fn(),
     delete: vi.fn(),
+    reorder: vi.fn(),
   }
 }
 

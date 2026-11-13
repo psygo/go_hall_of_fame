@@ -38,7 +38,7 @@ import {
 
 const event: TimelineEvent = {
   id: 3,
-  year: 1612,
+  year: "1612",
   title: "Founded",
   text: "Text",
   game: null,
@@ -67,6 +67,7 @@ function buildState({
   getResult = succeed<TimelineEvent | null>(event),
   listResult = succeed<readonly TimelineEvent[]>([event]),
   deleteResult = succeed(undefined),
+  reorderResult = succeed(undefined),
   gameOptionsResult = succeed<
     readonly TimelineGameReference[]
   >([{ slug: "alphago-game-4", name: "AlphaGo" }]),
@@ -78,6 +79,9 @@ function buildState({
     | ReturnType<typeof fail>
   listResult?:
     | ReturnType<typeof succeed<readonly TimelineEvent[]>>
+    | ReturnType<typeof fail>
+  reorderResult?:
+    | ReturnType<typeof succeed<void>>
     | ReturnType<typeof fail>
   deleteResult?:
     | ReturnType<typeof succeed<void>>
@@ -93,6 +97,7 @@ function buildState({
     get: vi.fn(async () => getResult),
     save: vi.fn(async () => saveResult),
     remove: vi.fn(async () => deleteResult),
+    reorderEvents: vi.fn(async () => reorderResult),
     gameOptions: vi.fn(async () => gameOptionsResult),
   }
   const dependencies: TimelineAdminDependencies = {
@@ -101,6 +106,7 @@ function buildState({
     getTimelineEvent: { call: useCases.get },
     saveTimelineEvent: { call: useCases.save },
     deleteTimelineEvent: { call: useCases.remove },
+    reorderTimelineEvents: { call: useCases.reorderEvents },
     listGameOptions: { call: useCases.gameOptions },
   }
   return {
@@ -130,12 +136,7 @@ describe("loadAdminTimeline", () => {
   it("returns the events after checking the admin", async () => {
     const { state, requireAdmin, list } = buildState()
 
-    expect(await state.loadAdminTimeline()).toEqual({
-      items: [event],
-      page: 1,
-      pageCount: 1,
-      total: 1,
-    })
+    expect(await state.loadAdminTimeline()).toEqual([event])
     expect(
       requireAdmin.mock.invocationCallOrder[0],
     ).toBeLessThan(list.mock.invocationCallOrder[0])
@@ -339,6 +340,56 @@ describe("saveFromForm", () => {
   })
 })
 
+describe("reorder", () => {
+  it("checks the admin first, reorders and revalidates", async () => {
+    const { state, requireAdmin, reorderEvents } =
+      buildState()
+
+    await state.reorder([3, 1, 2])
+
+    expect(reorderEvents).toHaveBeenCalledWith({
+      ids: [3, 1, 2],
+    })
+    expect(
+      requireAdmin.mock.invocationCallOrder[0],
+    ).toBeLessThan(
+      reorderEvents.mock.invocationCallOrder[0],
+    )
+    expect(revalidatePath).toHaveBeenCalledWith(
+      "/",
+      "layout",
+    )
+  })
+
+  it("throws, logging only the error name, without revalidating", async () => {
+    const cause = new Error("secret detail")
+    const { state } = buildState({
+      reorderResult: fail(cause),
+    })
+
+    await expect(state.reorder([1])).rejects.toThrow(
+      "The change could not be saved.",
+    )
+    expect(console.error).toHaveBeenCalledWith(
+      "Could not reorder the timeline:",
+      "Error",
+    )
+    expect(revalidatePath).not.toHaveBeenCalled()
+  })
+
+  it("does nothing when the admin check rejects", async () => {
+    const { state, reorderEvents } = buildState({
+      requireAdmin: rejectingAdmin(),
+    })
+
+    await expect(state.reorder([1])).rejects.toThrow(
+      "NEXT_REDIRECT:/admin/sign-in",
+    )
+    expect(reorderEvents).not.toHaveBeenCalled()
+    expect(revalidatePath).not.toHaveBeenCalled()
+  })
+})
+
 describe("deleteById", () => {
   it("deletes, revalidates and redirects to the list", async () => {
     const { state, remove } = buildState()
@@ -376,29 +427,6 @@ describe("deleteById", () => {
       "NEXT_REDIRECT:/admin/sign-in",
     )
     expect(remove).not.toHaveBeenCalled()
-  })
-})
-
-describe("loadAdminTimeline pagination", () => {
-  const many = Array.from({ length: 16 }, (_, index) => ({
-    ...event,
-    id: index + 1,
-  }))
-
-  it("returns the requested page, clamped and tolerant", async () => {
-    const { state } = buildState({
-      listResult: succeed(many),
-    })
-
-    expect(
-      (await state.loadAdminTimeline("2")).items,
-    ).toHaveLength(1)
-    expect((await state.loadAdminTimeline("99")).page).toBe(
-      2,
-    )
-    expect((await state.loadAdminTimeline("x")).page).toBe(
-      1,
-    )
   })
 })
 

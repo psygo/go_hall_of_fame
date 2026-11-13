@@ -86,8 +86,6 @@ export function TimelineFeed({
         className="py-4 text-center text-sm"
       >
         {isLoading && "Loading more of the timeline…"}
-        {nextOffset === null &&
-          "That is the whole timeline."}
         {hasFailed && (
           <button
             type="button"

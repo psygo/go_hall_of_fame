@@ -10,6 +10,10 @@ import {
 
 import { HomeFactsModel } from "../models/home-facts-model"
 
+const yearNumber = sql<
+  number | null
+>`nullif(substring(${timelineEventsTable.year} from '[0-9]{3,4}'), '')::int`
+
 export class HomeDataSource {
   constructor(private readonly database: Database) {}
 
@@ -48,8 +52,9 @@ export class HomeDataSource {
   private async fetchTimelineSpan() {
     const [row] = await this.database
       .select({
-        firstYear: min(timelineEventsTable.year),
-        lastYear: max(timelineEventsTable.year),
+        // The years are text now: use the first 3-4 digit number of each ("c. 1670" gives 1670).
+        firstYear: min(yearNumber),
+        lastYear: max(yearNumber),
       })
       .from(timelineEventsTable)
     return row

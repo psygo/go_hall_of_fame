@@ -6,7 +6,8 @@ export type TimelineGameReference = {
 
 export type TimelineEvent = {
   readonly id: number
-  readonly year: number
+  /** As written: old events have no exact date ("c. 1670"). */
+  readonly year: string
   readonly title: string
   readonly text: string
   readonly game: TimelineGameReference | null

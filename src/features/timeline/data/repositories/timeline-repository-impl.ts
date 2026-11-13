@@ -35,6 +35,12 @@ export class TimelineRepositoryImpl implements TimelineRepository {
     )
   }
 
+  reorder(ids: readonly number[]) {
+    return captureDataState(() =>
+      this.dataSource.reorder(ids),
+    )
+  }
+
   delete(id: number) {
     return captureDataState(() =>
       this.dataSource.delete(id),

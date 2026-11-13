@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm"
+import { asc, eq, max } from "drizzle-orm"
 
 import type { Database } from "@/shared/database/data/database"
 import {
@@ -30,7 +30,7 @@ export class TimelineDataSource {
         eq(timelineEventsTable.gameId, gamesTable.id),
       )
       .orderBy(
-        asc(timelineEventsTable.year),
+        asc(timelineEventsTable.position),
         asc(timelineEventsTable.id),
       )
     return rows.map((row) =>
@@ -77,9 +77,16 @@ export class TimelineDataSource {
     const gameId = await this.findGameId(gameSlug)
     const values = { ...fields, gameId }
     if (id === null) {
+      // A new event goes to the end of the timeline; dragging in the admin moves it.
+      const [last] = await this.database
+        .select({ top: max(timelineEventsTable.position) })
+        .from(timelineEventsTable)
       await this.database
         .insert(timelineEventsTable)
-        .values(values)
+        .values({
+          ...values,
+          position: (last?.top ?? -1) + 1,
+        })
       return
     }
     await this.database
@@ -97,6 +104,17 @@ export class TimelineDataSource {
       .from(gamesTable)
       .where(eq(gamesTable.slug, slug))
     return row?.id ?? null
+  }
+
+  async reorder(ids: readonly number[]): Promise<void> {
+    await this.database.transaction(async (tx) => {
+      for (const [position, id] of ids.entries()) {
+        await tx
+          .update(timelineEventsTable)
+          .set({ position })
+          .where(eq(timelineEventsTable.id, id))
+      }
+    })
   }
 
   async delete(id: number): Promise<void> {

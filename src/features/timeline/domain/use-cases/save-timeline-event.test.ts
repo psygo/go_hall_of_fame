@@ -25,6 +25,7 @@ function buildRepository(
     ),
     save: vi.fn(async () => succeed(undefined)),
     delete: vi.fn(),
+    reorder: vi.fn(),
     ...overrides,
   }
 }
@@ -40,7 +41,7 @@ describe("SaveTimelineEvent", () => {
     expect(result).toEqual({ status: "saved" })
     expect(repository.save).toHaveBeenCalledWith(
       {
-        year: 1612,
+        year: "1612",
         title: "The Four Houses",
         text: "Go gets state backing.",
         gameSlug: null,

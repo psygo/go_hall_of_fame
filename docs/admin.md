@@ -42,9 +42,11 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   each tag links to the list searched for it, and the search boxes also match tags.
 + **Resources.** Games and players have a Resources list: a link and an optional description each,
   shown as a bulleted list on the public page. Links must be https or a path on this site.
-+ **Timeline** (`/admin/timeline`): events with a year, title and text, and optionally a game: the
-  whole event is then a link to that game's page (links inside its text still work). The side an event appears on
-  is computed: events alternate, and events within five years of the previous one stay on its side.
++ **Timeline** (`/admin/timeline`): events with a year (free text, because old events have no exact
+  date: `1846`, `c. 1670`, `Late 17th century`), a title and text, and optionally a game: the whole
+  event is then a link to that game's page (links inside its text still work). **Drag an event up or
+  down** to reorder the timeline (the ↑ ↓ buttons do the same from the keyboard); a new event goes to
+  the end. Events alternate sides of the line in that order.
 + **Resources** (`/admin/resources`): the links of the public Resources page (`/resources`): a link and
   an optional description each, as a bulleted list. Its heading and eyebrow are editable under Pages.
 + **Criteria** (`/admin/criteria`): the induction criteria.

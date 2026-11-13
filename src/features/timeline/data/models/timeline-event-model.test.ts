@@ -6,7 +6,7 @@ import { TimelineEventModel } from "./timeline-event-model"
 
 const validRaw = {
   id: 4,
-  year: 1612,
+  year: "c. 1612",
   title: "Founded",
   text: "Text",
 }
@@ -16,7 +16,7 @@ describe("TimelineEventModel", () => {
     const model = TimelineEventModel.fromRawData(validRaw)
 
     expect(model.id).toBe(4)
-    expect(model.year).toBe(1612)
+    expect(model.year).toBe("c. 1612")
     expect(model.title).toBe("Founded")
     expect(model.text).toBe("Text")
   })
@@ -51,19 +51,13 @@ describe("TimelineEventModel", () => {
     },
   )
 
-  it("throws when the year is not an integer", () => {
+  it("throws when the year is not a string", () => {
     expect(() =>
       TimelineEventModel.fromRawData({
         ...validRaw,
-        year: "1612",
+        year: 1612,
       }),
-    ).toThrow('"year" must be an integer')
-    expect(() =>
-      TimelineEventModel.fromRawData({
-        ...validRaw,
-        year: 1.5,
-      }),
-    ).toThrow(InvalidRawDataError)
+    ).toThrow('"year" must be a string')
   })
 
   it("throws when the raw data is not an object", () => {

@@ -19,7 +19,6 @@ export const ru: Messages = {
   contributors: "Участники",
   contributorsIntro: "Люди, создавшие этот сайт.",
   roleCreator: "Автор и сопровождающий",
-  roleAssistant: "ИИ-напарник по программированию",
   homeTitle:
     "Произведения искусства и легендарные игроки в истории го.",
   homeIntro:

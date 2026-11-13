@@ -7,13 +7,13 @@ import { TimelineRepositoryImpl } from "./timeline-repository-impl"
 
 const rawEvent = {
   id: 7,
-  year: 1612,
+  year: "1612",
   title: "Founded",
   text: "Text",
 }
 
 const draft: TimelineEventDraft = {
-  year: 1612,
+  year: "1612",
   title: "Founded",
   text: "Text",
   gameSlug: null,
@@ -160,6 +160,29 @@ describe("TimelineRepositoryImpl", () => {
         await buildRepository({
           upsert: throwing(cause),
         }).save(draft, null),
+      ).toEqual({ status: "failure", error: cause })
+    })
+  })
+
+  describe("reorder", () => {
+    it("passes the ids to the data source", async () => {
+      const reorder = vi.fn(async () => undefined)
+
+      const state = await buildRepository({
+        reorder,
+      }).reorder([3, 1, 2])
+
+      expect(reorder).toHaveBeenCalledWith([3, 1, 2])
+      expect(state.status).toBe("success")
+    })
+
+    it("returns a failure when the data source throws", async () => {
+      const cause = new Error("db down")
+
+      expect(
+        await buildRepository({
+          reorder: throwing(cause),
+        }).reorder([1]),
       ).toEqual({ status: "failure", error: cause })
     })
   })

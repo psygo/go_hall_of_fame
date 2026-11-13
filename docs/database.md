@@ -26,7 +26,7 @@ generated into `drizzle/` and tracked in git.
     Hall), `name`, `native_name`, `country` (enum `Japan | China | Korea | Others`), `years` (free text such
     as `1645–1702` or `b. 1983`), `distinction`, `bio`.
   + `photo_url` (null falls back to the placeholder portrait; use a path under `public/`, since
-    an absolute URL needs its host added to `images.remotePatterns` in `next.config.ts` first) and `photo_position` (CSS
+    an absolute URL needs its host in `images.remotePatterns` in `next.config.ts`; the portraits in `public/portraits/` are linked as `https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/<slug>.jpg`, see [portraits.md](./portraits.md)) and `photo_position` (CSS
     `object-position`, so one photo can be cropped per player).
 + `games`: one row per legendary game.
   + `slug` (unique), `year`, `name`, `black`, `white`, `result`, `setting`, `description` (Markdown;
@@ -48,7 +48,7 @@ generated into `drizzle/` and tracked in git.
   (`player_id`): a check constraint forbids both. With neither set, the row belongs to the public Resources page. `position` keeps the order.
 + `password_resets`: one-time reset links (`admin_id` cascade, `token_hash` unique, `expires_at`,
   `used_at`). Only the token's SHA-256 is stored.
-+ `timeline_events`: `game_id` (nullable, `set null` on delete) links an event to a game. Also `year`, `title`, `text`.
++ `timeline_events`: `game_id` (nullable, `set null` on delete) links an event to a game. Also `year` (free text), `position` (set by dragging in the admin), `title`, `text`.
 + `criteria`: the four induction criteria (`position` unique, `title`, `text`).
 + `admins`: `email` (unique), `name`, `password_hash` (scrypt), `failed_attempts`, `locked_until`.
 + `admin_sessions`: `admin_id` (cascade), `token_hash` (unique, SHA-256 of the cookie token),

@@ -9,7 +9,7 @@ import { ListTimelineChunk } from "./list-timeline-chunk"
 
 const eventIn = (year: number): TimelineEvent => ({
   id: year,
-  year,
+  year: String(year),
   title: `T${year}`,
   text: "x",
   game: null,
@@ -24,6 +24,7 @@ function buildRepository(
     listGameOptions: vi.fn(),
     save: vi.fn(),
     delete: vi.fn(),
+    reorder: vi.fn(),
   }
 }
 

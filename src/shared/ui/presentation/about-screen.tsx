@@ -3,7 +3,7 @@ import { getMessages } from "@/shared/i18n/presentation/server-locale"
 
 type Contributor = {
   readonly name: string
-  readonly role: "roleCreator" | "roleAssistant"
+  readonly role: "roleCreator"
   readonly picture: string
   readonly href?: string
 }
@@ -14,11 +14,6 @@ const CONTRIBUTORS: readonly Contributor[] = [
     role: "roleCreator",
     picture: "https://github.com/psygo.png?size=160",
     href: "https://github.com/psygo",
-  },
-  {
-    name: "Claude",
-    role: "roleAssistant",
-    picture: "/images/contributors/claude.svg",
   },
 ]
 

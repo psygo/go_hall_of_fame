@@ -17,7 +17,6 @@ export const en = {
   contributors: "Contributors",
   contributorsIntro: "The people who made this site.",
   roleCreator: "Creator and maintainer",
-  roleAssistant: "AI pair programmer",
   homeTitle:
     "The works of art and the legendary players in the history of Go.",
   homeIntro:

@@ -18,7 +18,8 @@ const players: readonly Omit<
     years: "1645–1702",
     distinction: "4th Honinbo",
     bio: "Called the Sage of Go. He raised the Edo-era game to a new standard of reading and positional judgement, and his style shaped the next two centuries of professional play.",
-    photoPosition: "50% 20%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/honinbo-dosaku.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "honinbo-shusaku",
@@ -28,7 +29,8 @@ const players: readonly Omit<
     years: "1829–1862",
     distinction: "19 straight castle-game wins",
     bio: "Died at 33 yet remains the model of classical Go. Unbeaten in his castle games before the shogun, he is remembered for the Ear-Reddening Game and a fuseki that still carries his name.",
-    photoPosition: "15% 40%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/honinbo-shusaku.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "kitani-minoru",
@@ -38,7 +40,8 @@ const players: readonly Omit<
     years: "1909–1975",
     distinction: "Teacher of a generation",
     bio: "With Go Seigen he launched the New Fuseki movement in 1933, then ran a famous live-in school that produced champions, among them Cho Chikun.",
-    photoPosition: "85% 30%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/kitani-minoru.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "go-seigen",
@@ -48,7 +51,8 @@ const players: readonly Omit<
     years: "1914–2014",
     distinction: "Won the ten-game matches",
     bio: "A prodigy from China who moved to Japan and rewrote opening theory. He played in the Game of the Century and, through the 1940s and 1950s, defeated every top rival in long jubango matches.",
-    photoPosition: "55% 75%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/go-seigen.jpg",
+    photoPosition: "50% 35%",
   },
   {
     slug: "sakata-eio",
@@ -58,7 +62,8 @@ const players: readonly Omit<
     years: "1920–2010",
     distinction: "64 titles",
     bio: "Nicknamed Razor Sakata for his sharp, fighting style. He dominated postwar Japanese Go and won 64 titles.",
-    photoPosition: "30% 85%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/sakata-eio.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "nie-weiping",
@@ -68,7 +73,8 @@ const players: readonly Omit<
     years: "b. 1952",
     distinction: "11 straight Super Go wins",
     bio: "Hero of Chinese Go in the 1980s. His run in the China–Japan Super Go matches turned a national sport into a national event.",
-    photoPosition: "75% 55%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/nie-weiping.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "cho-hunhyun",
@@ -78,7 +84,8 @@ const players: readonly Omit<
     years: "b. 1953",
     distinction: "Mentor to Lee Changho",
     bio: "The father of modern Korean Go. He trained in Japan, returned to lead the Korean game, and taught Lee Changho.",
-    photoPosition: "10% 15%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/cho-hunhyun.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "cho-chikun",
@@ -88,7 +95,8 @@ const players: readonly Omit<
     years: "b. 1956",
     distinction: "75 titles",
     bio: "Born in Korea, raised in Kitani’s school in Japan. A relentless fighter with a record title count in the Japanese game.",
-    photoPosition: "50% 20%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/cho-chikun.jpg",
+    photoPosition: "50% 35%",
   },
   {
     slug: "rui-naiwei",
@@ -98,7 +106,8 @@ const players: readonly Omit<
     years: "b. 1963",
     distinction: "Women’s Go benchmark",
     bio: "The strongest woman player of the modern era. She competed on equal terms with the best men in China, Japan and Korea.",
-    photoPosition: "15% 40%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/rui-naiwei.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "lee-changho",
@@ -108,7 +117,8 @@ const players: readonly Omit<
     years: "b. 1975",
     distinction: "17 world titles",
     bio: "Called the Stone Buddha for his calm. He turned over-the-board patience into the most successful world-title record of his era.",
-    photoPosition: "85% 30%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/lee-changho.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "lee-sedol",
@@ -118,7 +128,8 @@ const players: readonly Omit<
     years: "b. 1983",
     distinction: "18 world titles",
     bio: "Known as the Strong Stone. His fourth-game win over AlphaGo in 2016 remains the only human win against the program in a match.",
-    photoPosition: "55% 75%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/lee-sedol.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "iyama-yuta",
@@ -128,7 +139,8 @@ const players: readonly Omit<
     years: "b. 1989",
     distinction: "Two-time Seven-Crown holder",
     bio: "Held all seven major Japanese titles at once, a feat he has achieved twice.",
-    photoPosition: "30% 85%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/iyama-yuta.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "ke-jie",
@@ -138,7 +150,8 @@ const players: readonly Omit<
     years: "b. 1997",
     distinction: "World No. 1 for years",
     bio: "Reached the top as a teenager and led the Chinese ascent of the 2010s. In 2017 he faced AlphaGo in Wuzhen.",
-    photoPosition: "75% 55%",
+    photoUrl: "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/ke-jie.jpg",
+    photoPosition: "50% 25%",
   },
   {
     slug: "shin-jinseo",

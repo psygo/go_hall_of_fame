@@ -7,6 +7,7 @@ import { GetTimelineEvent } from "@/features/timeline/domain/use-cases/get-timel
 import { ListTimelineChunk } from "@/features/timeline/domain/use-cases/list-timeline-chunk"
 import { ListTimelineGameOptions } from "@/features/timeline/domain/use-cases/list-timeline-game-options"
 import { ListTimelineEvents } from "@/features/timeline/domain/use-cases/list-timeline-events"
+import { ReorderTimelineEvents } from "@/features/timeline/domain/use-cases/reorder-timeline-events"
 import { SaveTimelineEvent } from "@/features/timeline/domain/use-cases/save-timeline-event"
 import { createTimelineAdminState } from "@/features/timeline/presentation/state/timeline-admin-state"
 import { createTimelineLoaders } from "@/features/timeline/presentation/state/timeline-loaders"
@@ -31,5 +32,8 @@ export const timelineAdminState = createTimelineAdminState({
   getTimelineEvent: new GetTimelineEvent(repository),
   listGameOptions: new ListTimelineGameOptions(repository),
   saveTimelineEvent: new SaveTimelineEvent(repository),
+  reorderTimelineEvents: new ReorderTimelineEvents(
+    repository,
+  ),
   deleteTimelineEvent: new DeleteTimelineEvent(repository),
 })

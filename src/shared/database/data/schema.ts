@@ -149,7 +149,10 @@ export const timelineEventsTable = pgTable(
         onDelete: "set null",
       },
     ),
-    year: integer().notNull(),
+    /** As written, because old events have no exact date: "1846", "c. 1670", "Late 17th century". */
+    year: text().notNull(),
+    /** The place in the timeline, set by dragging in the admin (0 is first). */
+    position: integer().notNull().default(0),
     title: text().notNull(),
     text: text().notNull(),
   },

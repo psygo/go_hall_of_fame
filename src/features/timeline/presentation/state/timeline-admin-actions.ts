@@ -12,6 +12,12 @@ export async function saveTimelineEventAction(
   return timelineAdminState.saveFromForm(idParam, formData)
 }
 
+export async function reorderTimelineAction(
+  ids: number[],
+): Promise<void> {
+  return timelineAdminState.reorder(ids)
+}
+
 export async function deleteTimelineEventAction(
   id: number,
 ): Promise<void> {

@@ -11,7 +11,7 @@ describe("ListTimelineEvents", () => {
     const events: TimelineEvent[] = [
       {
         id: 1,
-        year: 1612,
+        year: "1612",
         title: "Founded",
         text: "Text",
         game: null,
@@ -22,6 +22,7 @@ describe("ListTimelineEvents", () => {
       listGameOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
+      reorder: vi.fn(),
       listAll: vi.fn(async () => succeed(events)),
     }
 
@@ -37,6 +38,7 @@ describe("ListTimelineEvents", () => {
       listGameOptions: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
+      reorder: vi.fn(),
       listAll: vi.fn(async () => failure),
     }
 

@@ -19,7 +19,6 @@ export const zh: Messages = {
   contributors: "贡献者",
   contributorsIntro: "制作这个网站的人。",
   roleCreator: "创建者与维护者",
-  roleAssistant: "AI 编程搭档",
   homeTitle: "围棋历史上的艺术杰作与传奇棋手。",
   homeIntro:
     "那些标志性的杰作，以及在这项最复杂的游戏中留下印记的艺术家。",

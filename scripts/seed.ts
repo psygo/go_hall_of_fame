@@ -75,9 +75,12 @@ async function linkGameToPlayers(
 
 async function seedTimelineAndCriteria() {
   await db.delete(timelineEventsTable)
-  await db
-    .insert(timelineEventsTable)
-    .values([...timelineSeeds])
+  await db.insert(timelineEventsTable).values(
+    timelineSeeds.map((seed, position) => ({
+      ...seed,
+      position,
+    })),
+  )
   for (const criterion of criteriaSeeds) {
     await db
       .insert(criteriaTable)

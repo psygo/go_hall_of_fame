@@ -5,13 +5,6 @@ import { connection } from "next/server"
 import type { RequireAdmin } from "@/core/admin-guard"
 import type { AdminFormState } from "@/core/admin-form-state"
 import {
-  ADMIN_PAGE_SIZE,
-  paginate,
-  readPageParam,
-  type Page,
-  type QueryParam,
-} from "@/core/list-query"
-import {
   unwrapDataState,
   type DataState,
 } from "@/core/data-state"
@@ -31,6 +24,7 @@ import type {
   TimelineEventErrors,
   TimelineEventForm,
 } from "../../domain/entities/timeline-event-draft"
+import type { ReorderTimelineEventsParams } from "../../domain/params/reorder-timeline-events-params"
 import type { SaveTimelineEventParams } from "../../domain/params/save-timeline-event-params"
 import type { TimelineEventIdParams } from "../../domain/params/timeline-event-id-params"
 
@@ -59,6 +53,10 @@ export type TimelineAdminDependencies = {
     SaveTimelineEventParams,
     SaveResult<TimelineEventErrors>
   >
+  readonly reorderTimelineEvents: UseCase<
+    ReorderTimelineEventsParams,
+    DataState<void>
+  >
   readonly deleteTimelineEvent: UseCase<
     TimelineEventIdParams,
     DataState<void>
@@ -68,18 +66,14 @@ export type TimelineAdminDependencies = {
 export function createTimelineAdminState(
   dependencies: TimelineAdminDependencies,
 ) {
-  async function loadAdminTimeline(
-    pageParam?: QueryParam,
-  ): Promise<Page<TimelineEvent>> {
+  /** Every event, in timeline order: the admin reorders the whole list by dragging. */
+  async function loadAdminTimeline(): Promise<
+    readonly TimelineEvent[]
+  > {
     await connection()
     await dependencies.requireAdmin()
-    const all = unwrapDataState(
+    return unwrapDataState(
       await dependencies.listTimelineEvents.call({}),
-    )
-    return paginate(
-      all,
-      readPageParam(pageParam),
-      ADMIN_PAGE_SIZE,
     )
   }
 
@@ -152,6 +146,22 @@ export function createTimelineAdminState(
     }
   }
 
+  async function reorder(
+    ids: readonly number[],
+  ): Promise<void> {
+    await dependencies.requireAdmin()
+    const reordered =
+      await dependencies.reorderTimelineEvents.call({ ids })
+    if (reordered.status === "failure") {
+      console.error(
+        "Could not reorder the timeline:",
+        reordered.error.name,
+      )
+      throw new Error("The change could not be saved.")
+    }
+    revalidatePath("/", "layout")
+  }
+
   async function deleteById(id: number): Promise<void> {
     await dependencies.requireAdmin()
     const deleted =
@@ -172,6 +182,7 @@ export function createTimelineAdminState(
     loadEditor,
     loadGameOptions,
     saveFromForm,
+    reorder,
     deleteById,
   }
 }

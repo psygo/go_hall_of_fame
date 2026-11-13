@@ -1,6 +1,16 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  images: {
+    // Player portraits live in this repository (public/portraits) and are served from GitHub.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
+        pathname: "/psygo/go_hall_of_fame/**",
+      },
+    ],
+  },
   async headers() {
     return [
       {

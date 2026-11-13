@@ -12,7 +12,7 @@ import type {
 
 export class TimelineEventModel implements TimelineEvent {
   declare readonly id: number
-  declare readonly year: number
+  declare readonly year: string
   declare readonly title: string
   declare readonly text: string
   declare readonly game: TimelineGameReference | null
@@ -25,7 +25,7 @@ export class TimelineEventModel implements TimelineEvent {
     const record = asRecord(raw, "timeline event")
     return new TimelineEventModel({
       id: readInteger(record, "id"),
-      year: readInteger(record, "year"),
+      year: readString(record, "year"),
       title: readString(record, "title"),
       text: readString(record, "text"),
       game: parseGame(record),

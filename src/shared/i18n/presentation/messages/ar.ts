@@ -19,7 +19,6 @@ export const ar: Messages = {
   contributors: "المساهمون",
   contributorsIntro: "الأشخاص الذين صنعوا هذا الموقع.",
   roleCreator: "المنشئ والمشرف",
-  roleAssistant: "شريك برمجة بالذكاء الاصطناعي",
   homeTitle:
     "الأعمال الفنية واللاعبون الأسطوريون في تاريخ لعبة الغو.",
   homeIntro:

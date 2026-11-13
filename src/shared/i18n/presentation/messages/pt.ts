@@ -19,7 +19,6 @@ export const pt: Messages = {
   contributors: "Colaboradores",
   contributorsIntro: "As pessoas que fizeram este site.",
   roleCreator: "Criador e mantenedor",
-  roleAssistant: "Programador de IA",
   homeTitle:
     "As obras de arte e os jogadores lendários da história do Go.",
   homeIntro:

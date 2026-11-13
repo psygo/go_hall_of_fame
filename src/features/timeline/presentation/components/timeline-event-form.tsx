@@ -55,8 +55,8 @@ export function TimelineEventForm({
     >
       <TextField
         name="year"
-        label="Year"
-        type="number"
+        label="Year or period"
+        hint="Text, as you want it shown: 1846, c. 1670, Late 17th century."
         defaultValue={values.year}
         error={errors.year}
         required

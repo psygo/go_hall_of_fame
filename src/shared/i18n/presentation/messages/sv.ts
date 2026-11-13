@@ -20,7 +20,6 @@ export const sv: Messages = {
   contributorsIntro:
     "Personerna som gjort den här webbplatsen.",
   roleCreator: "Skapare och underhållare",
-  roleAssistant: "AI-programmeringspartner",
   homeTitle:
     "Konstverken och de legendariska spelarna i Gos historia.",
   homeIntro:

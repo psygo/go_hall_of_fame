@@ -10,14 +10,8 @@ const cardPlacementClass = {
     "min-[720px]:col-start-3 min-[720px]:justify-self-start",
 } as const
 
-function itemOverlapClass({
-  isClustered,
-  index,
-}: TimelinePlacement) {
-  if (index === 0) return ""
-  return isClustered
-    ? "min-[720px]:-mt-4"
-    : "min-[720px]:-mt-14"
+function itemOverlapClass({ index }: TimelinePlacement) {
+  return index === 0 ? "" : "min-[720px]:-mt-14"
 }
 
 const ITEM_GRID =
@@ -61,7 +55,7 @@ export function TimelineItem({
       </div>
       <div
         aria-hidden
-        className={`border-ink col-start-1 row-start-1 mt-[5px] size-[18px] justify-self-center rounded-full border-2 shadow-[0_0_0_5px_var(--paper)] min-[720px]:col-start-2 min-[720px]:mt-[11px] ${stoneClass}`}
+        className={`border-ink col-start-1 row-start-1 mt-[5px] size-[18px] justify-self-center rounded-full border-2 min-[720px]:col-start-2 min-[720px]:mt-[11px] ${stoneClass}`}
       />
     </li>
   )

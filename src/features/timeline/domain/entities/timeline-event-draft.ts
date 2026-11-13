@@ -1,6 +1,5 @@
 import {
   collectErrors,
-  parseInteger,
   type FieldErrors,
   type Validation,
 } from "@/core/validation"
@@ -16,7 +15,7 @@ export type TimelineEventForm = {
 }
 
 export type TimelineEventDraft = {
-  readonly year: number
+  readonly year: string
   readonly title: string
   readonly text: string
   readonly gameSlug: string | null
@@ -25,8 +24,7 @@ export type TimelineEventDraft = {
 export type TimelineEventErrors = FieldErrors
 
 export const TIMELINE_LIMITS = {
-  minYear: 1,
-  maxYear: 2999,
+  year: 40,
   title: 120,
   text: 600,
 } as const
@@ -35,12 +33,16 @@ export function validateTimelineEventForm(
   form: TimelineEventForm,
   gameOptions: readonly TimelineGameReference[],
 ): Validation<TimelineEventDraft, TimelineEventErrors> {
-  const year = parseInteger(form.year)
+  const year = form.year.trim()
   const title = form.title.trim()
   const text = form.text.trim()
   const gameSlug = form.gameSlug.trim()
   const errors = collectErrors({
-    year: yearError(year),
+    year: requiredError(
+      year,
+      TIMELINE_LIMITS.year,
+      "a year or period",
+    ),
     title: requiredError(
       title,
       TIMELINE_LIMITS.title,
@@ -57,7 +59,7 @@ export function validateTimelineEventForm(
         ? undefined
         : "Choose a game that is in the Hall.",
   })
-  if (Object.keys(errors).length > 0 || year === null) {
+  if (Object.keys(errors).length > 0) {
     return { valid: false, errors }
   }
   return {
@@ -69,18 +71,6 @@ export function validateTimelineEventForm(
       gameSlug: gameSlug || null,
     },
   }
-}
-
-function yearError(
-  year: number | null,
-): string | undefined {
-  const inRange =
-    year !== null &&
-    year >= TIMELINE_LIMITS.minYear &&
-    year <= TIMELINE_LIMITS.maxYear
-  return inRange
-    ? undefined
-    : `Enter a year between ${TIMELINE_LIMITS.minYear} and ${TIMELINE_LIMITS.maxYear}.`
 }
 
 function requiredError(

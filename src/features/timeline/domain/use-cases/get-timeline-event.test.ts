@@ -15,7 +15,7 @@ describe("GetTimelineEvent", () => {
   it("returns the result of the repository", async () => {
     const data = {
       id: 3,
-      year: 1612,
+      year: "1612",
       title: "T",
       text: "x",
       game: null,
