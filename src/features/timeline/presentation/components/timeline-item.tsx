@@ -84,7 +84,7 @@ export function TimelineItem({
         {boardGames.map((game) => (
           <article
             key={game.slug}
-            className="border-divider hover:bg-accent-100 relative flex w-full max-w-[240px] flex-col gap-1.5 border p-2 text-left min-[720px]:data-[side=left]:self-end"
+            className={`border-divider hover:bg-accent-100 relative flex w-full max-w-[240px] flex-col border p-2 text-left min-[720px]:data-[side=left]:self-end ${event.showGameTitles ? "gap-1.5" : ""}`}
             data-side={side}
           >
             <Link
