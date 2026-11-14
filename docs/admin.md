@@ -28,7 +28,7 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 + **Games** (`/admin/games`): create, edit, delete. A game has one Markdown description (it replaced
   the separate hook, moment and why-it-endures fields). Also the Black/White player links, the SGF, resources, the order within the
   year.
-+ **Game Contributors** (`/admin/contributors`, public page `/contributors`): the people and organizations that served the game without
++ **Contributors** (`/admin/contributors`, public page `/contributors`): the people and organizations that served the game without
   being legendary players (Demis Hassabis, DeepMind, a professor who built a baduk department).
   Fields: name, kind (person, organization or entity), year of birth or founding (they are listed
   chronologically by it), what they contributed (one line), period (optional),
@@ -68,7 +68,7 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
 ## Public lists
 
 + Players are listed by year of birth by default, youngest born first, and games newest first (most
-  recent year). Game contributors are listed the same way, by descending year of birth or founding. The
+  recent year). Contributors are listed the same way, by descending year of birth or founding. The
   other orders, including oldest born first and earliest or latest inducted, are in the Sort by menu.
 + Players, games, the timeline and the induction criteria have sorting. Players and games also have a
   search box that filters as you type, and players a country filter. All of it lives in the address

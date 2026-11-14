@@ -1070,7 +1070,7 @@ class At extends HTMLElement {
         const p = this._board.get(g, h);
         if (p === b.Empty) continue;
         const st = this.createStone(g, h, p, l, d);
-        hv && hv.x === g && hv.y === h && (st.style.fill = "var(--accent, #c1321e)", st.style.stroke = p === b.Black ? "var(--stone-black, #1c1a17)" : "var(--stone, #f6f0e0)", st.style.strokeWidth = "0.16", st.setAttribute("r", String(Number(st.getAttribute("r")) - 0.03)));
+        hv && hv.x === g && hv.y === h && (st.style.fill = "var(--accent, #c1321e)", st.style.stroke = p === b.Black ? this.theme.blackStoneFill : this.theme.whiteStoneFill, st.style.strokeWidth = "0.16", st.setAttribute("r", String(Number(st.getAttribute("r")) - 0.03)));
         this.stonesGroup.appendChild(st);
         const m = n ? this.moveNumbers[this.moveNumberIndex(g, h)] : null;
         m != null && this.stonesGroup.appendChild(this.createMoveNumber(m, g, h, l, d));

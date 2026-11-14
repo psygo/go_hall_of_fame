@@ -14,7 +14,7 @@ export const en = {
   aboutTitle: "About Go | Hall of Fame",
   aboutIntro:
     "Go | Hall of Fame honors the game of Go: its legendary players, its legendary games and the history that connects them. It is an open-source project, built in the open.",
-  contributors: "Game Contributors",
+  contributors: "Contributors",
   builtBy: "Built by",
   contributorsIntro: "The people who made this site.",
   roleCreator: "Creator and maintainer",

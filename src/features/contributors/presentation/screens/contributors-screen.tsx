@@ -15,7 +15,7 @@ export async function ContributorsScreen() {
     <>
       <PageHeader
         eyebrow="Beyond the board"
-        title="Game Contributors"
+        title="Contributors"
       >
         <p className="mt-4 max-w-[56ch] text-lg">
           People and organizations that advanced the game of

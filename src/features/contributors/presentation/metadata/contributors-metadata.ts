@@ -5,7 +5,7 @@ import { stripMarkdown } from "@/core/markdown"
 import { pageMetadata } from "@/shared/ui/presentation/site-metadata"
 
 export const contributorsMetadata: Metadata = pageMetadata({
-  title: "Game Contributors",
+  title: "Contributors",
   description:
     "The people and organizations that advanced the game of Go without being legendary players.",
 })

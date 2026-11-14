@@ -9,7 +9,7 @@ const ADMIN_LINKS = [
   { href: "/admin/players", label: "Players" },
   {
     href: "/admin/contributors",
-    label: "Game contributors",
+    label: "Contributors",
   },
   { href: "/admin/games", label: "Games" },
   { href: "/admin/timeline", label: "Timeline" },

@@ -16,7 +16,7 @@ export const nl: Messages = {
   aboutTitle: "Over Go | Hall of Fame",
   aboutIntro:
     "Go | Hall of Fame eert het spel Go: zijn legendarische spelers, zijn legendarische partijen en de geschiedenis die ze verbindt. Het is een open-sourceproject, openlijk gebouwd.",
-  contributors: "Spelbijdragers",
+  contributors: "Bijdragers",
   builtBy: "Gemaakt door",
   contributorsIntro: "De mensen die deze site maakten.",
   roleCreator: "Maker en beheerder",

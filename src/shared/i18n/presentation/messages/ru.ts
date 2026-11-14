@@ -16,7 +16,7 @@ export const ru: Messages = {
   aboutTitle: "О Go | Hall of Fame",
   aboutIntro:
     "Go | Hall of Fame чтит игру го: её легендарных игроков, легендарные партии и историю, которая их связывает. Это проект с открытым исходным кодом, созданный открыто.",
-  contributors: "Вклад в игру",
+  contributors: "Участники",
   builtBy: "Создатели",
   contributorsIntro: "Люди, создавшие этот сайт.",
   roleCreator: "Автор и сопровождающий",

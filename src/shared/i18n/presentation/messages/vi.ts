@@ -16,7 +16,7 @@ export const vi: Messages = {
   aboutTitle: "Giới thiệu Go | Hall of Fame",
   aboutIntro:
     "Go | Hall of Fame tôn vinh môn cờ vây: những kỳ thủ huyền thoại, những ván cờ huyền thoại và lịch sử kết nối họ. Đây là dự án mã nguồn mở, được xây dựng công khai.",
-  contributors: "Người đóng góp cho cờ vây",
+  contributors: "Người đóng góp",
   builtBy: "Do ai tạo ra",
   contributorsIntro:
     "Những người đã tạo nên trang web này.",

@@ -17,7 +17,7 @@ export async function AdminContributorsScreen() {
 
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Game contributors">
+      <PageHeader eyebrow="Admin" title="Contributors">
         <Link
           href="/admin/contributors/new"
           className="btn btn-primary mt-6"

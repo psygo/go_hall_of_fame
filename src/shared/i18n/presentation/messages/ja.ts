@@ -16,7 +16,7 @@ export const ja: Messages = {
   aboutTitle: "Go | Hall of Fame について",
   aboutIntro:
     "Go | Hall of Fame は囲碁を称えるサイトです。伝説の棋士、伝説の対局、そしてそれらをつなぐ歴史。オープンソースで、公開の場で作られています。",
-  contributors: "ゲームへの貢献者",
+  contributors: "コントリビューター",
   builtBy: "制作",
   contributorsIntro: "このサイトを作った人たち。",
   roleCreator: "作者・メンテナー",

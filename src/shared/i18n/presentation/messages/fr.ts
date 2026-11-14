@@ -16,7 +16,7 @@ export const fr: Messages = {
   aboutTitle: "À propos de Go | Hall of Fame",
   aboutIntro:
     "Go | Hall of Fame célèbre le jeu de Go : ses joueurs légendaires, ses parties légendaires et l'histoire qui les relie. C'est un projet open source, construit au grand jour.",
-  contributors: "Contributeurs du jeu",
+  contributors: "Contributeurs",
   builtBy: "Réalisé par",
   contributorsIntro: "Les personnes qui ont créé ce site.",
   roleCreator: "Créateur et mainteneur",

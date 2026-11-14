@@ -5,7 +5,7 @@
   the site does not host or serve the image files itself.
 + Shin Jinseo has no freely licensed portrait on Commons yet, so he shows the placeholder.
 
-+ Game contributors: `prof-nam.jpg` (a photo supplied by the site owner) and `google-deepmind.png`
++ Contributors: `prof-nam.jpg` (a photo supplied by the site owner) and `google-deepmind.png`
   (the DeepMind logo, supplied by the site owner). Organizations and entities show their image whole
   (`contain`) instead of cropped.
 

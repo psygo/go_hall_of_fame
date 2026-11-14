@@ -16,7 +16,7 @@ export const sv: Messages = {
   aboutTitle: "Om Go | Hall of Fame",
   aboutIntro:
     "Go | Hall of Fame hedrar spelet Go: dess legendariska spelare, dess legendariska partier och historien som binder dem samman. Det är ett öppen källkod-projekt, byggt öppet.",
-  contributors: "Spelets bidragsgivare",
+  contributors: "Medverkande",
   builtBy: "Byggt av",
   contributorsIntro:
     "Personerna som gjort den här webbplatsen.",
