@@ -161,7 +161,7 @@ type PictureCard = {
   readonly fit: "cover" | "contain"
 }
 
-/** A row of small picture cards (a 4:5 picture at most 100 px wide, the name below). */
+/** A row of small picture cards (a 4:5 picture filling a card 100 px wide, the name below). */
 function PictureRow({
   label,
   side,
@@ -181,9 +181,9 @@ function PictureRow({
         <li key={card.key} className="max-w-full">
           <Link
             href={card.href}
-            className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[124px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
+            className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex w-[100px] max-w-full flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
           >
-            <span className="relative block aspect-[4/5] w-[100px] overflow-hidden">
+            <span className="relative block aspect-[4/5] w-full overflow-hidden">
               <Image
                 src={
                   card.photoUrl ?? PLACEHOLDER_PORTRAIT_URL
