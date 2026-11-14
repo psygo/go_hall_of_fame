@@ -18,8 +18,8 @@ export async function ContributorsScreen() {
         title="Contributors"
       >
         <p className="mt-4 max-w-[56ch] text-lg">
-          People and organizations that advanced the game of
-          Go without being legendary players.
+          People and organizations which advanced the game
+          of Go.
         </p>
       </PageHeader>
       {contributors.length === 0 ? (

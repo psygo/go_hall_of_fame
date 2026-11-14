@@ -7,7 +7,7 @@ import { pageMetadata } from "@/shared/ui/presentation/site-metadata"
 export const contributorsMetadata: Metadata = pageMetadata({
   title: "Contributors",
   description:
-    "The people and organizations that advanced the game of Go without being legendary players.",
+    "People and organizations which advanced the game of Go.",
 })
 
 export async function generateContributorMetadata({
