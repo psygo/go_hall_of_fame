@@ -205,6 +205,20 @@ const players: readonly Omit<
       "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/shin-jinseo.webp",
     photoPosition: "50% 25%",
   },
+  // Inducted after the first fifteen, so the induction number (the position in this list) is 16.
+  {
+    slug: "honinbo-sansa",
+    name: "Honinbo Sansa",
+    nativeName: "本因坊算砂",
+    country: "Japan",
+    years: "1559–1623",
+    birthYear: 1559,
+    distinction: "1st Honinbo and first Meijin",
+    bio: "Born Kanō Yosaburō, a Nichiren Buddhist priest of Kyoto who founded the Honinbo house, first of the four great Go schools of Japan. Oda Nobunaga named him the first Meijin in 1578, and he taught Nobunaga, Toyotomi Hideyoshi and Tokugawa Ieyasu. In 1603 Ieyasu made him the first go-dokoro, the official head of Go, and the system of houses he began lasted until the Meiji era.",
+    photoUrl:
+      "https://raw.githubusercontent.com/psygo/go_hall_of_fame/main/public/portraits/honinbo-sansa.jpg",
+    photoPosition: "50% 25%",
+  },
 ]
 
 export const playerSeeds: readonly PlayerSeed[] =

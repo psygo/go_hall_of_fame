@@ -24,3 +24,4 @@
 + `ke-jie.jpg`: [Ke_Jie_(柯洁)_2019_(cropped).png](https://commons.wikimedia.org/wiki/File:Ke_Jie_(%E6%9F%AF%E6%B4%81)_2019_(cropped).png), 中国新闻网, CC BY 3.0.
 + `honinbo-dosaku.jpg`: [Honinbo_Dosaku.png](https://commons.wikimedia.org/wiki/File:Honinbo_Dosaku.png), Unknown authorUnknown author, Public domain.
 + `honinbo-shusaku.jpg`: [Honinbo_Shusaku.jpg](https://commons.wikimedia.org/wiki/File:Honinbo_Shusaku.jpg), 江馬天江, Public domain.
++ `honinbo-sansa.jpg`: [Sansa.jpg](https://commons.wikimedia.org/wiki/File:Sansa.jpg), Unknown author, Public domain.
