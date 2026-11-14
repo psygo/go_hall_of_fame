@@ -6,7 +6,9 @@
 + Shin Jinseo has no freely licensed portrait on Commons yet, so he shows the placeholder.
 
 + Contributors: `prof-nam.jpg` and `john-fairbairn.jpg` (photos supplied by the site owner) and
-  `google-deepmind.png` and `go-magic.png` (logos supplied by the site owner). Organizations and entities show their image whole
+  `google-deepmind.png` and `go-magic.png` (logos supplied by the site owner).
++ AlphaGo (a player): `alphago.jpg` is the AlphaGo logo supplied by the site owner, centered on a white 4:5 canvas so the player card
+  does not crop it. Organizations and entities show their image whole
   (`contain`) instead of cropped.
 
 ## Files
