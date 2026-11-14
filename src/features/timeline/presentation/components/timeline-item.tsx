@@ -161,7 +161,7 @@ type PictureCard = {
   readonly fit: "cover" | "contain"
 }
 
-/** A row of small picture cards (a 4:5 picture at most 75 px wide, the name below). */
+/** A row of small picture cards (a 4:5 picture at most 100 px wide, the name below). */
 function PictureRow({
   label,
   side,
