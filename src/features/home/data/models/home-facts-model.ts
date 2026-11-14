@@ -1,5 +1,6 @@
 import {
   asRecord,
+  readArray,
   readInteger,
   readBoolean,
   readNullableInteger,
@@ -22,7 +23,7 @@ export class HomeFactsModel implements HomeFacts {
   declare readonly firstYear: number | null
   declare readonly lastYear: number | null
   declare readonly spotlightGame: SpotlightGame | null
-  declare readonly spotlightPlayer: SpotlightPlayer | null
+  declare readonly spotlightPlayers: readonly SpotlightPlayer[]
 
   private constructor(fields: HomeFacts) {
     Object.assign(this, fields)
@@ -40,11 +41,10 @@ export class HomeFactsModel implements HomeFacts {
         "spotlightGame",
         parseGame,
       ),
-      spotlightPlayer: parseOptional(
+      spotlightPlayers: readArray(
         record,
-        "spotlightPlayer",
-        parsePlayer,
-      ),
+        "spotlightPlayers",
+      ).map(parsePlayer),
     })
   }
 

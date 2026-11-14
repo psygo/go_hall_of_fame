@@ -26,7 +26,7 @@ export async function HomeScreen() {
     texts["home.intro"] === MESSAGES.en.homeIntro
       ? messages.homeIntro
       : texts["home.intro"]
-  const { spotlightGame, spotlightPlayer } = summary
+  const { spotlightGame, spotlightPlayers } = summary
 
   const cells = [
     {
@@ -139,16 +139,31 @@ export async function HomeScreen() {
           </section>
         )}
 
-        {spotlightPlayer && (
+        {spotlightPlayers.length > 0 && (
           <section aria-labelledby="home-player-heading">
             <h2
               id="home-player-heading"
               className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
             >
-              A legendary player
+              <span className="min-[1000px]:hidden">
+                {spotlightPlayers.length === 1
+                  ? "A legendary player"
+                  : "Legendary players"}
+              </span>
+              <span className="max-[999px]:hidden">
+                A legendary player
+              </span>
             </h2>
+            {/* Beside the game the column is narrow and shows one player; when the layout stacks, the others fill the row. */}
             <div className="grid grid-cols-[repeat(auto-fill,minmax(min(230px,100%),1fr))]">
-              <PlayerCard player={spotlightPlayer} />
+              {spotlightPlayers.map((player, index) => (
+                <div
+                  key={player.slug}
+                  className={`contents ${index === 0 ? "" : "[&>*]:min-[1000px]:hidden"}`}
+                >
+                  <PlayerCard player={player} />
+                </div>
+              ))}
             </div>
           </section>
         )}

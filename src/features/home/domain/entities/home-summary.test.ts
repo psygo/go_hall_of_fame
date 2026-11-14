@@ -58,7 +58,7 @@ describe("summarizeHome", () => {
       sgf: null,
       highlightMove: null,
     },
-    spotlightPlayer: null,
+    spotlightPlayers: [],
   }
 
   it("keeps the counts and spotlight items and adds the centuries", () => {
@@ -66,7 +66,7 @@ describe("summarizeHome", () => {
       playerCount: 12,
       gameCount: 8,
       spotlightGame: facts.spotlightGame,
-      spotlightPlayer: null,
+      spotlightPlayers: [],
       centuries: 4,
     })
   })

@@ -10,7 +10,7 @@ const rawFacts = {
   firstYear: 1612,
   lastYear: 2019,
   spotlightGame: null,
-  spotlightPlayer: null,
+  spotlightPlayers: [],
 }
 
 function buildRepository(

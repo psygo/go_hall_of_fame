@@ -10,6 +10,7 @@ import {
 } from "@/shared/database/data/schema"
 
 import { HomeFactsModel } from "../models/home-facts-model"
+import { SPOTLIGHT_PLAYER_COUNT } from "../../domain/entities/home-summary"
 
 const yearNumber = sql<
   number | null
@@ -35,20 +36,20 @@ export class HomeDataSource {
       gameCount,
       span,
       spotlightGame,
-      spotlightPlayer,
+      spotlightPlayers,
     ] = await Promise.all([
       this.countRows(playersTable, includeDrafts),
       this.countRows(gamesTable, includeDrafts),
       this.fetchTimelineSpan(includeDrafts),
       this.fetchSpotlightGame(includeDrafts),
-      this.fetchSpotlightPlayer(includeDrafts),
+      this.fetchSpotlightPlayers(includeDrafts),
     ])
     return HomeFactsModel.fromRawData({
       playerCount,
       gameCount,
       ...span,
       spotlightGame,
-      spotlightPlayer,
+      spotlightPlayers,
     })
   }
 
@@ -116,15 +117,12 @@ export class HomeDataSource {
     return row ?? null
   }
 
-  private async fetchSpotlightPlayer(
-    includeDrafts: boolean,
-  ) {
-    const [row] = await this.database
+  private fetchSpotlightPlayers(includeDrafts: boolean) {
+    return this.database
       .select()
       .from(playersTable)
       .where(isVisible(playersTable, includeDrafts))
       .orderBy(sql`random()`)
-      .limit(1)
-    return row ?? null
+      .limit(SPOTLIGHT_PLAYER_COUNT)
   }
 }

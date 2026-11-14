@@ -12,7 +12,7 @@ const facts: HomeFacts = {
   firstYear: 1612,
   lastYear: 2019,
   spotlightGame: null,
-  spotlightPlayer: null,
+  spotlightPlayers: [],
 }
 
 describe("GetHomeSummary", () => {
@@ -28,7 +28,7 @@ describe("GetHomeSummary", () => {
         playerCount: 3,
         gameCount: 2,
         spotlightGame: null,
-        spotlightPlayer: null,
+        spotlightPlayers: [],
         centuries: 4,
       }),
     )

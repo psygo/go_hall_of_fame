@@ -15,6 +15,9 @@ export type SpotlightGame = {
   readonly highlightMove: number | null
 }
 
+/** How many random players the home page features. */
+export const SPOTLIGHT_PLAYER_COUNT = 3
+
 /** A random player of the Hall, with what their card needs. */
 export type SpotlightPlayer = {
   readonly slug: string
@@ -46,7 +49,8 @@ export type HomeFacts = {
   readonly firstYear: number | null
   readonly lastYear: number | null
   readonly spotlightGame: SpotlightGame | null
-  readonly spotlightPlayer: SpotlightPlayer | null
+  /** Up to SPOTLIGHT_PLAYER_COUNT distinct random players. */
+  readonly spotlightPlayers: readonly SpotlightPlayer[]
 }
 
 export type HomeSummary = Omit<

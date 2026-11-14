@@ -53,7 +53,7 @@ const validRaw = {
   firstYear: 1612,
   lastYear: 2019,
   spotlightGame: rawGame,
-  spotlightPlayer,
+  spotlightPlayers: [spotlightPlayer],
 }
 
 describe("HomeFactsModel", () => {
@@ -65,61 +65,67 @@ describe("HomeFactsModel", () => {
     expect(model.firstYear).toBe(1612)
     expect(model.lastYear).toBe(2019)
     expect(model.spotlightGame).toEqual(spotlightGame)
-    expect(model.spotlightPlayer).toEqual(spotlightPlayer)
+    expect(model.spotlightPlayers).toEqual([
+      spotlightPlayer,
+    ])
   })
 
   it("drops extra columns of the spotlight rows", () => {
     const model = HomeFactsModel.fromRawData({
       ...validRaw,
       spotlightGame: { ...rawGame, id: 1 },
-      spotlightPlayer: {
-        ...spotlightPlayer,
-        id: 2,
-        bio: "Bio",
-      },
+      spotlightPlayers: [
+        {
+          ...spotlightPlayer,
+          id: 2,
+          bio: "Bio",
+        },
+      ],
     })
 
     expect(model.spotlightGame).toEqual(spotlightGame)
-    expect(model.spotlightPlayer).toEqual(spotlightPlayer)
+    expect(model.spotlightPlayers).toEqual([
+      spotlightPlayer,
+    ])
   })
 
-  it("reads null years and spotlight items as null", () => {
+  it("reads null years and the spotlight game as null, players as empty", () => {
     const model = HomeFactsModel.fromRawData({
       ...validRaw,
       firstYear: null,
       lastYear: null,
       spotlightGame: null,
-      spotlightPlayer: null,
+      spotlightPlayers: [],
     })
 
     expect(model.firstYear).toBeNull()
     expect(model.lastYear).toBeNull()
     expect(model.spotlightGame).toBeNull()
-    expect(model.spotlightPlayer).toBeNull()
+    expect(model.spotlightPlayers).toEqual([])
   })
 
   it("reads missing optional fields (undefined) as null", () => {
     const model = HomeFactsModel.fromRawData({
       playerCount: 0,
       gameCount: 0,
+      spotlightPlayers: [],
     })
 
     expect(model.firstYear).toBeNull()
     expect(model.lastYear).toBeNull()
     expect(model.spotlightGame).toBeNull()
-    expect(model.spotlightPlayer).toBeNull()
+    expect(model.spotlightPlayers).toEqual([])
   })
 
   it("reads a null photo URL of the spotlight player as null", () => {
     const model = HomeFactsModel.fromRawData({
       ...validRaw,
-      spotlightPlayer: {
-        ...spotlightPlayer,
-        photoUrl: null,
-      },
+      spotlightPlayers: [
+        { ...spotlightPlayer, photoUrl: null },
+      ],
     })
 
-    expect(model.spotlightPlayer?.photoUrl).toBeNull()
+    expect(model.spotlightPlayers[0]?.photoUrl).toBeNull()
   })
 
   it.each(["playerCount", "gameCount"])(
@@ -206,7 +212,7 @@ describe("HomeFactsModel", () => {
       expect(() =>
         HomeFactsModel.fromRawData({
           ...validRaw,
-          spotlightPlayer: { ...spotlightPlayer, tags },
+          spotlightPlayers: [{ ...spotlightPlayer, tags }],
         }),
       ).toThrow(InvalidRawDataError)
     },
@@ -259,18 +265,76 @@ describe("HomeFactsModel", () => {
     expect(() =>
       HomeFactsModel.fromRawData({
         ...validRaw,
-        spotlightPlayer: player,
+        spotlightPlayers: [player],
       }),
     ).toThrow(InvalidRawDataError)
   })
 
-  it("throws when the spotlight player is a primitive", () => {
+  it("throws when a spotlight player is a primitive", () => {
     expect(() =>
       HomeFactsModel.fromRawData({
         ...validRaw,
-        spotlightPlayer: 3,
+        spotlightPlayers: [3],
       }),
     ).toThrow("spotlight player must be an object")
+  })
+
+  describe("spotlightPlayers", () => {
+    it("accepts an empty list", () => {
+      expect(
+        HomeFactsModel.fromRawData({
+          ...validRaw,
+          spotlightPlayers: [],
+        }).spotlightPlayers,
+      ).toEqual([])
+    })
+
+    it("keeps several players in order", () => {
+      const players = ["a", "b", "c"].map((slug) => ({
+        ...spotlightPlayer,
+        slug,
+      }))
+
+      expect(
+        HomeFactsModel.fromRawData({
+          ...validRaw,
+          spotlightPlayers: players,
+        }).spotlightPlayers.map((player) => player.slug),
+      ).toEqual(["a", "b", "c"])
+    })
+
+    it("throws when one of several items is invalid", () => {
+      expect(() =>
+        HomeFactsModel.fromRawData({
+          ...validRaw,
+          spotlightPlayers: [
+            spotlightPlayer,
+            { ...spotlightPlayer, name: 5 },
+          ],
+        }),
+      ).toThrow(InvalidRawDataError)
+    })
+
+    it("throws when the key is missing", () => {
+      const raw: Record<string, unknown> = { ...validRaw }
+      delete raw.spotlightPlayers
+
+      expect(() => HomeFactsModel.fromRawData(raw)).toThrow(
+        '"spotlightPlayers" must be an array',
+      )
+    })
+
+    it.each([null, "x", { 0: spotlightPlayer }])(
+      "throws when it is not an array (%j)",
+      (spotlightPlayers) => {
+        expect(() =>
+          HomeFactsModel.fromRawData({
+            ...validRaw,
+            spotlightPlayers,
+          }),
+        ).toThrow(InvalidRawDataError)
+      },
+    )
   })
 
   it("converts to a plain entity equal to the fields", () => {
