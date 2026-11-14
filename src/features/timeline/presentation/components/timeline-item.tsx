@@ -78,9 +78,9 @@ export function TimelineItem({
               <li key={player.slug} className="max-w-full">
                 <Link
                   href={`/players/${player.slug}`}
-                  className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[88px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
+                  className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[100px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
                 >
-                  <span className="relative block aspect-[4/5] w-[50px] overflow-hidden">
+                  <span className="relative block aspect-[4/5] w-[75px] overflow-hidden">
                     <Image
                       src={
                         player.photoUrl ??
@@ -88,7 +88,7 @@ export function TimelineItem({
                       }
                       alt=""
                       fill
-                      sizes="50px"
+                      sizes="75px"
                       className="object-cover"
                       style={{
                         objectPosition:
