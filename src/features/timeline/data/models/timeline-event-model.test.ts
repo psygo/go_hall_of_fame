@@ -216,17 +216,6 @@ describe("TimelineEventModel", () => {
         ).toThrow(InvalidRawDataError)
       },
     )
-
-    it("keeps contributors as slug and name only", () => {
-      const entity = TimelineEventModel.fromRawData({
-        ...validRaw,
-        contributors: [
-          { ...base, sgf: "x", photoUrl: "y" },
-        ],
-      }).toEntity()
-
-      expect(entity.contributors).toEqual([base])
-    })
   })
 
   describe("linked player photo", () => {
@@ -295,6 +284,84 @@ describe("TimelineEventModel", () => {
     })
   })
 
+  describe("linked contributor details", () => {
+    const base = {
+      slug: "c",
+      name: "C",
+      kind: "person",
+      photoPosition: "50% 50%",
+    }
+    const parse = (contributor: Record<string, unknown>) =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        contributors: [contributor],
+      }).toEntity().contributors[0]
+
+    it("reads kind, photo URL and position as given", () => {
+      expect(
+        parse({ ...base, photoUrl: "/c.webp" }),
+      ).toEqual({
+        ...base,
+        photoUrl: "/c.webp",
+      })
+    })
+
+    it.each([null, undefined])(
+      "reads a %s photo URL as null",
+      (photoUrl) => {
+        expect(
+          parse({ ...base, photoUrl }).photoUrl,
+        ).toBeNull()
+      },
+    )
+
+    it("throws when the photo URL is not a string", () => {
+      expect(() => parse({ ...base, photoUrl: 5 })).toThrow(
+        InvalidRawDataError,
+      )
+    })
+
+    it.each(["kind", "photoPosition"])(
+      "throws when %s is missing or not a string",
+      (key) => {
+        const missing: Record<string, unknown> = {
+          ...base,
+          photoUrl: null,
+        }
+        delete missing[key]
+
+        expect(() => parse(missing)).toThrow(
+          InvalidRawDataError,
+        )
+        expect(() =>
+          parse({ ...base, photoUrl: null, [key]: 5 }),
+        ).toThrow(InvalidRawDataError)
+        expect(() =>
+          parse({ ...base, photoUrl: null, [key]: null }),
+        ).toThrow(InvalidRawDataError)
+      },
+    )
+
+    it("drops extra keys and keeps the order", () => {
+      const entity = TimelineEventModel.fromRawData({
+        ...validRaw,
+        contributors: [
+          { ...base, slug: "b", photoUrl: null, extra: 1 },
+          { ...base, slug: "a", photoUrl: null },
+        ],
+      }).toEntity()
+
+      expect(
+        entity.contributors.map((c) => c.slug),
+      ).toEqual(["b", "a"])
+      expect(entity.contributors[0]).toEqual({
+        ...base,
+        slug: "b",
+        photoUrl: null,
+      })
+    })
+  })
+
   it.each(["games", "players", "contributors"])(
     "throws when %s is missing or not an array",
     (key) => {
@@ -317,8 +384,20 @@ describe("TimelineEventModel", () => {
 
   it("reads the linked contributors in order", () => {
     const contributors = [
-      { slug: "kgs", name: "KGS" },
-      { slug: "demis-hassabis", name: "Demis Hassabis" },
+      {
+        slug: "kgs",
+        name: "KGS",
+        kind: "organization",
+        photoUrl: null,
+        photoPosition: "50% 50%",
+      },
+      {
+        slug: "demis-hassabis",
+        name: "Demis Hassabis",
+        kind: "person",
+        photoUrl: "/portraits/dh.webp",
+        photoPosition: "40% 20%",
+      },
     ]
 
     expect(

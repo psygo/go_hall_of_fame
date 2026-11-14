@@ -28,6 +28,12 @@ type LinkRow = {
   readonly name: string
 }
 
+type ContributorLinkRow = LinkRow & {
+  readonly kind: string
+  readonly photoUrl: string | null
+  readonly photoPosition: string
+}
+
 type PlayerLinkRow = LinkRow & {
   readonly photoUrl: string | null
   readonly photoPosition: string
@@ -89,13 +95,6 @@ export class TimelineDataSource {
         this.fetchPlayerLinks(ids, includeDrafts),
         this.fetchContributorLinks(ids, includeDrafts),
       ])
-    const linksOf = (
-      rows: readonly LinkRow[],
-      id: number,
-    ) =>
-      rows
-        .filter((row) => row.eventId === id)
-        .map(({ slug, name }) => ({ slug, name }))
     return events.map((event) =>
       TimelineEventModel.fromRawData({
         ...event,
@@ -118,7 +117,15 @@ export class TimelineDataSource {
             photoUrl: row.photoUrl,
             photoPosition: row.photoPosition,
           })),
-        contributors: linksOf(contributors, event.id),
+        contributors: contributors
+          .filter((row) => row.eventId === event.id)
+          .map((row) => ({
+            slug: row.slug,
+            name: row.name,
+            kind: row.kind,
+            photoUrl: row.photoUrl,
+            photoPosition: row.photoPosition,
+          })),
       }),
     )
   }
@@ -186,12 +193,15 @@ export class TimelineDataSource {
   private fetchContributorLinks(
     eventIds: readonly number[],
     includeDrafts: boolean,
-  ): Promise<LinkRow[]> {
+  ): Promise<ContributorLinkRow[]> {
     return this.database
       .select({
         eventId: timelineEventContributorsTable.eventId,
         slug: contributorsTable.slug,
         name: contributorsTable.name,
+        kind: contributorsTable.kind,
+        photoUrl: contributorsTable.photoUrl,
+        photoPosition: contributorsTable.photoPosition,
       })
       .from(timelineEventContributorsTable)
       .innerJoin(

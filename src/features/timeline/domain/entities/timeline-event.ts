@@ -25,6 +25,15 @@ export type TimelineLinkedPlayer =
     readonly photoPosition: string
   }
 
+/** A contributor an event is about, with the picture shown beside the name. */
+export type TimelineLinkedContributor =
+  TimelineContributorReference & {
+    /** A person's photo is cropped; an organization's or entity's logo is shown whole. */
+    readonly kind: string
+    readonly photoUrl: string | null
+    readonly photoPosition: string
+  }
+
 /** A contributor an event points to. */
 export type TimelineContributorReference = {
   readonly slug: string
@@ -42,7 +51,7 @@ export type TimelineEvent = {
   /** The players the event is about, in the admin's order. */
   readonly players: readonly TimelineLinkedPlayer[]
   /** The contributors the event is about, in the admin's order. */
-  readonly contributors: readonly TimelineContributorReference[]
+  readonly contributors: readonly TimelineLinkedContributor[]
   /** Whether the linked games' boards show the game's title. */
   readonly showGameTitles: boolean
   /** Only admins see a draft. */

@@ -35,7 +35,7 @@ export function TimelineItem({
 }) {
   const { event, side, index } = placement
   const stoneClass = index % 2 === 0 ? "bg-ink" : "bg-stone"
-  // Players show as picture cards, then the contributors and games without a record as chips, then the boards.
+  // Players and contributors show as picture cards, then the games: a chip when there is no record, else a board.
   const links: readonly RelatedLink[] = [
     ...event.games
       .filter((game) => game.sgf === null)
@@ -43,10 +43,6 @@ export function TimelineItem({
         href: `/games/${game.slug}`,
         label: game.name,
       })),
-    ...event.contributors.map((contributor) => ({
-      href: `/contributors/${contributor.slug}`,
-      label: contributor.name,
-    })),
   ]
   const boardGames = event.games.filter(
     (game) => game.sgf !== null,
@@ -69,39 +65,34 @@ export function TimelineItem({
         <div className="[&_a]:relative [&_a]:z-10">
           <Markdown>{event.text}</Markdown>
         </div>
-        {event.players.length > 0 && (
-          <ul
-            aria-label="Players"
-            className={`m-0 flex list-none flex-wrap gap-2 p-0 ${side === "left" ? "min-[720px]:justify-end" : ""}`}
-          >
-            {event.players.map((player) => (
-              <li key={player.slug} className="max-w-full">
-                <Link
-                  href={`/players/${player.slug}`}
-                  className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[100px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
-                >
-                  <span className="relative block aspect-[4/5] w-[75px] overflow-hidden">
-                    <Image
-                      src={
-                        player.photoUrl ??
-                        PLACEHOLDER_PORTRAIT_URL
-                      }
-                      alt=""
-                      fill
-                      sizes="75px"
-                      className="object-cover"
-                      style={{
-                        objectPosition:
-                          player.photoPosition,
-                      }}
-                    />
-                  </span>
-                  {player.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+        <PictureRow
+          label="Players"
+          side={side}
+          cards={event.players.map((player) => ({
+            key: player.slug,
+            href: `/players/${player.slug}`,
+            name: player.name,
+            photoUrl: player.photoUrl,
+            photoPosition: player.photoPosition,
+            fit: "cover",
+          }))}
+        />
+        <PictureRow
+          label="Contributors"
+          side={side}
+          cards={event.contributors.map((contributor) => ({
+            key: contributor.slug,
+            href: `/contributors/${contributor.slug}`,
+            name: contributor.name,
+            photoUrl: contributor.photoUrl,
+            photoPosition: contributor.photoPosition,
+            // A person's photo is cropped; an organization's logo is shown whole.
+            fit:
+              contributor.kind === "person"
+                ? "cover"
+                : "contain",
+          }))}
+        />
         {links.length > 0 && (
           <ul
             aria-label="Related"
@@ -158,6 +149,63 @@ export function TimelineItem({
         className={`border-ink col-start-1 row-start-1 mt-[5px] size-[18px] justify-self-center rounded-full border-2 min-[720px]:col-start-2 min-[720px]:mt-[11px] ${stoneClass}`}
       />
     </li>
+  )
+}
+
+type PictureCard = {
+  readonly key: string
+  readonly href: string
+  readonly name: string
+  readonly photoUrl: string | null
+  readonly photoPosition: string
+  readonly fit: "cover" | "contain"
+}
+
+/** A row of small picture cards (a 4:5 picture at most 75 px wide, the name below). */
+function PictureRow({
+  label,
+  side,
+  cards,
+}: {
+  readonly label: string
+  readonly side: "left" | "right"
+  readonly cards: readonly PictureCard[]
+}) {
+  if (cards.length === 0) return null
+  return (
+    <ul
+      aria-label={label}
+      className={`m-0 flex list-none flex-wrap gap-2 p-0 ${side === "left" ? "min-[720px]:justify-end" : ""}`}
+    >
+      {cards.map((card) => (
+        <li key={card.key} className="max-w-full">
+          <Link
+            href={card.href}
+            className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[100px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
+          >
+            <span className="relative block aspect-[4/5] w-[75px] overflow-hidden">
+              <Image
+                src={
+                  card.photoUrl ?? PLACEHOLDER_PORTRAIT_URL
+                }
+                alt=""
+                fill
+                sizes="75px"
+                className={
+                  card.fit === "cover"
+                    ? "object-cover"
+                    : "bg-white object-contain p-1"
+                }
+                style={{
+                  objectPosition: card.photoPosition,
+                }}
+              />
+            </span>
+            {card.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
   )
 }
 
