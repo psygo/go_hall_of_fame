@@ -20,11 +20,6 @@ function itemOverlapClass({ index }: TimelinePlacement) {
 type RelatedLink = {
   readonly href: string
   readonly label: string
-  /** A player's picture, shown in a small circle beside the name. */
-  readonly photo?: {
-    readonly url: string
-    readonly position: string
-  }
 }
 
 const PLACEHOLDER_PORTRAIT_URL =
@@ -40,16 +35,8 @@ export function TimelineItem({
 }) {
   const { event, side, index } = placement
   const stoneClass = index % 2 === 0 ? "bg-ink" : "bg-stone"
-  // Players first, then contributors; the games follow as small boards (a chip when there is no record).
+  // Players show as picture cards, then the contributors and games without a record as chips, then the boards.
   const links: readonly RelatedLink[] = [
-    ...event.players.map((player) => ({
-      href: `/players/${player.slug}`,
-      label: player.name,
-      photo: {
-        url: player.photoUrl ?? PLACEHOLDER_PORTRAIT_URL,
-        position: player.photoPosition,
-      },
-    })),
     ...event.games
       .filter((game) => game.sgf === null)
       .map((game) => ({
@@ -82,6 +69,42 @@ export function TimelineItem({
         <div className="[&_a]:relative [&_a]:z-10">
           <Markdown>{event.text}</Markdown>
         </div>
+        {event.players.length > 0 && (
+          <ul
+            aria-label="Players"
+            className={`m-0 flex list-none flex-wrap gap-2 p-0 ${side === "left" ? "min-[720px]:justify-end" : ""}`}
+          >
+            {event.players.map((player) => (
+              <li
+                key={player.slug}
+                className="w-[240px] max-w-full"
+              >
+                <Link
+                  href={`/players/${player.slug}`}
+                  className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex flex-col gap-1.5 border p-2 text-center text-sm font-bold no-underline"
+                >
+                  <span className="relative block aspect-[4/5] w-full overflow-hidden">
+                    <Image
+                      src={
+                        player.photoUrl ??
+                        PLACEHOLDER_PORTRAIT_URL
+                      }
+                      alt=""
+                      fill
+                      sizes="240px"
+                      className="object-cover"
+                      style={{
+                        objectPosition:
+                          player.photoPosition,
+                      }}
+                    />
+                  </span>
+                  {player.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
         {links.length > 0 && (
           <ul
             aria-label="Related"
@@ -91,23 +114,8 @@ export function TimelineItem({
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="border-divider hover:text-accent hover:border-accent inline-flex items-center gap-1.5 border px-2 py-0.5 text-sm font-bold no-underline"
+                  className="border-divider hover:text-accent hover:border-accent inline-block border px-2 py-0.5 text-sm font-bold no-underline"
                 >
-                  {link.photo !== undefined && (
-                    <span className="relative size-7 shrink-0 overflow-hidden rounded-full">
-                      <Image
-                        src={link.photo.url}
-                        alt=""
-                        fill
-                        sizes="28px"
-                        className="object-cover"
-                        style={{
-                          objectPosition:
-                            link.photo.position,
-                        }}
-                      />
-                    </span>
-                  )}
                   {link.label}
                 </Link>
               </li>
