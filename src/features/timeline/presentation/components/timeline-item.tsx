@@ -181,16 +181,16 @@ function PictureRow({
         <li key={card.key} className="max-w-full">
           <Link
             href={card.href}
-            className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[100px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
+            className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[124px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
           >
-            <span className="relative block aspect-[4/5] w-[75px] overflow-hidden">
+            <span className="relative block aspect-[4/5] w-[100px] overflow-hidden">
               <Image
                 src={
                   card.photoUrl ?? PLACEHOLDER_PORTRAIT_URL
                 }
                 alt=""
                 fill
-                sizes="75px"
+                sizes="100px"
                 className={
                   card.fit === "cover"
                     ? "object-cover"
