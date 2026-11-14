@@ -6,7 +6,7 @@
 + Shin Jinseo has no freely licensed portrait on Commons yet, so he shows the placeholder.
 
 + Contributors: `prof-nam.jpg` and `john-fairbairn.jpg` (photos supplied by the site owner) and
-  `google-deepmind.png` (the DeepMind logo, supplied by the site owner). Organizations and entities show their image whole
+  `google-deepmind.png` and `go-magic.png` (logos supplied by the site owner). Organizations and entities show their image whole
   (`contain`) instead of cropped.
 
 ## Files
