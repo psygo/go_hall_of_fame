@@ -57,7 +57,7 @@ export function TimelineItem({
       className={`${ITEM_GRID} ${itemOverlapClass(placement)}`}
     >
       <div
-        className={`relative col-start-3 row-start-1 mb-8 flex max-w-[460px] flex-col gap-1.5 min-[720px]:mb-12 ${cardPlacementClass[side]}`}
+        className={`relative col-start-3 row-start-1 mb-8 flex max-w-[500px] flex-col gap-1.5 min-[720px]:mb-12 ${cardPlacementClass[side]}`}
       >
         <div className="text-accent text-[28px] leading-none font-bold min-[720px]:text-[40px]">
           {event.year}
@@ -75,15 +75,12 @@ export function TimelineItem({
             className={`m-0 flex list-none flex-wrap gap-2 p-0 ${side === "left" ? "min-[720px]:justify-end" : ""}`}
           >
             {event.players.map((player) => (
-              <li
-                key={player.slug}
-                className="w-[240px] max-w-full"
-              >
+              <li key={player.slug} className="max-w-full">
                 <Link
                   href={`/players/${player.slug}`}
-                  className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex flex-col gap-1.5 border p-2 text-center text-sm font-bold no-underline"
+                  className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex max-w-[88px] flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
                 >
-                  <span className="relative block aspect-[4/5] w-full overflow-hidden">
+                  <span className="relative block aspect-[4/5] w-[50px] overflow-hidden">
                     <Image
                       src={
                         player.photoUrl ??
@@ -91,7 +88,7 @@ export function TimelineItem({
                       }
                       alt=""
                       fill
-                      sizes="240px"
+                      sizes="50px"
                       className="object-cover"
                       style={{
                         objectPosition:
@@ -122,30 +119,39 @@ export function TimelineItem({
             ))}
           </ul>
         )}
-        {boardGames.map((game) => (
-          <article
-            key={game.slug}
-            className={`border-divider hover:bg-accent-100 relative flex w-full max-w-[240px] flex-col border p-2 text-left min-[720px]:data-[side=left]:self-end ${event.showGameTitles ? "gap-1.5" : ""}`}
-            data-side={side}
+        {boardGames.length > 0 && (
+          <div
+            className={`flex flex-wrap gap-2 ${side === "left" ? "min-[720px]:justify-end" : ""}`}
           >
-            <Link
-              href={`/games/${game.slug}`}
-              className="text-ink hover:text-accent text-center text-sm font-bold no-underline after:absolute after:inset-0 after:content-['']"
-            >
-              {event.showGameTitles ? (
-                game.name
-              ) : (
-                <span className="sr-only">{game.name}</span>
-              )}
-            </Link>
-            {game.sgf !== null && (
-              <GamePreviewBoard
-                sgf={game.sgf}
-                targetMove={game.highlightMove ?? undefined}
-              />
-            )}
-          </article>
-        ))}
+            {boardGames.map((game) => (
+              <article
+                key={game.slug}
+                className={`border-divider hover:bg-accent-100 relative flex w-[240px] max-w-full flex-col border p-2 text-left ${event.showGameTitles ? "gap-1.5" : ""}`}
+              >
+                <Link
+                  href={`/games/${game.slug}`}
+                  className="text-ink hover:text-accent text-center text-sm font-bold no-underline after:absolute after:inset-0 after:content-['']"
+                >
+                  {event.showGameTitles ? (
+                    game.name
+                  ) : (
+                    <span className="sr-only">
+                      {game.name}
+                    </span>
+                  )}
+                </Link>
+                {game.sgf !== null && (
+                  <GamePreviewBoard
+                    sgf={game.sgf}
+                    targetMove={
+                      game.highlightMove ?? undefined
+                    }
+                  />
+                )}
+              </article>
+            ))}
+          </div>
+        )}
       </div>
       <div
         aria-hidden
@@ -167,7 +173,7 @@ export function TimelineItemSkeleton({
       className={`${ITEM_GRID} animate-pulse`}
     >
       <div
-        className={`col-start-3 row-start-1 mb-8 flex w-full max-w-[460px] flex-col gap-2.5 min-[720px]:mb-12 ${cardPlacementClass[side]}`}
+        className={`col-start-3 row-start-1 mb-8 flex w-full max-w-[500px] flex-col gap-2.5 min-[720px]:mb-12 ${cardPlacementClass[side]}`}
       >
         <div className="bg-divider h-9 w-24 min-[720px]:self-auto" />
         <div className="bg-divider h-5 w-3/4" />
