@@ -37,15 +37,11 @@ export async function AdminTimelineEditorScreen({
             year: event === null ? "" : String(event.year),
             title: event?.title ?? "",
             text: event?.text ?? "",
-            gameSlugs: (event?.games ?? []).map(
-              (game) => game.slug,
+            gameSlugs: slugsByName(event?.games ?? []),
+            playerSlugs: slugsByName(event?.players ?? []),
+            contributorSlugs: slugsByName(
+              event?.contributors ?? [],
             ),
-            playerSlugs: (event?.players ?? []).map(
-              (player) => player.slug,
-            ),
-            contributorSlugs: (
-              event?.contributors ?? []
-            ).map((contributor) => contributor.slug),
             showGameTitles: event?.showGameTitles ?? true,
             isDraft: event?.isDraft ?? false,
           }}
@@ -56,4 +52,20 @@ export async function AdminTimelineEditorScreen({
       </AdminSection>
     </>
   )
+}
+
+/** The linked items' slugs in alphabetical order of their names, as the editor lists them. */
+function slugsByName(
+  items: readonly {
+    readonly slug: string
+    readonly name: string
+  }[],
+): readonly string[] {
+  return [...items]
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, {
+        sensitivity: "base",
+      }),
+    )
+    .map((item) => item.slug)
 }

@@ -230,7 +230,7 @@ export class TimelineDataSource {
       })
       .from(contributorsTable)
       .where(isVisible(contributorsTable, includeDrafts))
-      .orderBy(asc(contributorsTable.name))
+      .orderBy(asc(sql`lower(${contributorsTable.name})`))
     return rows.map(({ slug, name }) => ({ slug, name }))
   }
 
@@ -242,11 +242,7 @@ export class TimelineDataSource {
       })
       .from(gamesTable)
       .where(isVisible(gamesTable, includeDrafts))
-      .orderBy(
-        asc(gamesTable.year),
-        asc(gamesTable.sequence),
-        asc(gamesTable.id),
-      )
+      .orderBy(asc(sql`lower(${gamesTable.name})`))
     return rows.map(({ slug, name }) => ({ slug, name }))
   }
 
@@ -258,7 +254,7 @@ export class TimelineDataSource {
       })
       .from(playersTable)
       .where(isVisible(playersTable, includeDrafts))
-      .orderBy(asc(playersTable.inductionNumber))
+      .orderBy(asc(sql`lower(${playersTable.name})`))
     return rows.map(({ slug, name }) => ({ slug, name }))
   }
 
