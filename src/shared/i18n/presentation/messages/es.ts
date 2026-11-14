@@ -15,11 +15,11 @@ export const es: Messages = {
   aboutEyebrow: "Sobre el proyecto",
   aboutTitle: "Acerca de Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame rinde homenaje al juego del Go: sus jugadores legendarios, sus partidas legendarias y la historia que los une. Es un proyecto de código abierto, hecho a la vista de todos.",
+    "Go | Hall of Fame rinde homenaje al juego del Go: sus jugadores legendarios, sus partidas legendarias y la historia que los une. Este es un proyecto de código abierto.",
   contributors: "Colaboradores",
-  builtBy: "Creado por",
+  builtBy: "Creado y mantenido por",
   contributorsIntro:
-    "Las personas que hicieron este sitio.",
+    "Las personas que hacen posible este sitio web",
   roleCreator: "Creador y responsable",
   homeTitle:
     "Las obras de arte y los jugadores legendarios de la historia del Go.",

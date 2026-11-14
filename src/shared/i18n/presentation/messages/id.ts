@@ -15,10 +15,11 @@ export const id: Messages = {
   aboutEyebrow: "Tentang proyek",
   aboutTitle: "Tentang Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame menghormati permainan Go: para pemain legendarisnya, permainan legendarisnya, dan sejarah yang menghubungkan keduanya. Ini adalah proyek sumber terbuka yang dibangun secara terbuka.",
+    "Go | Hall of Fame menghormati permainan Go: para pemain legendarisnya, permainan legendarisnya, dan sejarah yang menghubungkan keduanya. Ini adalah proyek sumber terbuka.",
   contributors: "Kontributor",
-  builtBy: "Dibuat oleh",
-  contributorsIntro: "Orang-orang yang membuat situs ini.",
+  builtBy: "Dibuat dan dikelola oleh",
+  contributorsIntro:
+    "Orang-orang yang membuat situs web ini mungkin",
   roleCreator: "Pembuat dan pemelihara",
   homeTitle:
     "Karya seni dan para pemain legendaris dalam sejarah Go.",

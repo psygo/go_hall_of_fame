@@ -23,7 +23,7 @@ generated into `drizzle/` and tracked in git.
 
 + `contributors` (migration 0016): people and organizations that served the game; `kind` is person, organization or entity; `birth_year` (birth or founding) orders the list; migration 0017 added `entity` and `birth_year`. Migration 0018 adds `timeline_events.show_game_titles` (default true). Entered through the admin, no seed data. `timeline_event_contributors` links them to timeline events.
 + `players`: one row per inductee.
-  + `slug` (unique, used in `/players/[slug]`), `induction_number` (unique, the "No. 01" of the
+  + `slug` (unique, used in `/players/[slug]`), `induction_number` (unique; no longer shown on the public pages, only in the admin and the "Earliest inducted" sort; the "No. 01" of the
     Hall), `name`, `native_name`, `country` (enum `Japan | China | Korea | Others`), `years` (free text such
     as `1645–1702` or `b. 1983`), `birth_year` (integer: the lists are
     chronological by it; migration 0015 numbered the existing players by it), `distinction`, `bio`.

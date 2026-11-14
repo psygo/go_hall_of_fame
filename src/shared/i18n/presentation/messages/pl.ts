@@ -15,10 +15,11 @@ export const pl: Messages = {
   aboutEyebrow: "O projekcie",
   aboutTitle: "O Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame czci grę Go: jej legendarnych graczy, legendarne partie i historię, która je łączy. To projekt open source, tworzony publicznie.",
+    "Go | Hall of Fame czci grę Go: jej legendarnych graczy, legendarne partie i historię, która je łączy. To projekt open source.",
   contributors: "Współtwórcy",
-  builtBy: "Autorzy",
-  contributorsIntro: "Osoby, które stworzyły tę stronę.",
+  builtBy: "Autorzy i opiekunowie",
+  contributorsIntro:
+    "Osoby, dzięki którym ta strona istnieje",
   roleCreator: "Twórca i opiekun",
   homeTitle:
     "Dzieła sztuki i legendarni gracze w historii Go.",

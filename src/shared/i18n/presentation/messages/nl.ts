@@ -15,10 +15,11 @@ export const nl: Messages = {
   aboutEyebrow: "Over het project",
   aboutTitle: "Over Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame eert het spel Go: zijn legendarische spelers, zijn legendarische partijen en de geschiedenis die ze verbindt. Het is een open-sourceproject, openlijk gebouwd.",
+    "Go | Hall of Fame eert het spel Go: zijn legendarische spelers, zijn legendarische partijen en de geschiedenis die ze verbindt. Dit is een open-sourceproject.",
   contributors: "Bijdragers",
-  builtBy: "Gemaakt door",
-  contributorsIntro: "De mensen die deze site maakten.",
+  builtBy: "Gemaakt en onderhouden door",
+  contributorsIntro:
+    "De mensen die deze website mogelijk maken",
   roleCreator: "Maker en beheerder",
   homeTitle:
     "De kunstwerken en de legendarische spelers uit de geschiedenis van Go.",

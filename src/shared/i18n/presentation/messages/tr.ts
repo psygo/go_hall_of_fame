@@ -15,10 +15,10 @@ export const tr: Messages = {
   aboutEyebrow: "Proje hakkında",
   aboutTitle: "Go | Hall of Fame hakkında",
   aboutIntro:
-    "Go | Hall of Fame, Go oyununu onurlandırır: efsanevi oyuncularını, efsanevi oyunlarını ve onları birbirine bağlayan tarihi. Açık kaynaklı, herkesin gözü önünde geliştirilen bir projedir.",
+    "Go | Hall of Fame, Go oyununu onurlandırır: efsanevi oyuncularını, efsanevi oyunlarını ve onları birbirine bağlayan tarihi. Bu, açık kaynaklı bir projedir.",
   contributors: "Katkıda bulunanlar",
-  builtBy: "Yapanlar",
-  contributorsIntro: "Bu siteyi yapan kişiler.",
+  builtBy: "Yapan ve sürdürenler",
+  contributorsIntro: "Bu web sitesini mümkün kılan kişiler",
   roleCreator: "Yaratıcı ve bakımcı",
   homeTitle:
     "Go tarihindeki sanat eserleri ve efsanevi oyuncular.",

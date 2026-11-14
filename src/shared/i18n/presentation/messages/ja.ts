@@ -15,10 +15,10 @@ export const ja: Messages = {
   aboutEyebrow: "プロジェクトについて",
   aboutTitle: "Go | Hall of Fame について",
   aboutIntro:
-    "Go | Hall of Fame は囲碁を称えるサイトです。伝説の棋士、伝説の対局、そしてそれらをつなぐ歴史。オープンソースで、公開の場で作られています。",
+    "Go | Hall of Fame は囲碁を称えるサイトです。伝説の棋士、伝説の対局、そしてそれらをつなぐ歴史。オープンソースのプロジェクトです。",
   contributors: "コントリビューター",
-  builtBy: "制作",
-  contributorsIntro: "このサイトを作った人たち。",
+  builtBy: "制作・運営",
+  contributorsIntro: "このウェブサイトを支える人たち",
   roleCreator: "作者・メンテナー",
   homeTitle: "囲碁の歴史における芸術作品と伝説の棋士たち。",
   homeIntro:

@@ -15,11 +15,11 @@ export const sv: Messages = {
   aboutEyebrow: "Om projektet",
   aboutTitle: "Om Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame hedrar spelet Go: dess legendariska spelare, dess legendariska partier och historien som binder dem samman. Det är ett öppen källkod-projekt, byggt öppet.",
+    "Go | Hall of Fame hedrar spelet Go: dess legendariska spelare, dess legendariska partier och historien som binder dem samman. Detta är ett projekt med öppen källkod.",
   contributors: "Medverkande",
-  builtBy: "Byggt av",
+  builtBy: "Byggt och underhållet av",
   contributorsIntro:
-    "Personerna som gjort den här webbplatsen.",
+    "Människorna som gör den här webbplatsen möjlig",
   roleCreator: "Skapare och underhållare",
   homeTitle:
     "Konstverken och de legendariska spelarna i Gos historia.",

@@ -15,11 +15,10 @@ export const vi: Messages = {
   aboutEyebrow: "Về dự án",
   aboutTitle: "Giới thiệu Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame tôn vinh môn cờ vây: những kỳ thủ huyền thoại, những ván cờ huyền thoại và lịch sử kết nối họ. Đây là dự án mã nguồn mở, được xây dựng công khai.",
+    "Go | Hall of Fame tôn vinh môn cờ vây: những kỳ thủ huyền thoại, những ván cờ huyền thoại và lịch sử kết nối họ. Đây là một dự án mã nguồn mở.",
   contributors: "Người đóng góp",
-  builtBy: "Do ai tạo ra",
-  contributorsIntro:
-    "Những người đã tạo nên trang web này.",
+  builtBy: "Do ai xây dựng và duy trì",
+  contributorsIntro: "Những người làm nên trang web này",
   roleCreator: "Người tạo và duy trì",
   homeTitle:
     "Những tác phẩm nghệ thuật và các kỳ thủ huyền thoại trong lịch sử cờ vây.",

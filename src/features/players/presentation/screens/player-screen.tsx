@@ -41,13 +41,6 @@ export async function PlayerScreen({
         </div>
         <div className="flex flex-col gap-5 px-4 pt-8 pb-10">
           <div className="flex flex-wrap gap-2">
-            <span className="tag tag-accent">
-              No.{" "}
-              {String(detail.inductionNumber).padStart(
-                2,
-                "0",
-              )}
-            </span>
             <span className="tag tag-outline">
               {detail.country}
             </span>

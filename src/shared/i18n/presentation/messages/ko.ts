@@ -15,10 +15,10 @@ export const ko: Messages = {
   aboutEyebrow: "프로젝트 소개",
   aboutTitle: "Go | Hall of Fame 소개",
   aboutIntro:
-    "Go | Hall of Fame은 바둑을 기립니다. 전설적인 기사들, 전설적인 대국, 그리고 그들을 잇는 역사. 공개적으로 만들어지는 오픈 소스 프로젝트입니다.",
+    "Go | Hall of Fame은 바둑을 기립니다. 전설적인 기사들, 전설적인 대국, 그리고 그들을 잇는 역사. 오픈 소스 프로젝트입니다.",
   contributors: "기여자",
-  builtBy: "만든 사람",
-  contributorsIntro: "이 사이트를 만든 사람들.",
+  builtBy: "만들고 관리하는 사람",
+  contributorsIntro: "이 웹사이트를 가능하게 하는 사람들",
   roleCreator: "제작자 및 유지관리자",
   homeTitle: "바둑의 역사 속 예술 작품과 전설적인 기사들.",
   homeIntro:

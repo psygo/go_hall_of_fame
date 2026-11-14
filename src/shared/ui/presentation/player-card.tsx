@@ -35,14 +35,7 @@ export function PlayerCard({
         className="border-divider border-b"
       />
       <div className="flex flex-1 flex-col gap-1.5 px-4 pt-3.5 pb-5">
-        <div className="flex items-center justify-between">
-          <span className="text-accent-700 text-xs font-bold">
-            No.{" "}
-            {String(player.inductionNumber).padStart(
-              2,
-              "0",
-            )}
-          </span>
+        <div className="flex items-center justify-end">
           <span className="flex items-center gap-1.5">
             <DraftBadge isDraft={player.isDraft} />
             <span className="tag tag-outline">

@@ -13,10 +13,11 @@ export const en = {
   aboutEyebrow: "About the project",
   aboutTitle: "About Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame honors the game of Go: its legendary players, its legendary games and the history that connects them. It is an open-source project, built in the open.",
+    "Go | Hall of Fame honors the game of Go: its legendary players, its legendary games and the history that connects them. This is an open-source project.",
   contributors: "Contributors",
-  builtBy: "Built by",
-  contributorsIntro: "The people who made this site.",
+  builtBy: "Built and maintained by",
+  contributorsIntro:
+    "The people who make this website possible",
   roleCreator: "Creator and maintainer",
   homeTitle:
     "The works of art and the legendary players in the history of Go.",

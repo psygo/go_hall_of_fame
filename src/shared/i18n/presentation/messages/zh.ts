@@ -15,10 +15,10 @@ export const zh: Messages = {
   aboutEyebrow: "关于本项目",
   aboutTitle: "关于 Go | Hall of Fame",
   aboutIntro:
-    "Go | Hall of Fame 致敬围棋：传奇棋手、传奇棋局，以及连接它们的历史。这是一个公开开发的开源项目。",
+    "Go | Hall of Fame 致敬围棋：传奇棋手、传奇棋局，以及连接它们的历史。这是一个开源项目。",
   contributors: "贡献者",
-  builtBy: "制作团队",
-  contributorsIntro: "制作这个网站的人。",
+  builtBy: "制作与维护团队",
+  contributorsIntro: "让这个网站成为可能的人们",
   roleCreator: "创建者与维护者",
   homeTitle: "围棋历史上的艺术杰作与传奇棋手。",
   homeIntro:
