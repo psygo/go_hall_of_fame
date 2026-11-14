@@ -28,6 +28,11 @@ type LinkRow = {
   readonly name: string
 }
 
+type PlayerLinkRow = LinkRow & {
+  readonly photoUrl: string | null
+  readonly photoPosition: string
+}
+
 type GameLinkRow = LinkRow & {
   readonly sgfUrl: string | null
   readonly hasUploadedSgf: boolean
@@ -105,7 +110,14 @@ export class TimelineDataSource {
               : row.sgfUrl,
             highlightMove: row.highlightMove,
           })),
-        players: linksOf(players, event.id),
+        players: players
+          .filter((row) => row.eventId === event.id)
+          .map((row) => ({
+            slug: row.slug,
+            name: row.name,
+            photoUrl: row.photoUrl,
+            photoPosition: row.photoPosition,
+          })),
         contributors: linksOf(contributors, event.id),
       }),
     )
@@ -143,12 +155,14 @@ export class TimelineDataSource {
   private fetchPlayerLinks(
     eventIds: readonly number[],
     includeDrafts: boolean,
-  ): Promise<LinkRow[]> {
+  ): Promise<PlayerLinkRow[]> {
     return this.database
       .select({
         eventId: timelineEventPlayersTable.eventId,
         slug: playersTable.slug,
         name: playersTable.name,
+        photoUrl: playersTable.photoUrl,
+        photoPosition: playersTable.photoPosition,
       })
       .from(timelineEventPlayersTable)
       .innerJoin(

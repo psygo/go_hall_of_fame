@@ -141,7 +141,20 @@ describe("TimelineEventModel", () => {
         highlightMove: null,
       },
     ]
-    const players = [{ slug: "shusaku", name: "Shusaku" }]
+    const players = [
+      {
+        slug: "shusaku",
+        name: "Shusaku",
+        photoUrl: "/portraits/shusaku.webp",
+        photoPosition: "40% 20%",
+      },
+      {
+        slug: "lee-sedol",
+        name: "Lee Sedol",
+        photoUrl: null,
+        photoPosition: "50% 50%",
+      },
+    ]
 
     const entity = TimelineEventModel.fromRawData({
       ...validRaw,
@@ -204,15 +217,81 @@ describe("TimelineEventModel", () => {
       },
     )
 
-    it("keeps players and contributors as slug and name only", () => {
+    it("keeps contributors as slug and name only", () => {
       const entity = TimelineEventModel.fromRawData({
         ...validRaw,
-        players: [{ ...base, sgf: "x", highlightMove: 1 }],
-        contributors: [{ ...base, sgf: "x" }],
+        contributors: [
+          { ...base, sgf: "x", photoUrl: "y" },
+        ],
       }).toEntity()
 
-      expect(entity.players).toEqual([base])
       expect(entity.contributors).toEqual([base])
+    })
+  })
+
+  describe("linked player photo", () => {
+    const base = {
+      slug: "p",
+      name: "P",
+      photoPosition: "50% 50%",
+    }
+    const parse = (player: Record<string, unknown>) =>
+      TimelineEventModel.fromRawData({
+        ...validRaw,
+        players: [player],
+      }).toEntity().players[0]
+
+    it("reads a string photo URL", () => {
+      expect(
+        parse({ ...base, photoUrl: "/p.webp" }),
+      ).toEqual({
+        ...base,
+        photoUrl: "/p.webp",
+      })
+    })
+
+    it.each([null, undefined])(
+      "reads a %s photo URL as null",
+      (photoUrl) => {
+        expect(
+          parse({ ...base, photoUrl }).photoUrl,
+        ).toBeNull()
+      },
+    )
+
+    it("throws when the photo URL is not a string", () => {
+      expect(() => parse({ ...base, photoUrl: 5 })).toThrow(
+        InvalidRawDataError,
+      )
+    })
+
+    it.each([undefined, 5, null])(
+      "throws when the photo position is %j",
+      (photoPosition) => {
+        expect(() =>
+          parse({ ...base, photoUrl: null, photoPosition }),
+        ).toThrow(InvalidRawDataError)
+      },
+    )
+
+    it("drops extra keys and keeps the order", () => {
+      const entity = TimelineEventModel.fromRawData({
+        ...validRaw,
+        players: [
+          { ...base, slug: "b", photoUrl: null, extra: 1 },
+          { ...base, slug: "a", photoUrl: null },
+        ],
+      }).toEntity()
+
+      expect(entity.players.map((p) => p.slug)).toEqual([
+        "b",
+        "a",
+      ])
+      expect(entity.players[0]).toEqual({
+        ...base,
+        slug: "b",
+        photoUrl: null,
+      })
     })
   })
 

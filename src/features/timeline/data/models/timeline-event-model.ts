@@ -13,6 +13,7 @@ import type {
   TimelineEvent,
   TimelineGameReference,
   TimelineLinkedGame,
+  TimelineLinkedPlayer,
   TimelinePlayerReference,
 } from "../../domain/entities/timeline-event"
 
@@ -22,7 +23,7 @@ export class TimelineEventModel implements TimelineEvent {
   declare readonly title: string
   declare readonly text: string
   declare readonly games: readonly TimelineLinkedGame[]
-  declare readonly players: readonly TimelinePlayerReference[]
+  declare readonly players: readonly TimelineLinkedPlayer[]
   declare readonly contributors: readonly TimelineContributorReference[]
   declare readonly showGameTitles: boolean
   declare readonly isDraft: boolean
@@ -42,7 +43,7 @@ export class TimelineEventModel implements TimelineEvent {
         parseLinkedGame,
       ),
       players: readArray(record, "players").map(
-        parseReference,
+        parseLinkedPlayer,
       ),
       contributors: readArray(record, "contributors").map(
         parseReference,
@@ -67,6 +68,18 @@ function parseLinkedGame(raw: unknown): TimelineLinkedGame {
       record,
       "highlightMove",
     ),
+  }
+}
+
+function parseLinkedPlayer(
+  raw: unknown,
+): TimelineLinkedPlayer {
+  const record = asRecord(raw, "linked player")
+  return {
+    slug: readString(record, "slug"),
+    name: readString(record, "name"),
+    photoUrl: readNullableString(record, "photoUrl"),
+    photoPosition: readString(record, "photoPosition"),
   }
 }
 

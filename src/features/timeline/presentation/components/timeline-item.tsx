@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 
 import { DraftBadge } from "@/shared/ui/presentation/draft-badge"
@@ -16,6 +17,19 @@ function itemOverlapClass({ index }: TimelinePlacement) {
   return index === 0 ? "" : "min-[720px]:-mt-14"
 }
 
+type RelatedLink = {
+  readonly href: string
+  readonly label: string
+  /** A player's picture, shown in a small circle beside the name. */
+  readonly photo?: {
+    readonly url: string
+    readonly position: string
+  }
+}
+
+const PLACEHOLDER_PORTRAIT_URL =
+  "/images/placeholder-portrait.jpg"
+
 const ITEM_GRID =
   "relative grid grid-cols-[28px_12px_minmax(0,1fr)] items-start min-[720px]:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)]"
 
@@ -27,10 +41,14 @@ export function TimelineItem({
   const { event, side, index } = placement
   const stoneClass = index % 2 === 0 ? "bg-ink" : "bg-stone"
   // Players first, then contributors; the games follow as small boards (a chip when there is no record).
-  const links = [
+  const links: readonly RelatedLink[] = [
     ...event.players.map((player) => ({
       href: `/players/${player.slug}`,
       label: player.name,
+      photo: {
+        url: player.photoUrl ?? PLACEHOLDER_PORTRAIT_URL,
+        position: player.photoPosition,
+      },
     })),
     ...event.games
       .filter((game) => game.sgf === null)
@@ -73,8 +91,23 @@ export function TimelineItem({
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="border-divider hover:text-accent hover:border-accent inline-block border px-2 py-0.5 text-sm font-bold no-underline"
+                  className="border-divider hover:text-accent hover:border-accent inline-flex items-center gap-1.5 border px-2 py-0.5 text-sm font-bold no-underline"
                 >
+                  {link.photo !== undefined && (
+                    <span className="relative size-7 shrink-0 overflow-hidden rounded-full">
+                      <Image
+                        src={link.photo.url}
+                        alt=""
+                        fill
+                        sizes="28px"
+                        className="object-cover"
+                        style={{
+                          objectPosition:
+                            link.photo.position,
+                        }}
+                      />
+                    </span>
+                  )}
                   {link.label}
                 </Link>
               </li>

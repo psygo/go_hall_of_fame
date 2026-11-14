@@ -18,6 +18,13 @@ export type TimelinePlayerReference = {
   readonly name: string
 }
 
+/** A player an event is about, with the photo shown beside the name. */
+export type TimelineLinkedPlayer =
+  TimelinePlayerReference & {
+    readonly photoUrl: string | null
+    readonly photoPosition: string
+  }
+
 /** A contributor an event points to. */
 export type TimelineContributorReference = {
   readonly slug: string
@@ -33,7 +40,7 @@ export type TimelineEvent = {
   /** The games the event is about, in the admin's order. */
   readonly games: readonly TimelineLinkedGame[]
   /** The players the event is about, in the admin's order. */
-  readonly players: readonly TimelinePlayerReference[]
+  readonly players: readonly TimelineLinkedPlayer[]
   /** The contributors the event is about, in the admin's order. */
   readonly contributors: readonly TimelineContributorReference[]
   /** Whether the linked games' boards show the game's title. */
