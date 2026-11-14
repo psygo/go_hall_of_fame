@@ -40,7 +40,7 @@ The admin lives under `/admin`. There is no public sign-up: admins are created w
   400 KB; its text is saved in the database). An uploaded file wins. If the form comes back with
   errors, choose the file again.
 + **Highlighted move.** An optional move number on the game form. The games-list preview plays up to
-  that move and draws it in the accent color (orange-red, like the diagram on the home page); the
+  that move and draws it in the accent color (orange-red, like the diagram on the home page), with a border in the stone's own color (black or white); the
   game page draws the same stone once the game reaches it. Blank means move 50.
 + **Markdown.** The long-text fields (a player's biography, a game's description,
   a timeline event's description) accept Markdown: `**bold**`, `*italic*`, `[a link](https://…)`,
