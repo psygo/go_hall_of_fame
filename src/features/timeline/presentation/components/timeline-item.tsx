@@ -178,7 +178,7 @@ function PictureRow({
       className={`m-0 flex list-none flex-wrap gap-2 p-0 ${side === "left" ? "min-[720px]:justify-end" : ""}`}
     >
       {cards.map((card) => (
-        <li key={card.key} className="max-w-full">
+        <li key={card.key} className="flex max-w-full">
           <Link
             href={card.href}
             className="border-divider text-ink hover:bg-accent-100 hover:text-accent flex w-[100px] max-w-full flex-col items-center gap-1 border p-1.5 text-center text-xs font-bold no-underline"
