@@ -26,7 +26,8 @@ export async function HomeScreen() {
     texts["home.intro"] === MESSAGES.en.homeIntro
       ? messages.homeIntro
       : texts["home.intro"]
-  const { spotlightGame, spotlightPlayers } = summary
+  const { spotlightGame } = summary
+  const [spotlightPlayer] = summary.spotlightPlayers
 
   const cells = [
     {
@@ -43,8 +44,8 @@ export async function HomeScreen() {
     },
     {
       href: "/timeline",
-      figure: String(summary.centuries),
-      title: "Centuries of Go",
+      figure: "2500+",
+      title: "Years of Go",
       text: texts["home.timelineCardText"],
     },
   ]
@@ -126,7 +127,8 @@ export async function HomeScreen() {
         ))}
       </section>
 
-      <div className="grid grid-cols-1 min-[1000px]:grid-cols-[minmax(0,5fr)_minmax(0,2fr)]">
+      {/* A game and a player share a row on a wide screen and stack (game on top) otherwise. */}
+      <div className="grid grid-cols-1 min-[1280px]:grid-cols-2">
         {spotlightGame && (
           <section aria-labelledby="home-game-heading">
             <h2
@@ -139,32 +141,18 @@ export async function HomeScreen() {
           </section>
         )}
 
-        {spotlightPlayers.length > 0 && (
+        {spotlightPlayer && (
           <section aria-labelledby="home-player-heading">
             <h2
               id="home-player-heading"
               className="border-divider border-b px-4 py-3 font-mono text-xs tracking-[0.12em] uppercase"
             >
-              <span className="min-[1000px]:hidden">
-                {spotlightPlayers.length === 1
-                  ? "A legendary player"
-                  : "Legendary players"}
-              </span>
-              <span className="max-[999px]:hidden">
-                A legendary player
-              </span>
+              A legendary player
             </h2>
-            {/* Beside the game the column is narrow and shows one player; when the layout stacks, the others fill the row. */}
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(230px,100%),1fr))]">
-              {spotlightPlayers.map((player, index) => (
-                <div
-                  key={player.slug}
-                  className={`contents ${index === 0 ? "" : "[&>*]:min-[1000px]:hidden"}`}
-                >
-                  <PlayerCard player={player} />
-                </div>
-              ))}
-            </div>
+            <PlayerCard
+              player={spotlightPlayer}
+              layout="wide"
+            />
           </section>
         )}
       </div>

@@ -107,14 +107,6 @@ export const PAGE_TEXT_DEFINITIONS: readonly PageTextDefinition[] =
       multiline: false,
     },
     {
-      key: "timeline.eyebrow",
-      page: "timeline",
-      label: "Eyebrow",
-      defaultValue: "Four centuries",
-      maxLength: 40,
-      multiline: false,
-    },
-    {
       key: "timeline.title",
       page: "timeline",
       label: "Heading",

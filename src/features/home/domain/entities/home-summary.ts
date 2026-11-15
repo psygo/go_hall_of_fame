@@ -15,8 +15,8 @@ export type SpotlightGame = {
   readonly highlightMove: number | null
 }
 
-/** How many random players the home page features. */
-export const SPOTLIGHT_PLAYER_COUNT = 3
+/** How many random players the home page features (one, beside or below the game). */
+export const SPOTLIGHT_PLAYER_COUNT = 1
 
 /** A random player of the Hall, with what their card needs. */
 export type SpotlightPlayer = {

@@ -6,7 +6,7 @@ export const contentType = "image/png"
 
 export default function Image() {
   return renderOgCard({
-    eyebrow: "Four centuries",
+    eyebrow: "2500+ years of Go",
     title: "Timeline",
     description:
       "Centuries of Go, from the Edo academy to the age of AI.",

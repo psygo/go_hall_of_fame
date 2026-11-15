@@ -27,10 +27,7 @@ export async function TimelineScreen({
 
   return (
     <>
-      <PageHeader
-        eyebrow={texts["timeline.eyebrow"]}
-        title={texts["timeline.title"]}
-      >
+      <PageHeader title={texts["timeline.title"]}>
         <ListControls
           sort={{
             value: order,
