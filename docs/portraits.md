@@ -29,3 +29,4 @@
 + `honinbo-shusaku.jpg`: [Honinbo_Shusaku.jpg](https://commons.wikimedia.org/wiki/File:Honinbo_Shusaku.jpg), 江馬天江, Public domain.
 + `honinbo-sansa.jpg`: [Sansa.jpg](https://commons.wikimedia.org/wiki/File:Sansa.jpg), Unknown author, Public domain.
 + `nihon-kiin.jpg`: the Nihon Ki-in building (日本棋院会館) in Tokyo, supplied by the site owner; source and licence not recorded (a Wikimedia Commons photo, to be confirmed). Shown whole on a white card.
++ `david-wu.jpg`: David Wu (contributor), photo supplied by the site owner, cropped to 4:5 around the face.
