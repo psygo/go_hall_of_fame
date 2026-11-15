@@ -27,3 +27,4 @@
 + `honinbo-dosaku.jpg`: [Honinbo_Dosaku.png](https://commons.wikimedia.org/wiki/File:Honinbo_Dosaku.png), Unknown authorUnknown author, Public domain.
 + `honinbo-shusaku.jpg`: [Honinbo_Shusaku.jpg](https://commons.wikimedia.org/wiki/File:Honinbo_Shusaku.jpg), 江馬天江, Public domain.
 + `honinbo-sansa.jpg`: [Sansa.jpg](https://commons.wikimedia.org/wiki/File:Sansa.jpg), Unknown author, Public domain.
++ `nihon-kiin.jpg`: the Nihon Ki-in building (日本棋院会館) in Tokyo, supplied by the site owner; source and licence not recorded (a Wikimedia Commons photo, to be confirmed). Shown whole on a white card.
