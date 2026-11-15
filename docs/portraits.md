@@ -10,6 +10,7 @@
 + AlphaGo (a player): `alphago.jpg` is the AlphaGo logo supplied by the site owner, centered on a white 4:5 canvas so the player card
   does not crop it. Organizations and entities show their image whole
   (`contain`) instead of cropped.
++ KataGo (a player): `katago.jpg` is the KataGo logo supplied by the site owner, centered on a white 4:5 canvas like AlphaGo.
 
 ## Files
 
